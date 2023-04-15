@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/ivi-analog-back/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/ivi-analog-back/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/ivi-analog-back",
+  "projects": {
+    "ivi-analog-back": {
+      "type": "application",
+      "root": "apps/ivi-analog-back",
+      "entryFile": "main",
+      "sourceRoot": "apps/ivi-analog-back/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ivi-analog-back/tsconfig.app.json"
+      }
+    },
+    "parser": {
+      "type": "application",
+      "root": "apps/parser",
+      "entryFile": "main",
+      "sourceRoot": "apps/parser/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/parser/tsconfig.app.json"
+      }
+    }
   }
 }
