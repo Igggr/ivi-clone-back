@@ -2,9 +2,15 @@ import { Injectable } from '@nestjs/common';
 import puppeteer, { Page } from 'puppeteer';
 
 
-const titleXpath = '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[1]/div[1]/div/div[1]/h1/span';
-const genreXpath = '//a[contains(@href, "lists/movies/genre--")]';
+const titleXpath = '//div[starts-with(@class, "styles_title")]/h1[starts-with(@class, "styles_title")]/span';
+const origTitleXpath = '//span[starts-with(@class, "styles_originalTitle")]';
+const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]';
+const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
+const sloganXpath = '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[4]/div[2]/div/text()';
 const timeXpath = '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div';
+
+// часть td - просто разделители. Этот спуск, а потом подъем в родимтеля нужен для фильтарция
+const premierXpath = '//*[@id="block_left"]/div/table/tbody/tr[2]/td/table/tbody/tr/td/a/parent::td/parent::tr'
 
 
 type Role = 'director' | 'actor' | 'producer' | 'voice_director' | 'translator' | 'voice' | 'writer'
@@ -38,58 +44,24 @@ function xpathBeetweenRoles(roleFrom: Role, roleTo: Role) {
 @Injectable()
 export class ParserService {
 
-  async parse(film: number = 535341) {
-    const mainUrl = `https://www.kinopoisk.ru/film/${film}/`;
-    const actorsUrl = `https://www.kinopoisk.ru/film/${film}/cast`;
-    const voicesUrl = `https://www.kinopoisk.ru/film/${film}/cast/who_is/voice/`;
-
-    console.log(mainUrl);
+  async parse(film: number = 535341) {   
 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-
-    await page.goto(mainUrl, {
-      waitUntil: 'domcontentloaded',
-    });
+    await this.optimizePageLoad(page);
 
     try {
 
-      const { title, year} = await (
-        await page.waitForXPath(titleXpath)
-      ).evaluate((node) => node.textContent.match(/(?<title>.*) \((?<year>\d{4})\)/).groups);
-      
-      console.log(title);
-      console.log(year);
+      const mainPageInfo = await this.parseMainPage(page, film);
+      const views = await this.parseViews(page, film);
+      const persons = await this.parsePersons(page, film);
 
-      const genres = await Promise.all(
-        await (
-          await page.$x(genreXpath)
-        ).map((handle) => handle.evaluate(
-          (n) => n.textContent
-        )))
-        ;
-     
-      console.log(genres);
-
-      const duration = await (
-        await page.waitForXPath(timeXpath)
-      ).evaluate((node) => node.textContent);
-
-      console.log(duration);
-
-      await page.goto(actorsUrl, {
-        waitUntil: 'domcontentloaded'
-      });
-
-      const persons = await this.getPersons(page);
-
-      // page.goto(voicesUrl);
-      
-      const res = { title, year, genres, duration, persons };
+      const res = { ...mainPageInfo, persons, views };
       console.log(res);
-      return res;
+      return { status: 'ok', value: res };
     } catch (e) {
       console.log(e)
+      return { status: 'error', error: e };
     }
     finally {
       await page.close();
@@ -97,27 +69,103 @@ export class ParserService {
     }
   }
 
-  async getPersons(page: Page) {
-    const directors = await this.getPersonsWithRole(page, directorsXpath);
-    console.log('direcors:\n\n')
-    console.log(directors);
-    const actors = await this.getPersonsWithRole(page, actorsXpath);
-    console.log('actors:\n\n')
-    console.log(actors);
-    const producers = await this.getPersonsWithRole(page, producersXpath);
-    const voiceDirectors = await this.getPersonsWithRole(page, voiceDirectorsXpath);
-    const translators = await this.getPersonsWithRole(page, translatorsXpath);
-    const voices = await this.getPersonsWithRole(page, voicesXpath);
-    const writers = await this.getPersonsWithRole(page, writersXpath);
-    const operators = await this.getPersonsWithRole(page, operatorsXpath);
-    const composers = await this.getPersonsWithRole(page, composersXpath);
-    const designers = await this.getPersonsWithRole(page, designersXpath);
-    const editors = await this.getPersonsWithRole(page, editorsXpath);
+  async optimizePageLoad(page: Page) {
+    // не нужно грузить стили и картинки 
+    await page.setRequestInterception(true); 
 
-    return { directors, actors, producers, voiceDirectors, translators, voices, writers, operators, composers, designers, editors };
+    page.on('request', (request) => {
+      const resourceType = request.resourceType();
+      const blockedTypes = ['image', 'stylesheet', 'font', 'media'];
+      if (blockedTypes.includes(resourceType)) {
+        request.abort();
+      } else {
+        request.continue();
+      }
+    })
   }
 
-  private async getPersonsWithRole(page: Page, xpath: string) {
+  private async parseMainPage(page: Page, film: number) {
+    const mainUrl = `https://www.kinopoisk.ru/film/${film}/`;
+
+    await page.goto(mainUrl, {
+      waitUntil: 'domcontentloaded',
+    });
+
+    const originalTitle = await page.waitForXPath(origTitleXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent))
+
+    const { title, year } = await page.waitForXPath(titleXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent.match(/(?<title>.*) \((?<year>\d{4})\)/).groups));
+
+    const country = await page.waitForXPath(countryXpath)
+      .then((handle) => handle.evaluate((node: HTMLAnchorElement) => ({ country: node.textContent, countryLink: node.getAttribute('href') })));
+
+    const slogan = await page.waitForXPath(sloganXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent));
+
+
+    const genres = await Promise.all(
+      await page.$x(genreXpath).then(
+        (handles) => handles.map((handle) => handle.evaluate((node) => node.textContent))
+      )
+    );
+
+    const duration = await (
+      await page.waitForXPath(timeXpath)
+    ).evaluate((node) => node.textContent);
+
+    const res = { title, originalTitle, year, genres, country, slogan, duration };
+    
+    return res;
+  }
+
+  private async parseViews(page: Page, film: number) {
+    const datesUrl = `https://www.kinopoisk.ru/film/${film}/dates/`;
+
+    await page.goto(datesUrl, {
+      waitUntil: 'networkidle0',
+    });
+
+    const views = await Promise.all(await page.$x(premierXpath).then(
+      (handles) => handles.map(async (handle) => ({
+        date: await handle.$eval('td>span>b', (node) => node.textContent),
+        country: {
+          country: await handle.$eval('td>a', (node) => node.textContent),
+          // countryLink: await handle.$eval('td>a[starts-with(@href, "/lists/m_act")]', (node) => node.getAttribute('href')),
+        },
+        // where: await handle.$eval('td>a[starts-with(@href, "/lists/m_act")]/following-sibling::small', (node) => node.textContent),
+      }))
+    ))
+
+    console.log(views);
+    return views;
+
+  }
+
+  private async parsePersons(page: Page, film: number) {
+    const actorsUrl = `https://www.kinopoisk.ru/film/${film}/cast`;
+
+    await page.goto(actorsUrl, {
+      waitUntil: 'domcontentloaded',
+    });
+
+    const directors = await this.parsePersonsWithRole(page, directorsXpath);
+    const actors = await this.parsePersonsWithRole(page, actorsXpath);
+    const producers = await this.parsePersonsWithRole(page, producersXpath);
+    const voiceDirectors = await this.parsePersonsWithRole(page, voiceDirectorsXpath);
+    const translators = await this.parsePersonsWithRole(page, translatorsXpath);
+    const voices = await this.parsePersonsWithRole(page, voicesXpath);
+    const writers = await this.parsePersonsWithRole(page, writersXpath);
+    const operators = await this.parsePersonsWithRole(page, operatorsXpath);
+    const composers = await this.parsePersonsWithRole(page, composersXpath);
+    const designers = await this.parsePersonsWithRole(page, designersXpath);
+    const editors = await this.parsePersonsWithRole(page, editorsXpath);
+
+    const res = { directors, actors, producers, voiceDirectors, translators, voices, writers, operators, composers, designers, editors };
+    return res;
+  }
+
+  private async parsePersonsWithRole(page: Page, xpath: string) {
 
     const persons = await Promise.all(
       (await page.$x(xpath))
@@ -136,7 +184,7 @@ export class ParserService {
             name_en,
             // photo,
           };
-           console.log(res);
+          //  console.log(res);
           return res;
         })
     );
