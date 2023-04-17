@@ -131,12 +131,14 @@ export class ParserService {
         date: await handle.$eval('td>span>b', (node) => node.textContent),
         country: {
           country: await handle.$eval('td>a', (node) => node.textContent),
-          // countryLink: await handle.$eval('td>a[starts-with(@href, "/lists/m_act")]', (node) => node.getAttribute('href')),
+          countryLink: await handle.$eval('xpath/td/a[starts-with(@href, "/lists/m_act")]', (node) => node.getAttribute('href')),
         },
-        // where: await handle.$eval('td>a[starts-with(@href, "/lists/m_act")]/following-sibling::small', (node) => node.textContent),
+        where: await handle.$eval('xpath/td/a[starts-with(@href, "/lists/m_act")]/following-sibling::small', (node) => node.textContent.trim()),
+        views: await handle.$eval('xpath/td/a[starts-with(@href, "/lists/m_act")]/parent::td/following-sibling::td/small', (node) => node.textContent.trim()),
       }))
     ))
 
+    console.log('Views:\n\n')
     console.log(views);
     return views;
 
