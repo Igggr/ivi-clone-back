@@ -29,9 +29,9 @@ export class ParserService {
     await this.optimizePageLoad(page);
 
     try {
-      const mainPageInfo = {}; // await this.parseMainPage(page, film);
-      const views = {}; // await this.parseViews(page, film);
-      const persons = {}; // await this.parsePersons(page, film);
+      const mainPageInfo = await this.parseMainPage(page, film);
+      const views = await this.parseViews(page, film);
+      const persons = await this.parsePersons(page, film);
       const comments = await this.parseComments(page, film);
 
       const res = { ...mainPageInfo, persons, views, comments };
@@ -51,7 +51,29 @@ export class ParserService {
     page.on('request', (request) => {
       const resourceType = request.resourceType();
       const blockedTypes = ['image', 'stylesheet', 'font', 'media'];
-      if (blockedTypes.includes(resourceType)) {
+      const blockResourceName = [
+        'adition',
+        'adzerk',
+        'analytics',
+        'cdn.api.twitter',
+        'clicksor',
+        'clicktale',
+        'doubleclick',
+        'exelator',
+        'facebook',
+        'fontawesome',
+        'google',
+        'google-analytics',
+        'googletagmanager',
+        'mixpanel',
+        'optimizely',
+        'quantserve',
+        'sharethrough',
+        'tiqcdn',
+        'zedo',
+      ];
+      const requestUrl = request.url().split('?')[0];
+      if (blockedTypes.includes(resourceType) || blockResourceName.some((resource) => requestUrl.includes(resource))) {
         request.abort();
       } else {
         request.continue();
