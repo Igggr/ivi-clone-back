@@ -15,4 +15,14 @@ export class AuthController {
       userDto,
     );
   }
+
+  @Post('/create')
+  createUser(@Body() userDto: CreateUserDto) {
+    return this.authService.send(
+      {
+        cmd: 'create-user',
+      },
+      userDto,
+    );
+  }
 }
