@@ -1,20 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer, { Page } from 'puppeteer';
 
-
-const titleXpath = '//div[starts-with(@class, "styles_title")]/h1[starts-with(@class, "styles_title")]/span';
+const titleXpath =
+  '//div[starts-with(@class, "styles_title")]/h1[starts-with(@class, "styles_title")]/span';
 const origTitleXpath = '//span[starts-with(@class, "styles_originalTitle")]';
 const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]';
 const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
-const sloganXpath = '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[4]/div[2]/div/text()';
-const timeXpath = '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div';
+const sloganXpath =
+  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[4]/div[2]/div/text()';
+const timeXpath =
+  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div';
 
 // часть td - просто разделители. Этот спуск, а потом подъем в родимтеля нужен для фильтарция
-const premierXpath = '//*[@id="block_left"]/div/table/tbody/tr[2]/td/table/tbody/tr/td/a/parent::td/parent::tr'
+const premierXpath =
+  '//*[@id="block_left"]/div/table/tbody/tr[2]/td/table/tbody/tr/td/a/parent::td/parent::tr';
 
-
-type Role = 'director' | 'actor' | 'producer' | 'voice_director' | 'translator' | 'voice' | 'writer'
-  | 'operator' | 'composer' | 'design' | 'editor';
+type Role =
+  | 'director'
+  | 'actor'
+  | 'producer'
+  | 'voice_director'
+  | 'translator'
+  | 'voice'
+  | 'writer'
+  | 'operator'
+  | 'composer'
+  | 'design'
+  | 'editor';
 
 const directorsXpath = xpathBeetweenRoles('director', 'actor');
 const actorsXpath = xpathBeetweenRoles('actor', 'producer');
@@ -26,8 +38,8 @@ const writersXpath = xpathBeetweenRoles('writer', 'operator');
 const operatorsXpath = xpathBeetweenRoles('operator', 'composer');
 const composersXpath = xpathBeetweenRoles('composer', 'design');
 const designersXpath = xpathBeetweenRoles('design', 'editor');
-const editorsXpath = '//a[@name="editor"]/following-sibling::div//div[@class="actorInfo"]';
-
+const editorsXpath =
+  '//a[@name="editor"]/following-sibling::div//div[@class="actorInfo"]';
 
 function xpathBetween(tagBefore: string, tagAfter: string): string {
   return `[preceding-sibling::${tagBefore} and not(preceding-sibling::${tagAfter})]`;
@@ -40,38 +52,31 @@ function xpathBeetweenRoles(roleFrom: Role, roleTo: Role) {
   return `//div${xpathBetween(tagBefore, tagAfter)}//div[@class="actorInfo"]`;
 }
 
-
 @Injectable()
 export class ParserService {
-
-  async parse(film: number = 535341) {   
-
+  async parse(film = 535341) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await this.optimizePageLoad(page);
 
     try {
-
       const mainPageInfo = await this.parseMainPage(page, film);
       const views = await this.parseViews(page, film);
       const persons = await this.parsePersons(page, film);
 
       const res = { ...mainPageInfo, persons, views };
-      console.log(res);
       return { status: 'ok', value: res };
     } catch (e) {
-      console.log(e)
       return { status: 'error', error: e };
-    }
-    finally {
+    } finally {
       await page.close();
       await browser.close();
     }
   }
 
   async optimizePageLoad(page: Page) {
-    // не нужно грузить стили и картинки 
-    await page.setRequestInterception(true); 
+    // не нужно грузить стили и картинки
+    await page.setRequestInterception(true);
 
     page.on('request', (request) => {
       const resourceType = request.resourceType();
@@ -81,7 +86,7 @@ export class ParserService {
       } else {
         request.continue();
       }
-    })
+    });
   }
 
   private async parseMainPage(page: Page, film: number) {
@@ -91,31 +96,52 @@ export class ParserService {
       waitUntil: 'domcontentloaded',
     });
 
-    const originalTitle = await page.waitForXPath(origTitleXpath)
-      .then((handle) => handle.evaluate((node) => node.textContent))
-
-    const { title, year } = await page.waitForXPath(titleXpath)
-      .then((handle) => handle.evaluate((node) => node.textContent.match(/(?<title>.*) \((?<year>\d{4})\)/).groups));
-
-    const country = await page.waitForXPath(countryXpath)
-      .then((handle) => handle.evaluate((node: HTMLAnchorElement) => ({ country: node.textContent, countryLink: node.getAttribute('href') })));
-
-    const slogan = await page.waitForXPath(sloganXpath)
+    const originalTitle = await page
+      .waitForXPath(origTitleXpath)
       .then((handle) => handle.evaluate((node) => node.textContent));
 
+    const { title, year } = await page
+      .waitForXPath(titleXpath)
+      .then((handle) =>
+        handle.evaluate(
+          (node) =>
+            node.textContent.match(/(?<title>.*) \((?<year>\d{4})\)/).groups,
+        ),
+      );
+
+    const country = await page.waitForXPath(countryXpath).then((handle) =>
+      handle.evaluate((node: HTMLAnchorElement) => ({
+        country: node.textContent,
+        countryLink: node.getAttribute('href'),
+      })),
+    );
+
+    const slogan = await page
+      .waitForXPath(sloganXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent));
 
     const genres = await Promise.all(
-      await page.$x(genreXpath).then(
-        (handles) => handles.map((handle) => handle.evaluate((node) => node.textContent))
-      )
+      await page
+        .$x(genreXpath)
+        .then((handles) =>
+          handles.map((handle) => handle.evaluate((node) => node.textContent)),
+        ),
     );
 
     const duration = await (
       await page.waitForXPath(timeXpath)
     ).evaluate((node) => node.textContent);
 
-    const res = { title, originalTitle, year, genres, country, slogan, duration };
-    
+    const res = {
+      title,
+      originalTitle,
+      year,
+      genres,
+      country,
+      slogan,
+      duration,
+    };
+
     return res;
   }
 
@@ -126,22 +152,30 @@ export class ParserService {
       waitUntil: 'networkidle0',
     });
 
-    const views = await Promise.all(await page.$x(premierXpath).then(
-      (handles) => handles.map(async (handle) => ({
-        date: await handle.$eval('td>span>b', (node) => node.textContent),
-        country: {
-          country: await handle.$eval('td>a', (node) => node.textContent),
-          countryLink: await handle.$eval('xpath/td/a[starts-with(@href, "/lists/m_act")]', (node) => node.getAttribute('href')),
-        },
-        where: await handle.$eval('xpath/td/a[starts-with(@href, "/lists/m_act")]/following-sibling::small', (node) => node.textContent.trim()),
-        views: await handle.$eval('xpath/td/a[starts-with(@href, "/lists/m_act")]/parent::td/following-sibling::td/small', (node) => node.textContent.trim()),
-      }))
-    ))
+    const views = await Promise.all(
+      await page.$x(premierXpath).then((handles) =>
+        handles.map(async (handle) => ({
+          date: await handle.$eval('td>span>b', (node) => node.textContent),
+          country: {
+            country: await handle.$eval('td>a', (node) => node.textContent),
+            countryLink: await handle.$eval(
+              'xpath/td/a[starts-with(@href, "/lists/m_act")]',
+              (node) => node.getAttribute('href'),
+            ),
+          },
+          where: await handle.$eval(
+            'xpath/td/a[starts-with(@href, "/lists/m_act")]/following-sibling::small',
+            (node) => node.textContent.trim(),
+          ),
+          views: await handle.$eval(
+            'xpath/td/a[starts-with(@href, "/lists/m_act")]/parent::td/following-sibling::td/small',
+            (node) => node.textContent.trim(),
+          ),
+        })),
+      ),
+    );
 
-    console.log('Views:\n\n')
-    console.log(views);
     return views;
-
   }
 
   private async parsePersons(page: Page, film: number) {
@@ -154,7 +188,10 @@ export class ParserService {
     const directors = await this.parsePersonsWithRole(page, directorsXpath);
     const actors = await this.parsePersonsWithRole(page, actorsXpath);
     const producers = await this.parsePersonsWithRole(page, producersXpath);
-    const voiceDirectors = await this.parsePersonsWithRole(page, voiceDirectorsXpath);
+    const voiceDirectors = await this.parsePersonsWithRole(
+      page,
+      voiceDirectorsXpath,
+    );
     const translators = await this.parsePersonsWithRole(page, translatorsXpath);
     const voices = await this.parsePersonsWithRole(page, voicesXpath);
     const writers = await this.parsePersonsWithRole(page, writersXpath);
@@ -163,36 +200,71 @@ export class ParserService {
     const designers = await this.parsePersonsWithRole(page, designersXpath);
     const editors = await this.parsePersonsWithRole(page, editorsXpath);
 
-    const res = { directors, actors, producers, voiceDirectors, translators, voices, writers, operators, composers, designers, editors };
+    const res = {
+      directors,
+      actors,
+      producers,
+      voiceDirectors,
+      translators,
+      voices,
+      writers,
+      operators,
+      composers,
+      designers,
+      editors,
+    };
     return res;
   }
 
   private async parsePersonsWithRole(page: Page, xpath: string) {
-
     const persons = await Promise.all(
-      (await page.$x(xpath))
-        .map(async (d) => {
-          const nameHandler = await d.$('div.info>div.name');
+      (
+        await page.$x(xpath)
+      ).map(async (personHandle) => {
+        const nameHandler = await personHandle.$('div.info>div.name');
 
-          const { url, name } = await nameHandler.$('a').then((handle) => handle.evaluate((node) => ({ url: node.getAttribute('href'), name: node.text })));
-          // console.log({ url, name });
-          const name_en = await nameHandler.$('span').then((handle) => handle.evaluate((node) => node.textContent));
-          // console.log(name_en);
-          // const photo = await d.$('div.photo>a>img').then((handle) => handle.evaluate((node) => node.getAttribute('src')));
+        const { url, name } = await nameHandler.$eval('a', (node) => ({
+          url: node.getAttribute('href'),
+          name: node.text,
+        }));
+        const name_en = await nameHandler.$eval(
+          'span',
+          (node) => node.textContent,
+        );
 
-          const res = {
-            url,
-            name,
-            name_en,
-            // photo,
-          };
-          //  console.log(res);
-          return res;
-        })
+        // в src почему-то какой-то мусор. Хотя в коже страницы все нормально. Пришлось брать из атрибута title
+        // (в коде старницы он совпадает c src, но здесь коректен только title)
+        const photo = await personHandle.$eval('div.photo>a>img', (node) =>
+          node.getAttribute('title'),
+        );
+        const role = await personHandle.$eval(
+          'div.info>div.role',
+          (node) => node.textContent,
+        );
+
+        let dub;
+        try {
+          // этот элемент есть не везде (не у всех актеров есть дублер) => исключение. Решение конечно костыльненькое
+          dub = await personHandle.$eval(
+            'xpath/following-sibling::div[@class="dubInfo"]/div[@class="name"]/a',
+            (node) => ({
+              who: node.textContent,
+              url: node.getAttribute('href'),
+            }),
+          );
+        } catch (e) {}
+        const res = {
+          url,
+          name,
+          name_en,
+          photo,
+          role,
+          dub,
+        };
+        return res;
+      }),
     );
 
     return persons;
   }
-
-
 }
