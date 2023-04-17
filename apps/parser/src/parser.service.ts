@@ -1,56 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer, { Page } from 'puppeteer';
-
-const titleXpath =
-  '//div[starts-with(@class, "styles_title")]/h1[starts-with(@class, "styles_title")]/span';
-const origTitleXpath = '//span[starts-with(@class, "styles_originalTitle")]';
-const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]';
-const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
-const sloganXpath =
-  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[4]/div[2]/div/text()';
-const timeXpath =
-  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div';
-
-// часть td - просто разделители. Этот спуск, а потом подъем в родимтеля нужен для фильтарция
-const premierXpath =
-  '//*[@id="block_left"]/div/table/tbody/tr[2]/td/table/tbody/tr/td/a/parent::td/parent::tr';
-
-type Role =
-  | 'director'
-  | 'actor'
-  | 'producer'
-  | 'voice_director'
-  | 'translator'
-  | 'voice'
-  | 'writer'
-  | 'operator'
-  | 'composer'
-  | 'design'
-  | 'editor';
-
-const directorsXpath = xpathBeetweenRoles('director', 'actor');
-const actorsXpath = xpathBeetweenRoles('actor', 'producer');
-const producersXpath = xpathBeetweenRoles('producer', 'voice_director');
-const voiceDirectorsXpath = xpathBeetweenRoles('voice_director', 'translator');
-const translatorsXpath = xpathBeetweenRoles('translator', 'voice');
-const voicesXpath = xpathBeetweenRoles('voice', 'writer');
-const writersXpath = xpathBeetweenRoles('writer', 'operator');
-const operatorsXpath = xpathBeetweenRoles('operator', 'composer');
-const composersXpath = xpathBeetweenRoles('composer', 'design');
-const designersXpath = xpathBeetweenRoles('design', 'editor');
-const editorsXpath =
-  '//a[@name="editor"]/following-sibling::div//div[@class="actorInfo"]';
-
-function xpathBetween(tagBefore: string, tagAfter: string): string {
-  return `[preceding-sibling::${tagBefore} and not(preceding-sibling::${tagAfter})]`;
-}
-
-function xpathBeetweenRoles(roleFrom: Role, roleTo: Role) {
-  const tagBefore = `a[@name="${roleFrom}"]`;
-  const tagAfter = `a[@name="${roleTo}"]`;
-
-  return `//div${xpathBetween(tagBefore, tagAfter)}//div[@class="actorInfo"]`;
-}
+import {
+  actorsXpath,
+  composersXpath,
+  countryXpath,
+  designersXpath,
+  directorsXpath,
+  editorsXpath,
+  genreXpath,
+  operatorsXpath,
+  origTitleXpath,
+  premierXpath,
+  producersXpath,
+  sloganXpath,
+  timeXpath,
+  titleXpath,
+  translatorsXpath,
+  voiceDirectorsXpath,
+  voicesXpath,
+  writersXpath,
+} from './xpath';
 
 @Injectable()
 export class ParserService {
@@ -60,11 +29,12 @@ export class ParserService {
     await this.optimizePageLoad(page);
 
     try {
-      const mainPageInfo = await this.parseMainPage(page, film);
-      const views = await this.parseViews(page, film);
-      const persons = await this.parsePersons(page, film);
+      const mainPageInfo = {} // await this.parseMainPage(page, film);
+      const views = {} // await this.parseViews(page, film);
+      const persons = {} // await this.parsePersons(page, film);
+      const comments = await this.parseComments(page, film);
 
-      const res = { ...mainPageInfo, persons, views };
+      const res = { ...mainPageInfo, persons, views, comments };
       return { status: 'ok', value: res };
     } catch (e) {
       return { status: 'error', error: e };
@@ -266,5 +236,33 @@ export class ParserService {
     );
 
     return persons;
+  }
+
+  private async parseComments(page: Page, film: number) {
+    // по идее так я только первую страницу паршу - то есть надо дорабатывать
+    const reviewsPage = `https://www.kinopoisk.ru/film/${film}/reviews/?ord=rating`;
+    await page.goto(reviewsPage, {
+      waitUntil: 'networkidle0',
+    });
+
+    const reviewHandels = await page.$x('//div[contains(@class, "userReview")]/div[contains(@class, "response")]');
+
+    const reviews = await Promise.all(reviewHandels.map(async (handle) => {
+      const res =  {
+        title: await handle.$eval('meta', (node) => node.getAttribute('content')),
+
+        // кто же хранит ответ пользователя в таблице ???
+        text: await handle.$eval('table', (node) => node.textContent.trim()),
+        // user: await handle.$eval('/xpath/div[@itemprop="author"]/div/p[@class="profile_name"]/a[@itemprop="name"]', (node) => ({
+        //   userName: node.textContent,
+        //   url: node.getAttribute('href'),
+        // }))
+      }
+      console.log(res);
+      return res;
+    }));
+
+    return reviews;
+
   }
 }

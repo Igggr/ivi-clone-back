@@ -4,9 +4,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './task.service';
 
 @Module({
-  imports: [
-    ScheduleModule.forRoot()
-  ],
+  imports: [ScheduleModule.forRoot()],
   controllers: [],
   providers: [ParserService, TasksService],
 })
