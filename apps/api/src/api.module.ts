@@ -1,10 +1,30 @@
 import { Module } from '@nestjs/common';
-import { ApiController } from './controllers/api.controller';
-import { ApiService } from './api.service';
+import { AuthController } from './controllers/api.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [],
-  controllers: [ApiController],
-  providers: [ApiService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: './.env',
+    }),
+    ClientsModule.register([
+      {
+        name: 'AUTH',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'auth_queue',
+          noAck: false,
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
+    ]),
+  ],
+  controllers: [AuthController],
+  providers: [],
 })
 export class ApiModule {}
