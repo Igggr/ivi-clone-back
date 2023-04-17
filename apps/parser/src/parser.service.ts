@@ -29,9 +29,9 @@ export class ParserService {
     await this.optimizePageLoad(page);
 
     try {
-      const mainPageInfo = {} // await this.parseMainPage(page, film);
-      const views = {} // await this.parseViews(page, film);
-      const persons = {} // await this.parsePersons(page, film);
+      const mainPageInfo = {}; // await this.parseMainPage(page, film);
+      const views = {}; // await this.parseViews(page, film);
+      const persons = {}; // await this.parsePersons(page, film);
       const comments = await this.parseComments(page, film);
 
       const res = { ...mainPageInfo, persons, views, comments };
@@ -245,24 +245,29 @@ export class ParserService {
       waitUntil: 'networkidle0',
     });
 
-    const reviewHandels = await page.$x('//div[contains(@class, "userReview")]/div[contains(@class, "response")]');
+    const reviewHandels = await page.$x(
+      '//div[contains(@class, "userReview")]/div[contains(@class, "response")]',
+    );
 
-    const reviews = await Promise.all(reviewHandels.map(async (handle) => {
-      const res =  {
-        title: await handle.$eval('meta', (node) => node.getAttribute('content')),
+    const reviews = await Promise.all(
+      reviewHandels.map(async (handle) => {
+        const res = {
+          title: await handle.$eval('meta', (node) =>
+            node.getAttribute('content'),
+          ),
 
-        // кто же хранит ответ пользователя в таблице ???
-        text: await handle.$eval('table', (node) => node.textContent.trim()),
-        // user: await handle.$eval('/xpath/div[@itemprop="author"]/div/p[@class="profile_name"]/a[@itemprop="name"]', (node) => ({
-        //   userName: node.textContent,
-        //   url: node.getAttribute('href'),
-        // }))
-      }
-      console.log(res);
-      return res;
-    }));
+          // кто же хранит ответ пользователя в таблице ???
+          text: await handle.$eval('table', (node) => node.textContent.trim()),
+          // user: await handle.$eval('/xpath/div[@itemprop="author"]/div/p[@class="profile_name"]/a[@itemprop="name"]', (node) => ({
+          //   userName: node.textContent,
+          //   url: node.getAttribute('href'),
+          // }))
+        };
+        console.log(res);
+        return res;
+      }),
+    );
 
     return reviews;
-
   }
 }
