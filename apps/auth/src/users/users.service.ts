@@ -23,8 +23,9 @@ export class UsersService {
    * @param email Емэйл пользователя
    * @returns Объект пользователя
    */
-  async getUsersByEmail(email: string) {
+  async getUserByEmail(email: string) {
     const user = await this.userRepository.findOne({ where: { email: email } });
+    console.log(user);
     return user;
   }
 }

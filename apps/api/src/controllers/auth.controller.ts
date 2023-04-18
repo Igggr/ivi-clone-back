@@ -1,5 +1,6 @@
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
+import { Body, Controller, Inject, Post, UsePipes } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('/auth')
@@ -17,6 +18,7 @@ export class AuthController {
   }
 
   @Post('/create')
+  @UsePipes(ValidationPipe)
   createUser(@Body() userDto: CreateUserDto) {
     return this.authService.send(
       {
