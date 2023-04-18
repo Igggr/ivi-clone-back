@@ -1,0 +1,65 @@
+version: "3"
+services:
+
+  postgres_profile:
+    container_name: postgres_profile
+    image: postgres:latest
+    ports:
+    - "5432:5432"
+    volumes:
+    # таблицы и их содержимое
+    - ./db_data/profile/postgres/:/var/lib/postgresql/data
+    - ./db_data/profile/run/postgres.sock:/var/run/postgres/postgres.sock
+    env_file:
+    - docker.profile_db.env
+    networks:
+    - postgres_profile
+  
+  postgres_auth:
+    container_name: postgres_auth
+    image: postgres:latest
+    ports:
+    - "5433:5432"
+    volumes:
+    # таблицы и их содержимое
+    - ./db_data/auth/postgres:/var/lib/postgresql/data
+    - ./db_data/auth/run/postgres.sock:/var/run/postgres/postgres.sock
+    env_file:
+    - docker.auth_db.env
+    networks:
+    - postgres_auth
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+    - "8080:80"
+    volumes:
+    - ./db_data/pgadmin:/root/.pgadmin
+    env_file:
+    - docker.pgadmin.env
+    networks:
+    - postgres_auth
+    - postgres_profile
+
+  rabbit:
+    image: rabbitmq:3.10.7-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672 # AMQP порт
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    networks:
+      - rabbit
+
+networks:
+  postgres_auth:
+    driver: bridge
+  postgres_profile:
+    driver: bridge
+  rabbit:
+    driver: bridge
