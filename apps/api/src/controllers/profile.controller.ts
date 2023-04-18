@@ -1,3 +1,4 @@
+import { REGISTRATION } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -10,7 +11,7 @@ export class ProfilesController {
   registration(@Body() userProfileDto: CreateUserProfileDto) {
     return this.profileService.send(
       {
-        cmd: 'registration',
+        cmd: REGISTRATION,
       },
       userProfileDto,
     );

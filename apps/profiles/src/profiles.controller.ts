@@ -2,6 +2,7 @@ import { Body, Controller } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
+import { REGISTRATION } from '@app/shared';
 
 @Controller()
 export class ProfilesController {
@@ -16,7 +17,7 @@ export class ProfilesController {
     return this.profileService.getAllProfiles();
   }
 
-  @MessagePattern({ cmd: 'registration' })
+  @MessagePattern({ cmd: REGISTRATION })
   registration(
     @Body() userProfileDto: CreateUserProfileDto,
     @Ctx() context: RmqContext,

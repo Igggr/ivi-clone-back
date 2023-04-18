@@ -8,6 +8,7 @@ import {
 } from '@nestjs/microservices';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { UsersService } from './users/users.service';
+import { CREATE_USER, LOGIN } from '@app/shared';
 
 @Controller()
 export class AuthController {
@@ -16,7 +17,7 @@ export class AuthController {
     private readonly userService: UsersService,
   ) {}
 
-  @MessagePattern({ cmd: 'login' })
+  @MessagePattern({ cmd: LOGIN })
   login(@Body() userDto: CreateUserDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
@@ -25,7 +26,7 @@ export class AuthController {
     return this.authService.login(userDto);
   }
 
-  @MessagePattern({ cmd: 'create-user' })
+  @MessagePattern({ cmd: CREATE_USER })
   createUser(@Body() userDto: CreateUserDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();

@@ -1,3 +1,4 @@
+import { CREATE_USER, LOGIN } from '@app/shared';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { Body, Controller, Inject, Post, UsePipes } from '@nestjs/common';
@@ -11,7 +12,7 @@ export class AuthController {
   login(@Body() userDto: CreateUserDto) {
     return this.authService.send(
       {
-        cmd: 'login',
+        cmd: LOGIN,
       },
       userDto,
     );
@@ -22,7 +23,7 @@ export class AuthController {
   createUser(@Body() userDto: CreateUserDto) {
     return this.authService.send(
       {
-        cmd: 'create-user',
+        cmd: CREATE_USER,
       },
       userDto,
     );

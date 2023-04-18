@@ -1,3 +1,4 @@
+import { CREATE_USER } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { Profile } from '@app/shared/entities/profile.entity';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
@@ -35,7 +36,7 @@ export class ProfilesService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const newUser = await this.authService.send('create-user', userProfileDto);
+    const newUser = await this.authService.send(CREATE_USER, userProfileDto);
     console.log(newUser);
     const profile = await this.profileRepository.create({
       ...userProfileDto,
