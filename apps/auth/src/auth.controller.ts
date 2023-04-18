@@ -8,7 +8,7 @@ import {
 } from '@nestjs/microservices';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { UsersService } from './users/users.service';
-import { CREATE_USER, LOGIN } from '@app/shared';
+import { CREATE_USER, GET_USER_BY_EMAIL, LOGIN } from '@app/shared';
 
 @Controller()
 export class AuthController {
@@ -35,7 +35,7 @@ export class AuthController {
     return this.userService.createUser(userDto);
   }
 
-  @MessagePattern({ cmd: 'get-user-by-email' })
+  @MessagePattern({ cmd: GET_USER_BY_EMAIL })
   getUserByEmail(@Payload() email: string, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();

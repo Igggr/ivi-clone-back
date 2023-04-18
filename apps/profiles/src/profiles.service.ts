@@ -1,9 +1,10 @@
-import { CREATE_USER } from '@app/shared';
+import { CREATE_USER, GET_USER_BY_EMAIL } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { Profile } from '@app/shared/entities/profile.entity';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
+import { firstValueFrom } from 'rxjs';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -24,11 +25,13 @@ export class ProfilesService {
   }
 
   async createUserProfile(userProfileDto: CreateUserProfileDto) {
+    console.log('Sending:')
     console.log(userProfileDto);
-    const user = await this.authService.send(
-      'get-user-by-email',
+    const user = await firstValueFrom(this.authService.send(
+      { cmd: GET_USER_BY_EMAIL },
       userProfileDto.email,
-    );
+    ));
+    console.log('Return user:')
     console.log(user); // вот здесь возвращает не юзера
     if (user) {
       throw new HttpException(
@@ -36,7 +39,7 @@ export class ProfilesService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const newUser = await this.authService.send(CREATE_USER, userProfileDto);
+    const newUser = await firstValueFrom(this.authService.send({ cmd: CREATE_USER }, userProfileDto));
     console.log(newUser);
     const profile = await this.profileRepository.create({
       ...userProfileDto,
