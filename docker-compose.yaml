@@ -1,0 +1,40 @@
+version: "3"
+services:
+
+  rabbit:
+    image: rabbitmq:3.10.7-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672 # AMQP порт
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    networks:
+      - rabbit
+  
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_data:/data
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+        - redis
+
+networks:
+  postgres_auth:
+    driver: bridge
+  postgres_profile:
+    driver: bridge
+  rabbit:
+    driver: bridge

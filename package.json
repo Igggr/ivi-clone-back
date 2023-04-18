@@ -20,10 +20,16 @@
     "test:e2e": "jest --config ./apps/ivi-analog-back/test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/cache-manager": "^1.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/microservices": "^9.4.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^2.2.1",
+    "amqp-connection-manager": "^4.1.12",
+    "amqplib": "^0.10.3",
+    "cache-manager-redis-store": "^3.0.1",
+    "puppeteer": "^19.9.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
@@ -68,7 +74,11 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/apps/"
-    ]
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "^@app/rabbit(|/.*)$": "<rootDir>/libs/rabbit/src/$1"
+    }
   }
 }

@@ -28,6 +28,15 @@
         "tsConfigPath": "apps/parser/tsconfig.app.json"
       }
     },
+    "rabbit": {
+      "type": "library",
+      "root": "libs/rabbit",
+      "entryFile": "index",
+      "sourceRoot": "libs/rabbit/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/rabbit/tsconfig.lib.json"
+      }
+    },
     "api": {
       "type": "application",
       "root": "apps/api",

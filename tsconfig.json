@@ -17,6 +17,13 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {}
+    "paths": {
+      "@app/rabbit": [
+        "libs/rabbit/src"
+      ],
+      "@app/rabbit/*": [
+        "libs/rabbit/src/*"
+      ]
+    }
   }
 }
