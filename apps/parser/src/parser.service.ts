@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import puppeteer, { Page } from 'puppeteer';
 import {
   actorsXpath,
@@ -73,7 +72,10 @@ export class ParserService {
         'zedo',
       ];
       const requestUrl = request.url().split('?')[0];
-      if (blockedTypes.includes(resourceType) || blockResourceName.some((resource) => requestUrl.includes(resource))) {
+      if (
+        blockedTypes.includes(resourceType) ||
+        blockResourceName.some((resource) => requestUrl.includes(resource))
+      ) {
         request.abort();
       } else {
         request.continue();
@@ -292,4 +294,9 @@ export class ParserService {
 
     return reviews;
   }
+}
+function Injectable(): (
+  target: typeof ParserService,
+) => void | typeof ParserService {
+  throw new Error('Function not implemented.');
 }
