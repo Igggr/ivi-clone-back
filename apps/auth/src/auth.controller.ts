@@ -40,7 +40,6 @@ export class AuthController {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
-    console.log(email);
 
     return this.userService.getUserByEmail(email);
   }
