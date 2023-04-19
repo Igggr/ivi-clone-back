@@ -38,10 +38,10 @@ export class ProfilesService {
     console.log('Return user:');
     console.log(user); // вот здесь возвращает не юзера
     if (user) {
-      throw new HttpException(
-        'Пользователь с таким email уже существует',
-        HttpStatus.BAD_REQUEST,
-      );
+      return {
+        status: 'error',
+        error: 'Пользователь с таким email уже существует',
+      };
     }
     const hashPassword = await bcrypt.hash(userProfileDto.password, 5);
     const newUserDto = new CreateUserDto(userProfileDto.email, hashPassword);
@@ -54,8 +54,11 @@ export class ProfilesService {
       userId: newUser.id,
     });
     await this.profileRepository.save(profile);
-
-    return this.generateToken(newUser);
+    const token = await this.generateToken(newUser);
+    return {
+      status: "ok",
+      ...token
+    };
   }
 
   /**
