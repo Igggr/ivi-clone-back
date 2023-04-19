@@ -4,9 +4,18 @@ import { FilmService } from './film.service';
 import { DatabaseModule } from '@app/database';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+import { ClientsModule } from '@nestjs/microservices';
+import { PARSER } from '@app/rabbit/queues';
+import { OPTIONS } from '@app/rabbit';
 
 @Module({
   imports: [
+    ClientsModule.register([
+      {
+        name: PARSER,
+        ...OPTIONS(PARSER),
+      },
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: './apps/film/.env',

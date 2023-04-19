@@ -9,7 +9,6 @@ const redisStore = require('cache-manager-redis-store').redisStore;
 
 import { OPTIONS } from '@app/rabbit';
 import { PARSER } from '@app/rabbit/queues';
-import { DummyController } from './dummy.controller';
 import { ParserService } from './parser.service';
 import { TasksService } from './task.service';
 
@@ -29,7 +28,7 @@ import { TasksService } from './task.service';
       port: 5003
     })
   ],
-  controllers: [DummyController],
+  controllers: [],
   providers: [ParserService, TasksService],
 })
 export class ParserModule {}
