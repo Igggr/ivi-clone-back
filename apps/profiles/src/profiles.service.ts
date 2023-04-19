@@ -3,7 +3,7 @@ import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { Profile } from '@app/shared/entities/profile.entity';
 import { User } from '@app/shared/entities/user.entity';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,10 +38,10 @@ export class ProfilesService {
     console.log('Return user:');
     console.log(user); // вот здесь возвращает не юзера
     if (user) {
-      throw new HttpException(
-        'Пользователь с таким email уже существует',
-        HttpStatus.BAD_REQUEST,
-      );
+      return {
+        status: 'error',
+        error: 'Пользователь с таким email уже существует',
+      };
     }
     const hashPassword = await bcrypt.hash(userProfileDto.password, 5);
     const newUserDto = new CreateUserDto(userProfileDto.email, hashPassword);
