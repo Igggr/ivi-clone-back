@@ -5,7 +5,7 @@ services:
     container_name: postgres_profile
     image: postgres:latest
     ports:
-    - "5432:5432"
+    - "5434:5432"
     volumes:
     # таблицы и их содержимое
     - ./db_data/profile/postgres/:/var/lib/postgresql/data
