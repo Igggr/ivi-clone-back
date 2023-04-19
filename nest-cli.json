@@ -45,6 +45,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/api/tsconfig.app.json"
       }
+    },
+    "film": {
+      "type": "application",
+      "root": "apps/film",
+      "entryFile": "main",
+      "sourceRoot": "apps/film/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/film/tsconfig.app.json"
+      }
     }
   }
 }
