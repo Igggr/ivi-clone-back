@@ -17,9 +17,9 @@ import { UsersService } from './users/users.service';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'rootroot',
+      port: 5433,
+      username: 'admin',
+      password: '123456',
       database: 'auth_microservice',
       synchronize: true,
       autoLoadEntities: true,
