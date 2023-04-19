@@ -22,13 +22,17 @@
   "dependencies": {
     "@nestjs/cache-manager": "^1.0.0",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/microservices": "^9.4.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^2.2.1",
+    "@nestjs/typeorm": "^9.0.1",
     "amqp-connection-manager": "^4.1.12",
     "amqplib": "^0.10.3",
     "cache-manager-redis-store": "^3.0.1",
+    "joi": "^17.9.1",
+    "pg": "^8.10.0",
     "puppeteer": "^19.9.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
@@ -78,7 +82,8 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@app/rabbit(|/.*)$": "<rootDir>/libs/rabbit/src/$1"
+      "^@app/rabbit(|/.*)$": "<rootDir>/libs/rabbit/src/$1",
+      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1"
     }
   }
 }
