@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager'
+import { Cache } from 'cache-manager';
 import { Cron } from '@nestjs/schedule';
 import { ParserService } from './parser.service';
 import { ClientProxy } from '@nestjs/microservices';
@@ -15,7 +15,7 @@ export class TasksService {
     private readonly parserService: ParserService,
     @Inject(PARSER)
     private readonly client: ClientProxy,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Cron('30 * * * * *')

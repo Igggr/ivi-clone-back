@@ -5,16 +5,43 @@ services:
     container_name: postgres_film
     image: postgres:latest
     ports:
-    - "5434:5432"
+      - "5435:5432"
     volumes:
-    # таблицы и их содержимое
-    - ./db_data/film/postgres/:/var/lib/postgresql/data
-    - ./db_data/film/run/postgres.sock:/var/run/postgres/postgres.sock
+      - ./db_data/film/postgres/:/var/lib/postgresql/data
+      - ./db_data/film/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
     - docker.film_db.env
     networks:
     - postgres_film
   
+  postgres_profile:
+    container_name: postgres_profile
+    image: postgres:latest
+    ports:
+    - "5434:5432"
+    volumes:
+    # таблицы и их содержимое
+    - ./db_data/profile/postgres/:/var/lib/postgresql/data
+    - ./db_data/profile/run/postgres.sock:/var/run/postgres/postgres.sock
+    env_file:
+    - docker.profile_db.env
+    networks:
+    - postgres_profile
+  
+  postgres_auth:
+    container_name: postgres_auth
+    image: postgres:latest
+    ports:
+    - "5433:5432"
+    volumes:
+    # таблицы и их содержимое
+    - ./db_data/auth/postgres:/var/lib/postgresql/data
+    - ./db_data/auth/run/postgres.sock:/var/run/postgres/postgres.sock
+    env_file:
+    - docker.auth_db.env
+    networks:
+    - postgres_auth
+
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -26,6 +53,8 @@ services:
     - docker.pgadmin.env
     networks:
     - postgres_film
+    - postgres_auth
+    - postgres_profile
 
   rabbit:
     image: rabbitmq:3.10.7-management
@@ -40,7 +69,7 @@ services:
       - ./rabbitmq:/var/lib/rabbitmq
     networks:
       - rabbit
-  
+
   redis:
     image: "redis:alpine"
     ports:
@@ -59,6 +88,10 @@ services:
 
 networks:
   postgres_film:
+    driver: bridge
+  postgres_auth:
+    driver: bridge
+  postgres_profile:
     driver: bridge
   rabbit:
     driver: bridge

@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import puppeteer, { Page } from 'puppeteer';
 import {
   actorsXpath,
@@ -20,6 +19,7 @@ import {
   voicesXpath,
   writersXpath,
 } from './xpath';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ParserService {
@@ -78,7 +78,10 @@ export class ParserService {
         'zedo',
       ];
       const requestUrl = request.url().split('?')[0];
-      if (blockedTypes.includes(resourceType)) {// || blockResourceName.some((resource) => requestUrl.includes(resource))) {
+      if (
+        blockedTypes.includes(resourceType) ||
+        blockResourceName.some((resource) => requestUrl.includes(resource))
+      ) {
         request.abort();
       } else {
         request.continue();
