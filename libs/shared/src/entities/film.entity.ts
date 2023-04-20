@@ -22,6 +22,9 @@ export class FilmEntity {
     title: string;
 
     @Column()
+    originalTitle: string;
+
+    @Column()
     slogan: string;
 
     @ManyToOne(() => CountryEntity, (country) => country.filmsCreated)

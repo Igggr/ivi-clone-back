@@ -5,15 +5,18 @@ export class ActorEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ unique: true })
+    url: string; // ссылка на профиль на сайте кинопоиск
+
     @Column()
     fullName: string;
 
-    @Column({unique: true})
-    url: string;
+    @Column()
+    fullName_en: string
 
     @Column()
     photo: string;
 
-    @OneToMany(() => ActorFilmEntity, (personInFilm) => personInFilm.person)
+    @OneToMany(() => ActorFilmEntity, (personInFilm) => personInFilm.actor)
     personInFilm: ActorFilmEntity[];
 }

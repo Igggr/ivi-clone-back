@@ -7,6 +7,7 @@ import * as Joi from 'joi';
 import { ClientsModule } from '@nestjs/microservices';
 import { PARSER } from '@app/rabbit/queues';
 import { OPTIONS } from '@app/rabbit';
+import { ActorService } from './actor/actor.service';
 
 @Module({
   imports: [
@@ -30,6 +31,6 @@ import { OPTIONS } from '@app/rabbit';
     DatabaseModule.forRoot([]),
   ],
   controllers: [FilmController],
-  providers: [FilmService],
+  providers: [FilmService, ActorService],
 })
 export class FilmModule {}

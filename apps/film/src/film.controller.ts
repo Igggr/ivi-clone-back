@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { FilmService } from './film.service';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { GET_FILMS, PARSE_DATA } from '@app/rabbit/events';
-import { FilmQueryDTO, PaginationDTO } from '@app/database/dto';
+import { FilmQueryDTO, ParsedFilmDTO } from '@app/shared';
 
 @Controller()
 export class FilmController {
@@ -10,9 +10,10 @@ export class FilmController {
 
 
   @EventPattern(PARSE_DATA)
-  saveParsedData(@Payload() data) {
+  saveParsedData(@Payload() data: ParsedFilmDTO) {
     console.log('Recieve parsed data');
     console.log(data);
+    this.filmService.createFromParsedData(data);
   }
 
 

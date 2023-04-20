@@ -20,6 +20,7 @@ import {
   writersXpath,
 } from './xpath';
 import { Injectable } from '@nestjs/common';
+import { ParsedActorDTO } from '@app/shared';
 
 @Injectable()
 export class ParserService {
@@ -216,18 +217,18 @@ export class ParserService {
     return res;
   }
 
-  private async parsePersonsWithRole(page: Page, xpath: string) {
+  private async parsePersonsWithRole(page: Page, xpath: string): Promise<ParsedActorDTO[]> {
     const persons = await Promise.all(
       (
         await page.$x(xpath)
       ).map(async (personHandle) => {
         const nameHandler = await personHandle.$('div.info>div.name');
 
-        const { url, name } = await nameHandler.$eval('a', (node) => ({
+        const { url, fullName } = await nameHandler.$eval('a', (node) => ({
           url: node.getAttribute('href'),
-          name: node.text,
+          fullName: node.text,
         }));
-        const name_en = await nameHandler.$eval(
+        const fullName_en = await nameHandler.$eval(
           'span',
           (node) => node.textContent,
         );
@@ -248,6 +249,7 @@ export class ParserService {
           dub = await personHandle.$eval(
             'xpath/following-sibling::div[@class="dubInfo"]/div[@class="name"]/a',
             (node) => ({
+              // TODO: привести в оответсвие с CreateActorDTO
               who: node.textContent,
               url: node.getAttribute('href'),
             }),
@@ -255,8 +257,8 @@ export class ParserService {
         } catch (e) {}
         const res = {
           url,
-          name,
-          name_en,
+          fullName,
+          fullName_en,
           photo,
           role,
           dub,

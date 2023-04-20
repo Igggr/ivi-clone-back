@@ -15,10 +15,10 @@ export class ActorFilmEntity {
 
     // можно сомещать несколько должностей в фильме
     @ManyToOne(() => ActorEntity, (person) => person.personInFilm)
-    person: ActorEntity;
+    actor: ActorEntity;
 
     @Column()
-    personId: number;
+    actorId: number;
 
     @ManyToOne(() => ActorRoleEntity, (actorRole) => actorRole.personsInFilm)
     role: ActorRoleEntity;
