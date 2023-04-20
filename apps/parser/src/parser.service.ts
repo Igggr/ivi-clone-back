@@ -19,6 +19,7 @@ import {
   voicesXpath,
   writersXpath,
 } from './xpath';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ParserService {
@@ -294,9 +295,4 @@ export class ParserService {
 
     return reviews;
   }
-}
-function Injectable(): (
-  target: typeof ParserService,
-) => void | typeof ParserService {
-  throw new Error('Function not implemented.');
 }

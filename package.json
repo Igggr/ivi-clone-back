@@ -39,7 +39,8 @@
     "puppeteer": "^19.9.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.15"
+    "typeorm": "^0.3.15",
+    "cache-manager-redis-store": "^3.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
