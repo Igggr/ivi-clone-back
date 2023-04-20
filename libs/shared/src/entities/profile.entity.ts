@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsString } from 'class-validator';
+import { IsMobilePhone, IsString } from 'class-validator';
 
 @Entity()
 export class Profile {
@@ -17,7 +17,11 @@ export class Profile {
   @Column({ nullable: false })
   surname: string;
 
-  @ApiProperty({ example: '+79275046543', description: 'Пароль пользователя' })
+  @ApiProperty({
+    example: '+79275046543',
+    description: 'Номер телефона пользователя',
+  })
+  @IsMobilePhone('ru-RU')
   @IsString({ message: 'Должно быть строкой' })
   @Column({ nullable: false })
   phoneNumber: string;

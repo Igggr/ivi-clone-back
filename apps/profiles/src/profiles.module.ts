@@ -11,6 +11,16 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5434,
+      username: 'admin',
+      password: '123456',
+      database: 'register_microservice',
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
     ClientsModule.register([
       {
         name: 'AUTH',
@@ -25,16 +35,6 @@ import { ConfigModule } from '@nestjs/config';
         },
       },
     ]),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5434,
-      username: 'admin',
-      password: '123456',
-      database: 'register_microservice',
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
     TypeOrmModule.forFeature([Profile]),
   ],
   controllers: [ProfilesController],
