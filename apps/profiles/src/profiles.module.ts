@@ -3,16 +3,13 @@ import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
 import { Profile } from '@app/shared/entities/profile.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.PRIVATE_KEY ?? 'SECRET',
-      signOptions: {
-        expiresIn: '24h',
-      },
+    ConfigModule.forRoot({
+      envFilePath: '.env',
     }),
     ClientsModule.register([
       {

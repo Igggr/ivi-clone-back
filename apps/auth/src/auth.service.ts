@@ -1,8 +1,7 @@
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { User } from '@app/shared/entities/user.entity';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
 import { UsersService } from './users/users.service';
 
 @Injectable()
@@ -14,8 +13,10 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
-
-    return this.generateToken(user);
+    if (user instanceof User) {
+      return this.generateToken(user);
+    }
+    return user;
   }
 
   /**
@@ -24,7 +25,7 @@ export class AuthService {
    * @param user Объект пользователя
    * @returns Сгенерированный токен
    */
-  private async generateToken(user: User) {
+  async generateToken(user: User) {
     const payload = { email: user.email, id: user.id };
     return {
       token: this.jwtService.sign(payload),
@@ -38,20 +39,19 @@ export class AuthService {
    * @returns Объект пользователя
    */
   private async validateUser(userDto: CreateUserDto) {
-    try {
-      const user = await this.userService.getUserByEmail(userDto.email);
-      const passwordEquals = await bcrypt.compare(
+    const user = await this.userService.getUserByEmail(userDto.email);
+    if (user) {
+      const passwordEquals = await this.userService.checkPassword(
         userDto.password,
         user.password,
       );
-      if (user && passwordEquals) {
+      if (passwordEquals) {
         return user;
       }
-      throw new Error();
-    } catch (error) {
-      throw new UnauthorizedException({
-        message: 'Некорректный емэйл или пароль',
-      });
     }
+    return {
+      status: 'error',
+      error: 'Неккоректный емэйл или пароль',
+    };
   }
 }

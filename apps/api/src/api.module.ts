@@ -7,8 +7,7 @@ import { ProfilesController } from './controllers/profile.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: './.env',
+      envFilePath: '.env',
     }),
     ClientsModule.register([
       {
