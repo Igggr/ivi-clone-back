@@ -1,6 +1,6 @@
 import { NumberLiteralTypeAnnotation } from "@babel/types";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { PersonFilmEntity } from "./person-film.entity";
+import { ActorFilmEntity } from "./actor-film.entity";
 import { GenreEntity } from "./genre.entity";
 import { CountryEntity } from "./contry.entity";
 import { DateTime } from "luxon";
@@ -30,8 +30,8 @@ export class FilmEntity {
     @Column()
     countryId: number;
 
-    @OneToMany(() => PersonFilmEntity, (personsInFilm) => personsInFilm.film)
-    personsInFilm: PersonFilmEntity[];
+    @OneToMany(() => ActorFilmEntity, (personsInFilm) => personsInFilm.film)
+    personsInFilm: ActorFilmEntity[];
 
     @JoinTable()
     @ManyToMany(() => GenreEntity, (genre) => genre.films)

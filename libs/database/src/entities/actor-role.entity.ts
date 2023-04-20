@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { PersonFilmEntity } from "./person-film.entity";
+import { ActorFilmEntity } from "./actor-film.entity";
 
 @Entity()
 export class ActorRoleEntity {
@@ -10,6 +10,6 @@ export class ActorRoleEntity {
     role_name: string;
 
     // на случай если нам понадобиться найти всех режисеров
-    @OneToMany(() => PersonFilmEntity, (personFilm) => personFilm.role)
-    personsInFilm: PersonFilmEntity[];
+    @OneToMany(() => ActorFilmEntity, (personFilm) => personFilm.role)
+    personsInFilm: ActorFilmEntity[];
 }

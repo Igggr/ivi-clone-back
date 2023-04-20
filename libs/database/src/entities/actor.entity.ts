@@ -1,7 +1,7 @@
 import { Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { PersonFilmEntity } from "./person-film.entity";
+import { ActorFilmEntity } from "./actor-film.entity";
 
-export class PersonEntity {
+export class ActorEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -14,6 +14,6 @@ export class PersonEntity {
     @Column()
     photo: string;
 
-    @OneToMany(() => PersonFilmEntity, (personInFilm) => personInFilm.person)
-    personInFilm: PersonFilmEntity[];
+    @OneToMany(() => ActorFilmEntity, (personInFilm) => personInFilm.person)
+    personInFilm: ActorFilmEntity[];
 }

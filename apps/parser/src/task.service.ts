@@ -22,17 +22,22 @@ export class TasksService {
   async handleCron() {
     this.logger.debug('Called every 30 seconds');
 
-    const film: number = await this.cacheManager.get('film') ?? 1;
+    // до номера 299 страницы просто отсутствуют
+    const film: number = await this.cacheManager.get('film') ?? 299; 
     console.log(`Start parseing film ${film}`);
 
     // если упадет - фильм наверно косячный, с остутсвующими данными. 
-    // Прото пеерйдем к следующему
-    await this.cacheManager.set('film', film + 1, 0);
+    // Проcто перейдем к следующему
+    await this.cacheManager.set('film', film + 1);
 
     const res = await this.parserService.parse(film);
 
     if (res.status === 'ok') {
+      this.logger.log(`Film ${film} parsed succesefully`);
       this.client.emit(PARSE_DATA, res.value);
+    } else {
+      console.log(res.error);
+      console.log(`Unable to parse film ${film}`)
     }
   }
 }

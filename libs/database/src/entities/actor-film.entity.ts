@@ -1,9 +1,9 @@
 import { Column, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { FilmEntity } from "./film.entity";
-import { PersonEntity } from "./person.entity";
+import { ActorEntity } from "./actor.entity";
 import { ActorRoleEntity } from "./actor-role.entity";
 
-export class PersonFilmEntity {
+export class ActorFilmEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -14,8 +14,8 @@ export class PersonFilmEntity {
     filmId: number;
 
     // можно сомещать несколько должностей в фильме
-    @ManyToOne(() => PersonEntity, (person) => person.personInFilm)
-    person: PersonEntity;
+    @ManyToOne(() => ActorEntity, (person) => person.personInFilm)
+    person: ActorEntity;
 
     @Column()
     personId: number;

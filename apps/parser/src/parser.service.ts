@@ -23,16 +23,21 @@ import {
 
 @Injectable()
 export class ParserService {
-  async parse(film = 535341) {
+  async parse(film: number) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await this.optimizePageLoad(page);
 
     try {
+      console.log('Inside try-catch');
       const mainPageInfo = await this.parseMainPage(page, film);
+      console.log('Спарсил main page');
       const views = await this.parseViews(page, film);
+      console.log('Спарисл views');
       const persons = await this.parsePersons(page, film);
+      console.log('Спарисл persons');
       const comments = await this.parseComments(page, film);
+      console.log('Спарисл комменты')
 
       const res = { ...mainPageInfo, persons, views, comments };
       return { status: 'ok', value: res };
@@ -73,7 +78,7 @@ export class ParserService {
         'zedo',
       ];
       const requestUrl = request.url().split('?')[0];
-      if (blockedTypes.includes(resourceType) || blockResourceName.some((resource) => requestUrl.includes(resource))) {
+      if (blockedTypes.includes(resourceType)) {// || blockResourceName.some((resource) => requestUrl.includes(resource))) {
         request.abort();
       } else {
         request.continue();
