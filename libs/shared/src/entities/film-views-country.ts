@@ -1,12 +1,13 @@
-import { Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { CountryEntity } from "./contry.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Country } from "./contry.entity";
 
+@Entity()
 export class FilmViewsCountry {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => CountryEntity, (country) => country.filmViews)
-    country: CountryEntity;
+    @ManyToOne(() => Country, (country) => country.filmViews)
+    country: Country;
 
     @Column()
     countryId: number;

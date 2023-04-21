@@ -1,27 +1,28 @@
-import { Column, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { FilmEntity } from "./film.entity";
-import { ActorEntity } from "./actor.entity";
-import { ActorRoleEntity } from "./actor-role.entity";
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Film } from "./film.entity";
+import { Actor } from "./actor.entity";
+import { ActorRole } from "./actor-role.entity";
 
-export class ActorFilmEntity {
+@Entity()
+export class ActorFilm {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => FilmEntity, (film) => film.personsInFilm)
-    film: FilmEntity[]
+    @ManyToOne(() => Film, (film) => film.personsInFilm)
+    film: Film[]
         
     @Column()
     filmId: number;
 
     // можно сомещать несколько должностей в фильме
-    @ManyToOne(() => ActorEntity, (person) => person.personInFilm)
-    actor: ActorEntity;
+    @ManyToOne(() => Actor, (person) => person.personInFilm)
+    actor: Actor;
 
     @Column()
     actorId: number;
 
-    @ManyToOne(() => ActorRoleEntity, (actorRole) => actorRole.personsInFilm)
-    role: ActorRoleEntity;
+    @ManyToOne(() => ActorRole, (actorRole) => actorRole.personsInFilm)
+    role: ActorRole;
 
     @Column()
     roleId: number;

@@ -1,13 +1,14 @@
-import { Column, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { FilmEntity } from "./film.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Film } from "./film.entity";
 
-export class GenreEntity {
+@Entity()
+export class Genre {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
     genre_name: string;
 
-    @ManyToMany(() => FilmEntity, (film) => film.genres)
-    films: FilmEntity[];
+    @ManyToMany(() => Film, (film) => film.genres)
+    films: Film[];
 }

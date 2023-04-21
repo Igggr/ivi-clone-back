@@ -1,5 +1,5 @@
 import { CreateActorDTO, ParsedActorDTO, RoleType } from '@app/shared';
-import { ActorEntity } from '@app/shared/entities';
+import { Actor } from '@app/shared/entities';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Equal } from 'typeorm';
@@ -7,8 +7,8 @@ import { Repository, Equal } from 'typeorm';
 @Injectable()
 export class ActorService {
     constructor(
-        @InjectRepository(ActorEntity)
-        private readonly actorRepository: Repository<ActorEntity>,
+        @InjectRepository(Actor)
+        private readonly actorRepository: Repository<Actor>,
     ) { }
     
     async ensureActorExist(dto: CreateActorDTO) {

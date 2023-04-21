@@ -1,8 +1,9 @@
 import { NumberLiteralTypeAnnotation } from "@babel/types";
-import { Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { CommentEntity } from "./comment.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Comment } from "./comment.entity";
 
-export class ReviewEntity {
+@Entity()
+export class Review {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -15,8 +16,8 @@ export class ReviewEntity {
     @Column()
     isPositive: boolean;  // вот из-за этого (и title) приходится выносить review и comment в рвзные таблицы
 
-    @OneToMany(() => CommentEntity, (comment) => comment.review)
-    comments: CommentEntity[];
+    @OneToMany(() => Comment, (comment) => comment.review)
+    comments: Comment[];
 
     @Column()
     profileId: number;  // кажется profile - в другом сервисе

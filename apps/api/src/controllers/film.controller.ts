@@ -1,6 +1,6 @@
 import { GET_FILMS } from '@app/rabbit/events';
 import { FILM } from '@app/rabbit/queues';
-import { FilmEntity } from '@app/shared/entities/film.entity';
+import { Film } from '@app/shared/entities/film.entity';
 import { Controller, Get, HttpStatus, Inject, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
@@ -13,7 +13,7 @@ export class FilmController {
     ) { }
     
     @ApiOperation({ summary: 'Получение информации о фильмах' })
-    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [FilmEntity] })
+    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
     @Get('/movies')
     async getAll(
         @Query('genres') genres: string[],
@@ -30,7 +30,7 @@ export class FilmController {
     }
 
     @ApiOperation({ summary: 'Получение информации о фильмах' })
-    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [FilmEntity] })
+    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
     @Get('/movies')
     async getAllMovies(
         @Query('genres') genres: string[],
@@ -47,7 +47,7 @@ export class FilmController {
     }
 
     @ApiOperation({ summary: 'Получение информации о сериалах' })
-    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [FilmEntity] })
+    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
     @Get('/serials')
     async getAllSerials(
         @Query('genres') genres: string[],
@@ -64,7 +64,7 @@ export class FilmController {
     }
 
     @ApiOperation({ summary: 'Получение информации о мультфльмах' })
-    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [FilmEntity] })
+    @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
     @Get('/cartoons')
     async getAllCartoons(
         @Query('genres') genres: string[],

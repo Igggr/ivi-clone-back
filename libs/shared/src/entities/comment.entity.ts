@@ -1,24 +1,25 @@
-import { Column, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ReviewEntity } from "./review.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Review } from "./review.entity";
 
-export class CommentEntity {
+@Entity()
+export class Comment {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => ReviewEntity, (review) => review.comments)
-    review: ReviewEntity;
+    @ManyToOne(() => Review, (review) => review.comments)
+    review: Review;
 
     @Column()
     reviewId: number;
 
-    @ManyToOne(() => CommentEntity, (parent) => parent.childrens)
-    parentComment?: CommentEntity;
+    @ManyToOne(() => Comment, (parent) => parent.childrens)
+    parentComment?: Comment;
 
     @Column({ nullable: true })
     parentCommentId?: number;
 
-    @OneToMany(() => CommentEntity, (child) => child.parentComment, { nullable: true })
-    childrens?: CommentEntity[];
+    @OneToMany(() => Comment, (child) => child.parentComment, { nullable: true })
+    childrens?: Comment[];
 
     @Column()
     profileId: number;  // кажется profile - в другом сервисе

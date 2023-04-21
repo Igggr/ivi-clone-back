@@ -1,7 +1,7 @@
 
 import { FilmQueryDTO, ParsedFilmDTO } from '@app/shared';
-import { ActorEntity, ActorFilmEntity, ActorRoleEntity } from '@app/shared/entities';
-import { FilmEntity } from '@app/shared/entities/film.entity';
+import { Actor, ActorFilm, ActorRole } from '@app/shared/entities';
+import { Film } from '@app/shared/entities/film.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm'
@@ -10,10 +10,10 @@ import { ActorService } from './actor/actor.service';
 @Injectable()
 export class FilmService {
   constructor(
-    @InjectRepository(FilmEntity)
-    private readonly filmRepository: Repository<FilmEntity>,
-    @InjectRepository(FilmEntity)
-    private readonly actorFilmRepository: Repository<ActorFilmEntity>,
+    @InjectRepository(Film)
+    private readonly filmRepository: Repository<Film>,
+    @InjectRepository(Film)
+    private readonly actorFilmRepository: Repository<ActorFilm>,
     private readonly actorService: ActorService,
   ) { }
   

@@ -1,4 +1,4 @@
-import { GenreEntity } from "../entities";
+import { Genre } from "../entities";
 import { PickType } from '@nestjs/swagger';
 
-export class CreateGenreDTO extends PickType(GenreEntity, ['genre_name']) {}
+export class CreateGenreDTO extends PickType(Genre, ['genre_name']) {}

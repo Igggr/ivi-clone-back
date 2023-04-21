@@ -20,11 +20,13 @@ import {
   writersXpath,
 } from './xpath';
 import { Injectable } from '@nestjs/common';
-import { ParsedActorDTO } from '@app/shared';
+import { ParsedActorDTO, ParsedFilmDTO } from '@app/shared';
+import { CreateCountryDTO } from '@app/shared/dto/create-country.dto';
+import { ResponseDTO } from '@app/rabbit';
 
 @Injectable()
 export class ParserService {
-  async parse(film: number) {
+  async parse(film: number): Promise<ResponseDTO<ParsedFilmDTO>> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await this.optimizePageLoad(page);
@@ -80,8 +82,8 @@ export class ParserService {
       ];
       const requestUrl = request.url().split('?')[0];
       if (
-        blockedTypes.includes(resourceType) ||
-        blockResourceName.some((resource) => requestUrl.includes(resource))
+        blockedTypes.includes(resourceType)
+        || blockResourceName.some((resource) => requestUrl.includes(resource))
       ) {
         request.abort();
       } else {
@@ -110,10 +112,10 @@ export class ParserService {
         ),
       );
 
-    const country = await page.waitForXPath(countryXpath).then((handle) =>
+    const country: CreateCountryDTO = await page.waitForXPath(countryXpath).then((handle) =>
       handle.evaluate((node: HTMLAnchorElement) => ({
-        country: node.textContent,
-        countryLink: node.getAttribute('href'),
+        countryName: node.textContent,
+        url: node.getAttribute('href'),
       })),
     );
 
@@ -134,9 +136,10 @@ export class ParserService {
     ).evaluate((node) => node.textContent);
 
     const res = {
+      url: mainUrl,
       title,
       originalTitle,
-      year,
+      year: parseInt(year),
       genres,
       country,
       slogan,
@@ -202,17 +205,17 @@ export class ParserService {
     const editors = await this.parsePersonsWithRole(page, editorsXpath);
 
     const res = {
-      directors,
-      actors,
-      producers,
-      voiceDirectors,
-      translators,
-      voices,
-      writers,
-      operators,
-      composers,
-      designers,
-      editors,
+      director: directors,
+      actor: actors,
+      producer: producers,
+      voiceDirector: voiceDirectors,
+      translator: translators,
+      voice: voices,
+      writer: writers,
+      operator: operators,
+      composer: composers,
+      designer: designers,
+      editor: editors,
     };
     return res;
   }
