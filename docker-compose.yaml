@@ -85,6 +85,19 @@ services:
       - "8081:8081"
     depends_on:
         - redis
+  
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      target: development
+    command: npm run start:dev api
+    depends_on:
+      - rabbit
+    ports:
+      - '3000:3000'
+    networks:
+      - rabbit
 
 networks:
   postgres_film:
