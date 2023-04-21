@@ -1,4 +1,7 @@
 import { Genre } from '../entities';
-import { PickType } from '@nestjs/swagger';
+import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
-export class CreateGenreDTO extends PickType(Genre, ['genre_name']) {}
+export class CreateGenreDTO extends IntersectionType(
+    PickType(Genre, ['genreName']),
+    PartialType(PickType(Genre, ['genreNameEn']))
+) {}

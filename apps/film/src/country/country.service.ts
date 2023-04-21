@@ -21,8 +21,7 @@ export class CountryService {
             return country;
         }
         const newCountry = this.countryRepository.create(dto);
-        await this.countryRepository.save(newCountry);
-        return newCountry;
+        return await this.countryRepository.save(newCountry);
     }
 
 

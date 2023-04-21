@@ -32,7 +32,7 @@ export class Film {
   slogan: string;
 
   @ManyToOne(() => Country, (country) => country.filmsCreated)
-  createdInCountry: Country;
+  country: Country;
 
   @Column()
   countryId: number;

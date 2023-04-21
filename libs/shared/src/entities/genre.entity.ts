@@ -7,7 +7,10 @@ export class Genre {
   id: number;
 
   @Column()
-  genre_name: string;
+  genreName: string;
+
+  @Column({nullable: true})
+  genreNameEn: string;
 
   @ManyToMany(() => Film, (film) => film.genres)
   films: Film[];

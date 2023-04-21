@@ -23,6 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CountryService } from './country/country.service';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { ReviewService } from './review/review.service';
+import { GenreService } from './genre/genre.service';
 
 @Module({
   imports: [
@@ -67,6 +68,6 @@ import { ReviewService } from './review/review.service';
     ]),
   ],
   controllers: [FilmController],
-  providers: [FilmService, ActorService, CountryService, ActorRoleService, ReviewService],
+  providers: [FilmService, ActorService, CountryService, ActorRoleService, ReviewService, GenreService],
 })
 export class FilmModule {}

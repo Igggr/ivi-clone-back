@@ -48,6 +48,7 @@ export class ActorService {
         roleNotes: dto.role,
       }))
     );
+    console.log(actorsInFilm);
     this.actorFilmRepository.save(actorsInFilm)
 
     return actorRoles;

@@ -27,7 +27,7 @@ import { ResponseDTO } from '@app/rabbit';
 @Injectable()
 export class ParserService {
   async parse(film: number): Promise<ResponseDTO<ParsedFilmDTO>> {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ ignoreHTTPSErrors: true });
     const page = await browser.newPage();
     await this.optimizePageLoad(page);
 
@@ -129,7 +129,7 @@ export class ParserService {
       await page
         .$x(genreXpath)
         .then((handles) =>
-          handles.map((handle) => handle.evaluate((node) => node.textContent)),
+          handles.map((handle) => handle.evaluate((node) => ({ genreName: node.textContent }))),
         ),
     );
 

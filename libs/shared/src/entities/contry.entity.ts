@@ -17,7 +17,7 @@ export class Country {
   flag: string; // надо хранить UTF значок
 
   // вдруг есть любители индуского кино
-  @OneToMany(() => Film, (film) => film.createdInCountry)
+  @OneToMany(() => Film, (film) => film.country)
   filmsCreated: Film[];
 
   @OneToMany(() => FilmViewsCountry, (view) => view.country)
