@@ -145,10 +145,23 @@ export class ParserService {
       genres,
       country,
       slogan,
-      duration,
+      duration: this.extractTime(duration) ,
     };
 
     return res;
+  }
+
+
+  private extractTime(time: string) {
+    let minutes: string;
+    if (time.includes('/')) {
+      minutes = time.trim().split(/ *\/ */)[1];
+    } else if (/\d* мин\./.test(time)) {
+      minutes = /(?<minutes>\d*) мин\./.exec(time).groups['minutes'];
+    } else {
+      throw new Error(`Кажется ты не предусмотрел как прасить время в формате ${time}`);
+    }
+    return `${minutes} minutes`;
   }
 
   private async parseViews(page: Page, film: number) {

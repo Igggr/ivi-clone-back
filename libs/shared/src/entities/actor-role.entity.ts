@@ -7,7 +7,7 @@ export class ActorRole {
   id: number;
 
   @Column()
-  role_name: string;
+  roleName: string;
 
   // на случай если нам понадобиться найти всех режисеров
   @OneToMany(() => ActorFilm, (personFilm) => personFilm.role)

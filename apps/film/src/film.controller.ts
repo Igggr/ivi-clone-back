@@ -9,10 +9,11 @@ export class FilmController {
   constructor(private readonly filmService: FilmService) {}
 
   @EventPattern({ cmd: PARSE_DATA })
-  saveParsedData(@Payload() data: ParsedFilmDTO) {
+  async saveParsedData(@Payload() data: ParsedFilmDTO) {
     console.log('Recieve parsed data');
     console.log(data);
-    this.filmService.createFromParsedData(data);
+    await this.filmService.createFromParsedData(data);
+    console.log('Saved to DB');
   }
 
   @MessagePattern({ cmd: GET_FILMS })

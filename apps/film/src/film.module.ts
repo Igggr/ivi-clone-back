@@ -20,6 +20,9 @@ import {
   Comment,
 } from '@app/shared/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CountryService } from './country/country.service';
+import { ActorRoleService } from './actor.role/actor.role.service';
+import { ReviewService } from './review/review.service';
 
 @Module({
   imports: [
@@ -64,6 +67,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ]),
   ],
   controllers: [FilmController],
-  providers: [FilmService, ActorService],
+  providers: [FilmService, ActorService, CountryService, ActorRoleService, ReviewService],
 })
 export class FilmModule {}

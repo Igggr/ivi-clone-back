@@ -10,7 +10,6 @@ import {
 import { ActorFilm } from './actor-film.entity';
 import { Genre } from './genre.entity';
 import { Country } from './contry.entity';
-import { IPostgresInterval } from 'postgres-interval';
 
 @Entity()
 export class Film {
@@ -46,5 +45,5 @@ export class Film {
   genres: Genre[];
 
   @Column({ type: 'interval' })
-  duration: IPostgresInterval;
+  duration: string;  // кривоватое хранение для интервала
 }

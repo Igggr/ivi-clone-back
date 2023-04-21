@@ -12,6 +12,7 @@ export class ParsedFilmDTO extends PickType(Film, [
   'title',
   'originalTitle',
   'slogan',
+  'duration'
 ]) {
   genres: string[];
   country: CreateCountryDTO;
