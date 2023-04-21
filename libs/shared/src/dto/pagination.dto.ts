@@ -1,4 +1,4 @@
 export class PaginationDTO {
-    limit: number;
-    ofset: number;
+  limit: number;
+  ofset: number;
 }

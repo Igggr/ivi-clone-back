@@ -9,7 +9,16 @@ import { PARSER } from '@app/rabbit/queues';
 import { OPTIONS } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
 import { Film } from '@app/shared/entities/film.entity';
-import { Actor, ActorFilm, ActorRole, Country, FilmViewsCountry, Genre, Review, Comment } from '@app/shared/entities';
+import {
+  Actor,
+  ActorFilm,
+  ActorRole,
+  Country,
+  FilmViewsCountry,
+  Genre,
+  Review,
+  Comment,
+} from '@app/shared/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -29,7 +38,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
-       }),
+      }),
     }),
     DatabaseModule.forRoot([
       Film,
@@ -52,7 +61,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       Country,
       FilmViewsCountry,
       Genre,
-    ])
+    ]),
   ],
   controllers: [FilmController],
   providers: [FilmService, ActorService],

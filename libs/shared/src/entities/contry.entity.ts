@@ -1,25 +1,25 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Film } from "./film.entity";
-import { FilmViewsCountry } from "./film-views-country";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Film } from './film.entity';
+import { FilmViewsCountry } from './film-views-country';
 
 @Entity()
 export class Country {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({unique: true, nullable: false})
-    countryName: string;
+  @Column({ unique: true, nullable: false })
+  countryName: string;
 
-    @Column({ unique: true, nullable: false})
-    url: string;
-    
-    @Column({ nullable: true })
-    flag: string; // надо хранить UTF значок
+  @Column({ unique: true, nullable: false })
+  url: string;
 
-    // вдруг есть любители индуского кино
-    @OneToMany(() => Film, (film) => film.createdInCountry)
-    filmsCreated: Film[];
+  @Column({ nullable: true })
+  flag: string; // надо хранить UTF значок
 
-    @OneToMany(() => FilmViewsCountry, (view) => view.country)
-    filmViews: FilmViewsCountry[];
+  // вдруг есть любители индуского кино
+  @OneToMany(() => Film, (film) => film.createdInCountry)
+  filmsCreated: Film[];
+
+  @OneToMany(() => FilmViewsCountry, (view) => view.country)
+  filmViews: FilmViewsCountry[];
 }

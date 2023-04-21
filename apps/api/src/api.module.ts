@@ -12,10 +12,12 @@ import { FilmController } from './controllers/film.controller';
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
-    ClientsModule.register([{
+    ClientsModule.register([
+      {
         name: FILM,
         ...OPTIONS(FILM),
-    }]),
+      },
+    ]),
     ClientsModule.register([
       {
         name: 'AUTH',

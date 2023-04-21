@@ -1,24 +1,23 @@
-import { NumberLiteralTypeAnnotation } from "@babel/types";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Comment } from "./comment.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Comment } from './comment.entity';
 
 @Entity()
 export class Review {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column()
-    text: string;
+  @Column()
+  text: string;
 
-    @Column()
-    isPositive: boolean;  // вот из-за этого (и title) приходится выносить review и comment в рвзные таблицы
+  @Column()
+  isPositive: boolean; // вот из-за этого (и title) приходится выносить review и comment в рвзные таблицы
 
-    @OneToMany(() => Comment, (comment) => comment.review)
-    comments: Comment[];
+  @OneToMany(() => Comment, (comment) => comment.review)
+  comments: Comment[];
 
-    @Column()
-    profileId: number;  // кажется profile - в другом сервисе
+  @Column()
+  profileId: number; // кажется profile - в другом сервисе
 }

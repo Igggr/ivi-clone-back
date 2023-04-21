@@ -1,45 +1,50 @@
-import { NumberLiteralTypeAnnotation } from "@babel/types";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ActorFilm } from "./actor-film.entity";
-import { Genre } from "./genre.entity";
-import { Country } from "./contry.entity";
-import { DateTime } from "luxon";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ActorFilm } from './actor-film.entity';
+import { Genre } from './genre.entity';
+import { Country } from './contry.entity';
 import { IPostgresInterval } from 'postgres-interval';
-
 
 @Entity()
 export class Film {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    url: string;
+  @Column()
+  url: string;
 
-    @Column()
-    year: number;
-        
-    @Column()
-    title: string;
+  @Column()
+  year: number;
 
-    @Column()
-    originalTitle: string;
+  @Column()
+  title: string;
 
-    @Column()
-    slogan: string;
+  @Column()
+  originalTitle: string;
 
-    @ManyToOne(() => Country, (country) => country.filmsCreated)
-    createdInCountry: Country;
+  @Column()
+  slogan: string;
 
-    @Column()
-    countryId: number;
+  @ManyToOne(() => Country, (country) => country.filmsCreated)
+  createdInCountry: Country;
 
-    @OneToMany(() => ActorFilm, (personsInFilm) => personsInFilm.film)
-    personsInFilm: ActorFilm[];
+  @Column()
+  countryId: number;
 
-    @JoinTable()
-    @ManyToMany(() => Genre, (genre) => genre.films)
-    genres: Genre[];
+  @OneToMany(() => ActorFilm, (personsInFilm) => personsInFilm.film)
+  personsInFilm: ActorFilm[];
 
-    @Column({type: 'interval'})
-    duration: IPostgresInterval;
+  @JoinTable()
+  @ManyToMany(() => Genre, (genre) => genre.films)
+  genres: Genre[];
+
+  @Column({ type: 'interval' })
+  duration: IPostgresInterval;
 }

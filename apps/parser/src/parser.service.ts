@@ -40,7 +40,7 @@ export class ParserService {
       const persons = await this.parsePersons(page, film);
       console.log('Спарисл persons');
       const comments = await this.parseComments(page, film);
-      console.log('Спарисл комменты')
+      console.log('Спарисл комменты');
 
       const res = { ...mainPageInfo, persons, views, comments };
       return { status: 'ok', value: res };
@@ -82,8 +82,8 @@ export class ParserService {
       ];
       const requestUrl = request.url().split('?')[0];
       if (
-        blockedTypes.includes(resourceType)
-        || blockResourceName.some((resource) => requestUrl.includes(resource))
+        blockedTypes.includes(resourceType) ||
+        blockResourceName.some((resource) => requestUrl.includes(resource))
       ) {
         request.abort();
       } else {
@@ -112,12 +112,14 @@ export class ParserService {
         ),
       );
 
-    const country: CreateCountryDTO = await page.waitForXPath(countryXpath).then((handle) =>
-      handle.evaluate((node: HTMLAnchorElement) => ({
-        countryName: node.textContent,
-        url: node.getAttribute('href'),
-      })),
-    );
+    const country: CreateCountryDTO = await page
+      .waitForXPath(countryXpath)
+      .then((handle) =>
+        handle.evaluate((node: HTMLAnchorElement) => ({
+          countryName: node.textContent,
+          url: node.getAttribute('href'),
+        })),
+      );
 
     const slogan = await page
       .waitForXPath(sloganXpath)
@@ -220,7 +222,10 @@ export class ParserService {
     return res;
   }
 
-  private async parsePersonsWithRole(page: Page, xpath: string): Promise<ParsedActorDTO[]> {
+  private async parsePersonsWithRole(
+    page: Page,
+    xpath: string,
+  ): Promise<ParsedActorDTO[]> {
     const persons = await Promise.all(
       (
         await page.$x(xpath)

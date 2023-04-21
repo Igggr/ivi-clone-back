@@ -5,7 +5,7 @@ export const origTitleXpath =
 export const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]';
 export const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
 
-// DOM состоит просто из мусора. Ни id, ни внятных классов. 
+// DOM состоит просто из мусора. Ни id, ни внятных классов.
 // Цепляться за контент, это треш.
 // Но хpathб которые не цепляется за контент
 // '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div'
@@ -15,7 +15,8 @@ export const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
 // Но структура отличается и просто между 2 фильмами
 export const sloganXpath = '//div[text()="Слоган"]/following-sibling::div';
 export const timeXpath = '//div[text()="Время"]/following-sibling::div';
-export const premierXpath = '//a[starts-with(@href, "/lists/m_act[country]")]//parent::td/parent::tr'
+export const premierXpath =
+  '//a[starts-with(@href, "/lists/m_act[country]")]//parent::td/parent::tr';
 
 type Role =
   | 'director'

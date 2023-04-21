@@ -23,10 +23,10 @@ export class TasksService {
     this.logger.debug('Called every 30 seconds');
 
     // до номера 299 страницы просто отсутствуют
-    const film: number = await this.cacheManager.get('film') ?? 299; 
+    const film: number = (await this.cacheManager.get('film')) ?? 299;
     console.log(`Start parseing film ${film}`);
 
-    // если упадет - фильм наверно косячный, с остутсвующими данными. 
+    // если упадет - фильм наверно косячный, с остутсвующими данными.
     // Проcто перейдем к следующему
     await this.cacheManager.set('film', film + 1);
 
@@ -34,10 +34,10 @@ export class TasksService {
 
     if (res.status === 'ok') {
       this.logger.log(`Film ${film} parsed succesefully`);
-      this.client.emit(PARSE_DATA, res.value);
+      this.client.emit({ cmd: PARSE_DATA }, res.value);
     } else {
+      console.log(`Unable to parse film ${film}`);
       console.log(res.error);
-      console.log(`Unable to parse film ${film}`)
     }
   }
 }
