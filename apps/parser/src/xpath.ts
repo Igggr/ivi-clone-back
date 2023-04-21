@@ -5,16 +5,17 @@ export const origTitleXpath =
 export const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]';
 export const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
 
-// DOM состоит просто из мусора. Ни id, ни внятных классов. В принципе можно зацепиться за содержание элемента === 'Слоган'
-// Но цепляться за содержимое тега это кажется еще больший треш.
-export const sloganXpath =
-  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[4]/div[2]/div/text()';
-export const timeXpath =
-  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div';
-
-// часть td - просто разделители. Этот спуск, а потом подъем в родимтеля нужен для фильтарция
-export const premierXpath =
-  '//*[@id="block_left"]/div/table/tbody/tr[2]/td/table/tbody/tr/td/a/parent::td/parent::tr';
+// DOM состоит просто из мусора. Ни id, ни внятных классов. 
+// Цепляться за контент, это треш.
+// Но хpathб которые не цепляется за контент
+// '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div'
+// настолько хрупок, что ломается при переходе от страницы одного фильма к странице другого
+// Почему неясно. По идее они должны генерироватьь эти страницы одним и тем же кодом
+// и страницы могут различаться по структуре толок между фильмами / мультиками / сериалами
+// Но структура отличается и просто между 2 фильмами
+export const sloganXpath = '//div[text()="Слоган"]/following-sibling::div';
+export const timeXpath = '//div[text()="Время"]/following-sibling::div';
+export const premierXpath = '//a[starts-with(@href, "/lists/m_act[country]")]//parent::td/parent::tr'
 
 type Role =
   | 'director'

@@ -8,6 +8,9 @@ import { ClientsModule } from '@nestjs/microservices';
 import { PARSER } from '@app/rabbit/queues';
 import { OPTIONS } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
+import { Film } from '@app/shared/entities/film.entity';
+import { Actor, ActorFilm, ActorRole, Country, FilmViewsCountry, Genre, Review, Comment } from '@app/shared/entities';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -28,7 +31,28 @@ import { ActorService } from './actor/actor.service';
         DB_NAME: Joi.string().required(),
        }),
     }),
-    DatabaseModule.forRoot([]),
+    DatabaseModule.forRoot([
+      Film,
+      Actor,
+      ActorFilm,
+      ActorRole,
+      Review,
+      Comment,
+      Country,
+      FilmViewsCountry,
+      Genre,
+    ]),
+    TypeOrmModule.forFeature([
+      Film,
+      Actor,
+      ActorFilm,
+      ActorRole,
+      Review,
+      Comment,
+      Country,
+      FilmViewsCountry,
+      Genre,
+    ])
   ],
   controllers: [FilmController],
   providers: [FilmService, ActorService],

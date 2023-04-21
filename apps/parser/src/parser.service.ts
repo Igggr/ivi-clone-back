@@ -45,7 +45,7 @@ export class ParserService {
       const res = { ...mainPageInfo, persons, views, comments };
       return { status: 'ok', value: res };
     } catch (e) {
-      return { status: 'error', error: e };
+      return { status: 'error', error: e.message };
     } finally {
       await page.close();
       await browser.close();
