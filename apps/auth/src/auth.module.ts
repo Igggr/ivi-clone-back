@@ -6,8 +6,6 @@ import { User } from '@app/shared/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { ConfigModule } from '@nestjs/config';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 @Module({
   imports: [

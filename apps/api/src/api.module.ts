@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './controllers/auth.controller';
+import { AuthController } from './auth/auth.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { ProfilesController } from './controllers/profile.controller';
+import { ProfilesController } from './profiles/profile.controller';
+import { GoogleStrategy } from 'apps/api/src/auth/utils/google.strategy';
 
 @Module({
   imports: [
@@ -39,6 +40,6 @@ import { ProfilesController } from './controllers/profile.controller';
     ]),
   ],
   controllers: [AuthController, ProfilesController],
-  providers: [],
+  providers: [GoogleStrategy],
 })
 export class ApiModule {}
