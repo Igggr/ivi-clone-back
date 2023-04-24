@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth/auth.controller';
+import { AuthController } from './controllers/auth.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { ProfilesController } from './profiles/profile.controller';
-import { GoogleStrategy } from 'apps/api/src/auth/utils/google.strategy';
+import { ProfilesController } from './controllers/profile.controller';
+import { PassportModule } from '@nestjs/passport';
+import { GoogleStrategy } from './utils/google.strategy';
+import { SessionSerializer } from './utils/serializer';
 
 @Module({
   imports: [
@@ -38,8 +40,9 @@ import { GoogleStrategy } from 'apps/api/src/auth/utils/google.strategy';
         },
       },
     ]),
+    PassportModule.register({ session: true }),
   ],
   controllers: [AuthController, ProfilesController],
-  providers: [GoogleStrategy],
+  providers: [GoogleStrategy, SessionSerializer],
 })
 export class ApiModule {}

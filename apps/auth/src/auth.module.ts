@@ -6,6 +6,7 @@ import { User } from '@app/shared/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { ConfigModule } from '@nestjs/config';
+import { GoogleUser } from '@app/shared/entities/google-user.entity';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, GoogleUser]),
   ],
   controllers: [AuthController],
   providers: [AuthService, UsersService],

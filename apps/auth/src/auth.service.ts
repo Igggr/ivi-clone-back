@@ -3,12 +3,18 @@ import { User } from '@app/shared/entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { GoogleUser } from '@app/shared/entities/google-user.entity';
+import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userService: UsersService,
+    @InjectRepository(GoogleUser)
+    private readonly googleUserRepository: Repository<GoogleUser>,
   ) {}
 
   async login(userDto: CreateUserDto) {
@@ -53,5 +59,20 @@ export class AuthService {
       status: 'error',
       error: 'Неккоректный емэйл или пароль',
     };
+  }
+
+  async validateGoogleUser(details: CreateGoogleUserDetailsDto) {
+    console.log('Auth Service');
+    console.log(details);
+    const user = this.googleUserRepository.findOneBy({ email: details.email });
+    console.log(user);
+    if (user) return user;
+    const newGoogleUser = this.googleUserRepository.create(details);
+    return this.googleUserRepository.save(newGoogleUser);
+  }
+
+  async findGoogleUser(userId: number) {
+    const user = await this.googleUserRepository.findOneBy({ id: userId });
+    return user;
   }
 }

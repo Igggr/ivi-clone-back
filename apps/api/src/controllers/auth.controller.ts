@@ -6,12 +6,14 @@ import {
   Get,
   Inject,
   Post,
+  Req,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { GoogleAuthGuard } from 'apps/api/src/auth/utils/google-auth.guard';
+import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
+import { GoogleAuthGuard } from '../utils/google-auth.guard';
 
 @Controller('/auth')
 export class AuthController {
@@ -53,5 +55,20 @@ export class AuthController {
       },
       {},
     );
+  }
+
+  @Get('status')
+  googleUser(@Req() request: Request) {
+    console.log(request.user);
+    if (request) {
+      return { msg: 'Authenticated' };
+    } else {
+      return { msg: 'Not Authenticated' };
+    }
+  }
+
+  @Get()
+  getHello(): string {
+    return 'HI';
   }
 }
