@@ -2,7 +2,7 @@ import { FilmQueryDTO, ParsedFilmDTO } from '@app/shared';
 import { Film } from '@app/shared/entities/film.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, In, Repository } from 'typeorm';
 import { ActorService } from './actor/actor.service';
 import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
@@ -52,8 +52,11 @@ export class FilmService {
   find(dto: FilmQueryDTO) {
     return this.filmRepository.find({
       where: {
-        // и как здесь фильтровать?
+        'genres': {
+          'genreName': In(dto.genres)
+        }
       },
+      relations: ['genres'],
       skip: dto.pagination.ofset,
       take: dto.pagination.limit,
     });
