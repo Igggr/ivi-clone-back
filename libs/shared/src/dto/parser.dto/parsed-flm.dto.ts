@@ -1,11 +1,10 @@
-import { PickType } from '@nestjs/swagger';
+import { PartialType, PickType, IntersectionType } from '@nestjs/swagger';
 import { ParsedActorDTO } from './parsed-actor.dto';
 import { Film } from '@app/shared/entities/film.entity';
 import { RoleType } from './roles';
 import { CreateCountryDTO } from '../create-country.dto';
 import { CreateGenreDTO } from '../create-genre.dto';
-
-// TODO: есть похожая в parser / xpathю Оставить только одну
+import { CreateAgeRestrictionDTO } from '../create-age-restriction.dto';
 
 export class ParsedFilmDTO extends PickType(Film, [
   'url',
@@ -13,9 +12,11 @@ export class ParsedFilmDTO extends PickType(Film, [
   'title',
   'originalTitle',
   'slogan',
-  'duration'
+  'duration',
+  'preview',
 ]) {
   genres: CreateGenreDTO[];
   country: CreateCountryDTO;
   persons: Record<RoleType, ParsedActorDTO[]>;
+  ageRestriction: CreateAgeRestrictionDTO;
 }

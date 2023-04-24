@@ -10,6 +10,7 @@ import {
 import { ActorFilm } from './actor-film.entity';
 import { Genre } from './genre.entity';
 import { Country } from './contry.entity';
+import { AgeRestriction } from './age-restriction';
 
 @Entity()
 export class Film {
@@ -18,6 +19,9 @@ export class Film {
 
   @Column()
   url: string;
+
+  @Column({ nullable: true })
+  preview?: string;
 
   @Column()
   year: number;
@@ -45,5 +49,11 @@ export class Film {
   genres: Genre[];
 
   @Column({ type: 'interval' })
-  duration: string;  // кривоватое хранение для интервала
+  duration: string; // кривоватое хранение для интервала
+
+  @OneToMany(() => AgeRestriction, (restriction) => restriction.films)
+  ageRestriction: AgeRestriction;
+
+  @Column()
+  ageRestrictionId: number;
 }

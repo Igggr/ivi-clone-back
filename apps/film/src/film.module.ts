@@ -24,6 +24,7 @@ import { CountryService } from './country/country.service';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { ReviewService } from './review/review.service';
 import { GenreService } from './genre/genre.service';
+import { AgeRestrictionService } from './age.restriction/age.restriction.service';
 
 @Module({
   imports: [
@@ -68,6 +69,14 @@ import { GenreService } from './genre/genre.service';
     ]),
   ],
   controllers: [FilmController],
-  providers: [FilmService, ActorService, CountryService, ActorRoleService, ReviewService, GenreService],
+  providers: [
+    FilmService,
+    ActorService,
+    CountryService,
+    ActorRoleService,
+    ReviewService,
+    GenreService,
+    AgeRestrictionService,
+  ],
 })
 export class FilmModule {}

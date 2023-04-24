@@ -2,32 +2,52 @@ import puppeteer, { Page } from 'puppeteer';
 import {
   actorsXpath,
   composersXpath,
-  countryXpath,
   designersXpath,
   directorsXpath,
   editorsXpath,
-  genreXpath,
   operatorsXpath,
-  origTitleXpath,
-  premierXpath,
   producersXpath,
-  sloganXpath,
-  timeXpath,
-  titleXpath,
   translatorsXpath,
   voiceDirectorsXpath,
   voicesXpath,
   writersXpath,
-} from './xpath';
+} from './xpath/role';
+import {
+  countryXpath,
+  genreXpath,
+  origTitleXpath,
+  premierXpath,
+  sloganXpath,
+  timeXpath,
+  titleXpath,
+} from './xpath/main-page';
+import { previewElement, previewFrame, previewPageUrl } from './xpath/trailer';
 import { Injectable } from '@nestjs/common';
 import { ParsedActorDTO, ParsedFilmDTO } from '@app/shared';
 import { CreateCountryDTO } from '@app/shared/dto/create-country.dto';
 import { ResponseDTO } from '@app/rabbit';
+import {
+  MPAA_Link,
+  minAgeXpath,
+  restrictionAbbrivaitaionXpath,
+  restrictionFullDescriptionXpath,
+  restrictionShortDescriptionXpath,
+} from './xpath/age-restriction';
+import { CreateAgeRestrictionDTO } from '@app/shared/dto/create-age-restriction.dto';
 
+// взял из таблички с бесплатными прокси-серверами с карйне стремного сайта
+// http://free-proxy.cz/ru/proxylist/main/3
+const PROXY = '95.216.170.84';
+const PORT = '8080';
+
+const DOMEN = 'https://www.kinopoisk.ru';
 @Injectable()
 export class ParserService {
   async parse(film: number): Promise<ResponseDTO<ParsedFilmDTO>> {
-    const browser = await puppeteer.launch({ ignoreHTTPSErrors: true });
+    const browser = await puppeteer.launch({
+      ignoreHTTPSErrors: true,
+      // args: [`--proxy-server=${PROXY}:${PORT}`],
+    });
     const page = await browser.newPage();
     await this.optimizePageLoad(page);
 
@@ -35,12 +55,14 @@ export class ParserService {
       console.log('Inside try-catch');
       const mainPageInfo = await this.parseMainPage(page, film);
       console.log('Спарсил main page');
+      const preview = await this.getPreview(page, film);
+      console.log('Спарсил preview url');
       const views = await this.parseViews(page, film);
-      console.log('Спарисл views');
+      console.log('Спарсил views');
       const persons = await this.parsePersons(page, film);
-      console.log('Спарисл persons');
+      console.log('Спарсил persons');
       const comments = await this.parseComments(page, film);
-      console.log('Спарисл комменты');
+      console.log('Спарсил комменты');
 
       const res = { ...mainPageInfo, persons, views, comments };
       return { status: 'ok', value: res };
@@ -93,10 +115,10 @@ export class ParserService {
   }
 
   private async parseMainPage(page: Page, film: number) {
-    const mainUrl = `https://www.kinopoisk.ru/film/${film}/`;
+    const mainUrl = `${DOMEN}/film/${film}/`;
 
     await page.goto(mainUrl, {
-      waitUntil: 'domcontentloaded',
+      waitUntil: 'networkidle0',
     });
 
     const originalTitle = await page
@@ -129,7 +151,9 @@ export class ParserService {
       await page
         .$x(genreXpath)
         .then((handles) =>
-          handles.map((handle) => handle.evaluate((node) => ({ genreName: node.textContent }))),
+          handles.map((handle) =>
+            handle.evaluate((node) => ({ genreName: node.textContent })),
+          ),
         ),
     );
 
@@ -137,6 +161,7 @@ export class ParserService {
       await page.waitForXPath(timeXpath)
     ).evaluate((node) => node.textContent);
 
+    const ageRestriction = await this.parseAgeRestrictions(page);
     const res = {
       url: mainUrl,
       title,
@@ -145,12 +170,55 @@ export class ParserService {
       genres,
       country,
       slogan,
-      duration: this.extractTime(duration) ,
+      duration: this.extractTime(duration),
+      restriction: ageRestriction,
     };
 
     return res;
   }
 
+  private async parseAgeRestrictions(
+    page: Page,
+  ): Promise<CreateAgeRestrictionDTO> {
+    const minAge = await page
+      .waitForXPath(minAgeXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent));
+    const abbreviation = await page
+      .waitForXPath(restrictionAbbrivaitaionXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent));
+    const shortDescription = await page
+      .waitForXPath(restrictionShortDescriptionXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent));
+    const url = await page
+      .$(`xpath/${MPAA_Link}`)
+      .then((handle) => handle.evaluate((node) => node.getAttribute('href')));
+    await page.goto(url, {
+      waitUntil: 'networkidle0',
+    });
+    const longDescription = await page
+      .waitForXPath(restrictionFullDescriptionXpath)
+      .then((handle) => handle.evaluate((node) => node.textContent));
+
+    return {
+      url: `${DOMEN}/${url}`,
+      minAge: minAge,
+      abbreviation,
+      shortDescription,
+      longDescription,
+    };
+  }
+
+  private async getPreview(page: Page, film: number) {
+    await page.goto(previewPageUrl(film), {
+      waitUntil: 'networkidle0',
+    });
+
+    await page.click(`xpath/${previewElement}`);
+    const src = await page
+      .$(`xpath/${previewFrame(film)}`)
+      .then((handle) => handle.evaluate((el) => el.getAttribute('src')));
+    return src;
+  }
 
   private extractTime(time: string) {
     let minutes: string;
@@ -159,13 +227,15 @@ export class ParserService {
     } else if (/\d* мин\./.test(time)) {
       minutes = /(?<minutes>\d*) мин\./.exec(time).groups['minutes'];
     } else {
-      throw new Error(`Кажется ты не предусмотрел как прасить время в формате ${time}`);
+      throw new Error(
+        `Кажется ты не предусмотрел как прасить время в формате ${time}`,
+      );
     }
     return `${minutes} minutes`;
   }
 
   private async parseViews(page: Page, film: number) {
-    const datesUrl = `https://www.kinopoisk.ru/film/${film}/dates/`;
+    const datesUrl = `${DOMEN}/film/${film}/dates/`;
 
     await page.goto(datesUrl, {
       waitUntil: 'networkidle0',
@@ -198,10 +268,10 @@ export class ParserService {
   }
 
   private async parsePersons(page: Page, film: number) {
-    const actorsUrl = `https://www.kinopoisk.ru/film/${film}/cast`;
+    const actorsUrl = `${DOMEN}/film/${film}/cast`;
 
     await page.goto(actorsUrl, {
-      waitUntil: 'domcontentloaded',
+      waitUntil: 'networkidle0',
     });
 
     const directors = await this.parsePersonsWithRole(page, directorsXpath);
@@ -246,7 +316,7 @@ export class ParserService {
         const nameHandler = await personHandle.$('div.info>div.name');
 
         const { url, fullName } = await nameHandler.$eval('a', (node) => ({
-          url: node.getAttribute('href'),
+          url: DOMEN + '/' + node.getAttribute('href'),
           fullName: node.text,
         }));
         const fullName_en = await nameHandler.$eval(
@@ -272,7 +342,7 @@ export class ParserService {
             (node) => ({
               // TODO: привести в оответсвие с CreateActorDTO
               who: node.textContent,
-              url: node.getAttribute('href'),
+              url: `${DOMEN}/${node.getAttribute('href')}`,
             }),
           );
         } catch (e) {}
@@ -293,7 +363,7 @@ export class ParserService {
 
   private async parseComments(page: Page, film: number) {
     // по идее так я только первую страницу паршу - то есть надо дорабатывать
-    const reviewsPage = `https://www.kinopoisk.ru/film/${film}/reviews/?ord=rating`;
+    const reviewsPage = `${DOMEN}/film/${film}/reviews/?ord=rating`;
     await page.goto(reviewsPage, {
       waitUntil: 'networkidle0',
     });

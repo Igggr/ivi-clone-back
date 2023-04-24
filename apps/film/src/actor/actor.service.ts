@@ -1,5 +1,5 @@
 import { CreateActorDTO, ParsedActorDTO, RoleType } from '@app/shared';
-import { Actor, ActorFilm, ActorRole } from '@app/shared/entities';
+import { Actor, ActorFilm } from '@app/shared/entities';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Equal } from 'typeorm';
@@ -26,15 +26,19 @@ export class ActorService {
     return await this.actorRepository.save(newActor);
   }
 
-  async bulkCreate(filmId: number, persons: Record<RoleType, ParsedActorDTO[]>) {
-
-    const roles = await this.actorRoleService.ensureAllRolesExist(Object.keys(persons));
+  async bulkCreate(
+    filmId: number,
+    persons: Record<RoleType, ParsedActorDTO[]>,
+  ) {
+    const roles = await this.actorRoleService.ensureAllRolesExist(
+      Object.keys(persons),
+    );
 
     const actorRoles = await Promise.all(
       Object.entries(persons).flatMap(([roleName, actors]) =>
         actors.map(async (dto) => ({
           actor: await this.ensureActorExist(dto),
-          role: roles.get(roleName), 
+          role: roles.get(roleName),
           dto,
         })),
       ),
@@ -46,10 +50,10 @@ export class ActorService {
         filmId,
         roleId: role.id,
         roleNotes: dto.role,
-      }))
+      })),
     );
     console.log(actorsInFilm);
-    this.actorFilmRepository.save(actorsInFilm)
+    this.actorFilmRepository.save(actorsInFilm);
 
     return actorRoles;
   }

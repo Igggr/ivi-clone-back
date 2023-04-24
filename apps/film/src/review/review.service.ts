@@ -5,12 +5,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ReviewService {
-    constructor(
-        @InjectRepository(Review) reviewRepository: Repository<Review>,
-    ) { }
+  constructor(@InjectRepository(Review) reviewRepository: Repository<Review>) {}
 
-    createReviews() {
-        
-    }
-
+  createReviews() {}
 }

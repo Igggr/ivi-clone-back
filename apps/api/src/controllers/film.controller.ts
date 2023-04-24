@@ -3,9 +3,10 @@ import { FILM } from '@app/rabbit/queues';
 import { Film } from '@app/shared/entities/film.entity';
 import { Controller, Get, HttpStatus, Inject, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 
+@ApiTags('film')
 @Controller('film')
 export class FilmController {
   constructor(@Inject(FILM) private readonly client: ClientProxy) {}

@@ -7,6 +7,7 @@ import { ActorService } from './actor/actor.service';
 import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
 import { GenreService } from './genre/genre.service';
+import { AgeRestrictionService } from './age.restriction/age.restriction.service';
 
 @Injectable()
 export class FilmService {
@@ -17,13 +18,17 @@ export class FilmService {
     private readonly countryService: CountryService,
     private readonly revieWService: ReviewService,
     private readonly genreService: GenreService,
+    private readonly restrictionService: AgeRestrictionService,
   ) {}
 
   async createFromParsedData(dto: ParsedFilmDTO) {
     console.log('Creating films from parsed data');
 
     const country = await this.countryService.ensureCountry(dto.country);
-    const genres = await this.genreService.ensureAllGenresExist(dto.genres)
+    const genres = await this.genreService.ensureAllGenresExists(dto.genres);
+    const ageRestriction = await this.restrictionService.ensureRestrictionExist(
+      dto.ageRestriction,
+    );
 
     const film = this.filmRepository.create({
       url: dto.url,
@@ -34,17 +39,14 @@ export class FilmService {
       slogan: dto.slogan,
       countryId: country.id,
       duration: dto.duration,
+      ageRestriction,
     });
 
     await this.filmRepository.save(film);
 
-    const actorRoles = await this.actorService.bulkCreate(film.id, dto.persons);
+    await this.actorService.bulkCreate(film.id, dto.persons);
 
     await this.revieWService.createReviews();
-  }
-
-  private f() {
-
   }
 
   find(dto: FilmQueryDTO) {
