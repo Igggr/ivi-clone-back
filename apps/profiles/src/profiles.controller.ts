@@ -1,7 +1,6 @@
 import { Body, Controller } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
-import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { REGISTRATION } from '@app/shared';
 
 @Controller()
@@ -18,14 +17,14 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: REGISTRATION })
-  registration(
-    @Body() userProfileDto: CreateUserProfileDto,
-    @Ctx() context: RmqContext,
-  ) {
+  registration(@Body() userProfileDtoAndPhoto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.profileService.createUserProfile(userProfileDto);
+    return this.profileService.createUserProfile(
+      userProfileDtoAndPhoto.userProfileDto,
+      userProfileDtoAndPhoto.photo,
+    );
   }
 }

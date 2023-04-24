@@ -1,30 +1,56 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsMobilePhone, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 @Entity()
 export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ example: 'Alex', description: 'Имя пользователя' })
+  @ApiProperty({ example: 'Александр', description: 'Имя пользователя' })
   @IsString({ message: 'Должно быть строкой' })
   @Column({ nullable: true })
   name: string;
 
-  @ApiProperty({ example: 'Ivanov', description: 'Фамилия пользователя' })
+  @ApiProperty({ example: 'Иванов', description: 'Фамилия пользователя' })
   @IsString({ message: 'Должно быть строкой' })
   @Column({ nullable: false })
   surname: string;
 
+  // @ApiProperty({
+  //   example: '+79275046543',
+  //   description: 'Номер телефона пользователя',
+  // })
+  // @IsMobilePhone('ru-RU')
+  // @IsString({ message: 'Должно быть строкой' })
+  // @Column({ nullable: false })
+  // phoneNumber: string;
+
   @ApiProperty({
-    example: '+79275046543',
-    description: 'Номер телефона пользователя',
+    example: 'Россия',
+    description: 'Страна проживания пользователя',
   })
-  @IsMobilePhone('ru-RU')
-  @IsString({ message: 'Должно быть строкой' })
-  @Column({ nullable: false })
-  phoneNumber: string;
+  @IsString({ message: 'Должно быть строкой ' })
+  @Column({ nullable: true })
+  country: string;
+
+  @ApiProperty({
+    example: 'Москва',
+    description: 'Город проживания пользователя',
+  })
+  @IsString({ message: 'Должно быть строкой ' })
+  @Column({ nullable: true })
+  city: string;
+
+  @ApiProperty({
+    example: '21.02.2023',
+    description: 'Дата создания аккаунта',
+  })
+  @Column({ nullable: true })
+  creationDate: Date;
+
+  @Column({ nullable: true })
+  photo: string;
 
   @Column({ nullable: false })
   userId: number;

@@ -5,6 +5,7 @@ import { Profile } from '@app/shared/entities/profile.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
+import { FilesService } from '@app/shared/files.service';
 
 @Module({
   imports: [
@@ -38,6 +39,6 @@ import { ConfigModule } from '@nestjs/config';
     TypeOrmModule.forFeature([Profile]),
   ],
   controllers: [ProfilesController],
-  providers: [ProfilesService],
+  providers: [ProfilesService, FilesService],
 })
 export class ProfilesModule {}
