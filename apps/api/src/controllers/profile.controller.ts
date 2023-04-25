@@ -1,5 +1,6 @@
 import { REGISTRATION } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
+import { FilesService } from '@app/shared/files.service';
 import {
   Body,
   Controller,
@@ -16,7 +17,10 @@ import { firstValueFrom } from 'rxjs';
 
 @Controller()
 export class ProfilesController {
-  constructor(@Inject('PROFILES') private profileService: ClientProxy) {}
+  constructor(
+    @Inject('PROFILES') private profileService: ClientProxy,
+    private fileService: FilesService,
+  ) {}
 
   @Post('/registration')
   @UseInterceptors(FileInterceptor('photo'))
@@ -24,7 +28,7 @@ export class ProfilesController {
     @Body() userProfileDto: CreateUserProfileDto,
     @UploadedFile() photo,
   ) {
-    console.log(userProfileDto);
+    const namePhoto = await this.fileService.createFile(photo);
     const res = await firstValueFrom(
       this.profileService.send(
         {
@@ -32,7 +36,7 @@ export class ProfilesController {
         },
         {
           userProfileDto,
-          photo,
+          namePhoto,
         },
       ),
     );

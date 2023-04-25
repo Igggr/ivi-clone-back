@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./apps/ivi-analog-back/test/jest-e2e.json"
   },
   "dependencies": {
+    "@fastify/static": "^6.10.1",
     "@nestjs/cache-manager": "^1.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
@@ -27,7 +28,9 @@
     "@nestjs/jwt": "^10.0.3",
     "@nestjs/microservices": "^9.4.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-fastify": "^9.4.0",
     "@nestjs/schedule": "^2.2.1",
+    "@nestjs/serve-static": "^3.0.1",
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/typeorm": "^9.0.1",
     "amqp-connection-manager": "^4.1.12",
@@ -36,6 +39,8 @@
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "fastify": "^4.15.0",
+    "fastify-static": "^4.7.0",
     "pg": "^8.10.0",
     "puppeteer": "^19.9.1",
     "reflect-metadata": "^0.1.13",

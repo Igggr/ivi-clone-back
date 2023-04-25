@@ -15,8 +15,9 @@ export class FilesService {
     try {
       const fileName = uuid.v4() + '.jpg';
       console.log(fileName);
-      const filePath = path.join(process.cwd(), '/libs/shared/src', 'static');
+      const filePath = path.join(process.cwd(), '/libs', 'static');
       console.log(filePath);
+      console.log(path.resolve(__dirname, 'static'));
 
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });

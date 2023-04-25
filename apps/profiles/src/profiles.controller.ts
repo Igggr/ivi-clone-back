@@ -17,14 +17,17 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: REGISTRATION })
-  registration(@Body() userProfileDtoAndPhoto, @Ctx() context: RmqContext) {
+  async registration(
+    @Body() userProfileDtoAndPhoto,
+    @Ctx() context: RmqContext,
+  ) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.profileService.createUserProfile(
+    return await this.profileService.createUserProfile(
       userProfileDtoAndPhoto.userProfileDto,
-      userProfileDtoAndPhoto.photo,
+      userProfileDtoAndPhoto.namePhoto,
     );
   }
 }
