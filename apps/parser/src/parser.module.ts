@@ -12,6 +12,8 @@ import { OPTIONS } from '@app/rabbit';
 import { PARSER } from '@app/rabbit/queues';
 import { ParserService } from './parser.service';
 import { TasksService } from './task.service';
+import { ActorParserService } from './actor.parser/actor.parser.service';
+import { ReviewParserService } from './review.parser/review.parser.service';
 
 @Module({
   imports: [
@@ -29,6 +31,6 @@ import { TasksService } from './task.service';
     }),
   ],
   controllers: [],
-  providers: [ParserService, TasksService],
+  providers: [ParserService, TasksService, ActorParserService, ReviewParserService],
 })
 export class ParserModule {}

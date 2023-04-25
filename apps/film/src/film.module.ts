@@ -25,6 +25,7 @@ import { ActorRoleService } from './actor.role/actor.role.service';
 import { ReviewService } from './review/review.service';
 import { GenreService } from './genre/genre.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
+import { AgeRestriction } from '@app/shared/entities/age-restriction';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { AgeRestrictionService } from './age.restriction/age.restriction.service
       Country,
       FilmViewsCountry,
       Genre,
+      AgeRestriction,
     ]),
     TypeOrmModule.forFeature([
       Film,
@@ -66,6 +68,7 @@ import { AgeRestrictionService } from './age.restriction/age.restriction.service
       Country,
       FilmViewsCountry,
       Genre,
+      AgeRestriction,
     ]),
   ],
   controllers: [FilmController],
