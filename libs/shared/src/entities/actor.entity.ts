@@ -14,7 +14,7 @@ export class Actor {
   fullName: string;
 
   @Column()
-  fullName_en: string;
+  fullNameEn: string;
 
   @Column()
   photo: string;

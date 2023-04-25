@@ -13,7 +13,7 @@ import { ResponseDTO } from '@app/rabbit';
 import { ActorParserService } from './actor.parser/actor.parser.service';
 import { ReviewParserService } from './review.parser/review.parser.service';
 import { MainPageParserService } from './main-page.parser/main-page.parser.service';
-export { DOMEN } from './constants';
+import { DOMEN } from './constants';
 
 @Injectable()
 export class ParserService {
@@ -30,6 +30,7 @@ export class ParserService {
 
     console.log(`Start parseing film ${film}`);
     const page = await browser.newPage();
+
     await this.optimizePageLoad(page);
 
     try {

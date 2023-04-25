@@ -64,10 +64,11 @@ export class ActorParserService {
   }
     
 
-  private async parsePersonsWithRole(
+  async parsePersonsWithRole(
     page: Page,
     xpath: string,
   ): Promise<ParsedActorDTO[]> {
+    
     const persons = await Promise.all(
       (
         await page.$x(xpath)
@@ -75,22 +76,22 @@ export class ActorParserService {
         const nameHandler = await personHandle.$('div.info>div.name');
 
         const { url, fullName } = await nameHandler.$eval('a', (node) => ({
-          url: DOMEN + '/' + node.getAttribute('href'),
+          url: node.getAttribute('href'),
           fullName: node.text,
         }));
-        const fullName_en = await nameHandler.$eval(
+        const fullNameEn = await nameHandler.$eval(
           'span',
           (node) => node.textContent,
         );
 
         // в src почему-то какой-то мусор. Хотя в коже страницы все нормально. Пришлось брать из атрибута title
         // (в коде старницы он совпадает c src, но здесь коректен только title)
-        const photo = await personHandle.$eval('div.photo>a>img', (node) =>
+        const photo = DOMEN + '/' + await personHandle.$eval('div.photo>a>img', (node) =>
           node.getAttribute('title'),
         );
         const role = await personHandle.$eval(
           'div.info>div.role',
-          (node) => node.textContent,
+          (node) => node.innerText
         );
 
         let dub;
@@ -106,9 +107,9 @@ export class ActorParserService {
           );
         } catch (e) {}
         const res = {
-          url,
+          url: DOMEN + '/' + url,
           fullName,
-          fullName_en,
+          fullNameEn,
           photo,
           role,
           dub,
