@@ -8,3 +8,4 @@ export * from './parser.dto/parsed-actor.dto';
 export * from './parser.dto/parsed-flm.dto';
 export * from './parser.dto/roles';
 export * from './create-review.dto';
+export * from './create-age-restriction.dto';

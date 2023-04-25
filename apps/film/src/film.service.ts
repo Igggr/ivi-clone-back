@@ -39,14 +39,15 @@ export class FilmService {
       slogan: dto.slogan,
       countryId: country.id,
       duration: dto.duration,
-      ageRestriction,
+      ageRestrictionId: ageRestriction.id,
     });
 
     await this.filmRepository.save(film);
 
     await this.actorService.bulkCreate(film.id, dto.persons);
 
-    await this.revieWService.createReviews();
+    const reviews = dto.reviews.map((review) => ({ ...review, filmId: film.id, profileId: 1 }));
+    await this.revieWService.createReviews(reviews);
   }
 
   find(dto: FilmQueryDTO) {

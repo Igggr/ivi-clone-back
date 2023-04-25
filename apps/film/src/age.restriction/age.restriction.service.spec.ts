@@ -12,8 +12,8 @@ describe('AgeRestrictionService', () => {
         AgeRestrictionService,
         {
           provide: getRepositoryToken(AgeRestriction),
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

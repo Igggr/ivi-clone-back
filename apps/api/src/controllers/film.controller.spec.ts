@@ -11,10 +11,13 @@ describe('FilmController', () => {
       providers: [
         {
           provide: FILM,
-          useValue: {}
-        }
-      ]
-    }).overrideProvider(FILM).useValue({}).compile();
+          useValue: {},
+        },
+      ],
+    })
+      .overrideProvider(FILM)
+      .useValue({})
+      .compile();
 
     controller = module.get<FilmController>(FilmController);
   });

@@ -14,6 +14,7 @@ import { ParserService } from './parser.service';
 import { TasksService } from './task.service';
 import { ActorParserService } from './actor.parser/actor.parser.service';
 import { ReviewParserService } from './review.parser/review.parser.service';
+import { MainPageParserService } from './main-page.parser/main-page.parser.service';
 
 @Module({
   imports: [
@@ -31,6 +32,12 @@ import { ReviewParserService } from './review.parser/review.parser.service';
     }),
   ],
   controllers: [],
-  providers: [ParserService, TasksService, ActorParserService, ReviewParserService],
+  providers: [
+    ParserService,
+    TasksService,
+    ActorParserService,
+    ReviewParserService,
+    MainPageParserService,
+  ],
 })
 export class ParserModule {}

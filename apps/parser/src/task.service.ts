@@ -5,7 +5,7 @@ import { Cron } from '@nestjs/schedule';
 import { ParserService } from './parser.service';
 import { ClientProxy } from '@nestjs/microservices';
 import { PARSER } from '@app/rabbit/queues';
-import { PARSE_DATA } from '@app/rabbit/events';
+import { PARSED_DATA } from '@app/rabbit/events';
 
 @Injectable()
 export class TasksService {
@@ -24,7 +24,6 @@ export class TasksService {
 
     // до номера 299 страницы просто отсутствуют
     const film: number = (await this.cacheManager.get('film')) ?? 299;
-    console.log(`Start parseing film ${film}`);
 
     // если упадет - фильм наверно косячный, с остутсвующими данными.
     // Проcто перейдем к следующему
@@ -34,7 +33,7 @@ export class TasksService {
 
     if (res.status === 'ok') {
       this.logger.log(`Film ${film} parsed succesefully`);
-      this.client.emit({ cmd: PARSE_DATA }, res.value);
+      this.client.emit({ cmd: PARSED_DATA }, res.value);
     } else {
       console.log(`Unable to parse film ${film}`);
       console.log(res.error);

@@ -5,7 +5,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Film } from '@app/shared/entities/film.entity';
 import { FILM } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
-import { Actor, ActorFilm, ActorRole, Country, Genre, Review } from '@app/shared/entities';
+import {
+  Actor,
+  ActorFilm,
+  ActorRole,
+  Country,
+  Genre,
+  Review,
+} from '@app/shared/entities';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
@@ -28,52 +35,54 @@ describe('FilmController', () => {
         AgeRestrictionService,
         {
           provide: 'ActorService',
-          useValue: {}
+          useValue: {},
         },
         FilmService,
         {
           provide: getRepositoryToken(Film),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(Actor),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(ActorFilm),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(ActorRole),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(Country),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(Review),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(Genre),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(AgeRestriction),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: 'CountryService',
-          useValue: {}
+          useValue: {},
         },
         {
           provide: FILM,
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
-    }).overrideProvider('ActorService').useValue({})
-    .compile();
+    })
+      .overrideProvider('ActorService')
+      .useValue({})
+      .compile();
 
     filmController = app.get<FilmController>(FilmController);
   });

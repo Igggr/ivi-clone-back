@@ -11,6 +11,7 @@ import { ActorFilm } from './actor-film.entity';
 import { Genre } from './genre.entity';
 import { Country } from './contry.entity';
 import { AgeRestriction } from './age-restriction';
+import { Review } from './review.entity';
 
 @Entity()
 export class Film {
@@ -56,4 +57,10 @@ export class Film {
 
   @Column()
   ageRestrictionId: number;
+
+  @OneToMany(
+    () => Review,
+    (review) => review.film
+  )
+  reviews: Review[];
 }

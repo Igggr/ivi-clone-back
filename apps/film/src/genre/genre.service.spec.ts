@@ -12,8 +12,8 @@ describe('GenreService', () => {
         GenreService,
         {
           provide: getRepositoryToken(Genre),
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

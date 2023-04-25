@@ -18,10 +18,10 @@ export class AgeRestriction {
   minAge: string;
 
   @Column()
-  shortDescription: string;
+  description: string;
 
-  @Column()
-  longDescription: string;
+  // @Column()
+  // fullDescription: string;
 
   @ManyToOne(() => Film, (film) => film.ageRestriction)
   films: Film[];

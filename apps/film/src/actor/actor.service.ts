@@ -30,6 +30,9 @@ export class ActorService {
     filmId: number,
     persons: Record<RoleType, ParsedActorDTO[]>,
   ) {
+    if (!persons) {
+      return;
+    }
     const roles = await this.actorRoleService.ensureAllRolesExist(
       Object.keys(persons),
     );

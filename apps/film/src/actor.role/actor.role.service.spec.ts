@@ -12,8 +12,8 @@ describe('ActorRoleService', () => {
         ActorRoleService,
         {
           provide: getRepositoryToken(ActorRole),
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

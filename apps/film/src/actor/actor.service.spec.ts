@@ -14,23 +14,22 @@ describe('ActorService', () => {
         ActorRoleService,
         {
           provide: getRepositoryToken(Actor),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(ActorFilm),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(ActorRole),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: 'ActorRoleService',
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
-    })
-      .compile();
+    }).compile();
 
     service = module.get<ActorService>(ActorService);
   });

@@ -12,8 +12,8 @@ describe('ReviewService', () => {
         ReviewService,
         {
           provide: getRepositoryToken(Review),
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

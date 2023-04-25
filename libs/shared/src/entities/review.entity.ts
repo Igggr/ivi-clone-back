@@ -1,5 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Comment } from './comment.entity';
+import { Profile } from './profile.entity';
+import { Film } from './film.entity';
 
 @Entity()
 export class Review {
@@ -18,6 +20,17 @@ export class Review {
   @OneToMany(() => Comment, (comment) => comment.review)
   comments: Comment[];
 
+  @ManyToOne(
+    () => Film,
+    (film) => film.reviews
+  )
+  film: Film;
+
+  @Column()
+  filmId: number;
+
   @Column()
   profileId: number; // кажется profile - в другом сервисе
+
+
 }

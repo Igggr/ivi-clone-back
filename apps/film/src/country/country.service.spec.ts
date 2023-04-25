@@ -12,8 +12,8 @@ describe('CountryService', () => {
         CountryService,
         {
           provide: getRepositoryToken(Country),
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 
