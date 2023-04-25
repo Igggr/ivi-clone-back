@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DOMEN } from '../constants';
-import { Page } from 'puppeteer';
+import { ElementHandle, Page } from 'puppeteer';
 import {
   actorsXpath,
   composersXpath,
@@ -20,8 +20,7 @@ import { ParsedActorDTO } from '@app/shared';
 export class ActorParserService {
   async parsePersons(page: Page, film: number) {
     const actorsUrl = `${DOMEN}/film/${film}/cast`;
-
-    console.log('Паршу команду фильмаб navigate to ${actorsUrl}');
+    console.log(`Пытаюсь спарсить команду фильма - navigate to ${actorsUrl}`);
 
     try {
       await page.goto(actorsUrl, {
@@ -29,13 +28,16 @@ export class ActorParserService {
       });
 
       const directors = await this.parsePersonsWithRole(page, directorsXpath);
-      const actors = await this.parsePersonsWithRole(page, actorsXpath);
+      const actors = await this.parsePersonsWithRole(page, actorsXpath, true);
       const producers = await this.parsePersonsWithRole(page, producersXpath);
       const voiceDirectors = await this.parsePersonsWithRole(
         page,
         voiceDirectorsXpath,
       );
-      const translators = await this.parsePersonsWithRole(page, translatorsXpath);
+      const translators = await this.parsePersonsWithRole(
+        page,
+        translatorsXpath,
+      );
       const voices = await this.parsePersonsWithRole(page, voicesXpath);
       const writers = await this.parsePersonsWithRole(page, writersXpath);
       const operators = await this.parsePersonsWithRole(page, operatorsXpath);
@@ -56,68 +58,84 @@ export class ActorParserService {
         designer: designers,
         editor: editors,
       };
-      console.log('Учпешно спарисл команду фильма');
+      console.log(`Успешно спарсил команду фильма ${film}`);
       return res;
     } catch {
-      console.log('Не удалось спарсить команду фильма')
+      console.log(`Не удалось спарсить команду фильма ${film}`);
     }
   }
-    
+
+  private fullUrl(url: string) {
+    return DOMEN + url;
+  }
 
   async parsePersonsWithRole(
     page: Page,
     xpath: string,
+    isActor = false,
   ): Promise<ParsedActorDTO[]> {
-    
-    const persons = await Promise.all(
-      (
-        await page.$x(xpath)
-      ).map(async (personHandle) => {
-        const nameHandler = await personHandle.$('div.info>div.name');
-
-        const { url, fullName } = await nameHandler.$eval('a', (node) => ({
+    const personHandle: ElementHandle<Node> = (await page.$x(xpath))[0]
+    const persons = await page.$x(xpath).then((handles) =>
+      handles.map(async (personHandle) => {
+ 
+        const { url, fullName } = await personHandle.$eval('div.info > div.name>a', (node) => ({
           url: node.getAttribute('href'),
           fullName: node.text,
         }));
-        const fullNameEn = await nameHandler.$eval(
-          'span',
+        const fullNameEn = await personHandle.$eval('div.info > div.name>span',
           (node) => node.textContent,
         );
-
-        // в src почему-то какой-то мусор. Хотя в коже страницы все нормально. Пришлось брать из атрибута title
-        // (в коде старницы он совпадает c src, но здесь коректен только title)
-        const photo = DOMEN + '/' + await personHandle.$eval('div.photo>a>img', (node) =>
-          node.getAttribute('title'),
+        const photo = await personHandle.$eval('div.photo>a>img', (node) =>
+          node.getAttribute('src'),
         );
         const role = await personHandle.$eval(
           'div.info>div.role',
-          (node) => node.innerText
+          (node) => node.innerText,
         );
 
-        let dub;
-        try {
-          // этот элемент есть не везде (не у всех актеров есть дублер) => исключение. Решение конечно костыльненькое
-          dub = await personHandle.$eval(
-            'xpath/following-sibling::div[@class="dubInfo"]/div[@class="name"]/a',
-            (node) => ({
-              // TODO: привести в оответсвие с CreateActorDTO
-              who: node.textContent,
-              url: `${DOMEN}/${node.getAttribute('href')}`,
-            }),
-          );
-        } catch (e) {}
         const res = {
-          url: DOMEN + '/' + url,
+          url: this.fullUrl(url),
           fullName,
           fullNameEn,
-          photo,
+          photo: this.fullUrl(photo),
           role,
-          dub,
+          dub: isActor ? await this.getDublers(personHandle, role) : undefined,
         };
         return res;
-      }),
+      })
+
     );
 
-    return persons;
+    return Promise.all(persons);
+  }
+
+  async getDublers(personHandle: ElementHandle<Node>, role: string): Promise<ParsedActorDTO[]> {
+    try {
+      // не у всех актеров есть дублер => возможно исключение. Решение конечно костыльненькое
+
+      const dublers = await personHandle.$x('following-sibling::div[@class="dubInfo"]//div[contains(@class, "photo")]')
+        .then((handles) => handles.map(async (handle) => {
+          const url = await handle.$eval('a', (el) => el.getAttribute('href'));
+          const { fullName, photo } = await handle.$eval('a>img', (el) => ({
+            fullName: el.getAttribute('alt'),
+            photo: el.getAttribute('src')
+          }));
+
+          return {
+            url: this.fullUrl(url),
+            fullName,
+            role,
+            photo: this.fullUrl(photo)
+          }
+        })
+        );
+
+      return Promise.all(dublers);
+    } catch (e) {
+      console.log('Не удалось спасить дублепа')
+      console.log(e);
+      return;
+    }
+  
   }
 }

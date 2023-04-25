@@ -58,9 +58,6 @@ export class Film {
   @Column()
   ageRestrictionId: number;
 
-  @OneToMany(
-    () => Review,
-    (review) => review.film
-  )
+  @OneToMany(() => Review, (review) => review.film)
   reviews: Review[];
 }

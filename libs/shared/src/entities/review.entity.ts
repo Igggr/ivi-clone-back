@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Comment } from './comment.entity';
 import { Profile } from './profile.entity';
 import { Film } from './film.entity';
@@ -20,10 +26,7 @@ export class Review {
   @OneToMany(() => Comment, (comment) => comment.review)
   comments: Comment[];
 
-  @ManyToOne(
-    () => Film,
-    (film) => film.reviews
-  )
+  @ManyToOne(() => Film, (film) => film.reviews)
   film: Film;
 
   @Column()
@@ -31,6 +34,4 @@ export class Review {
 
   @Column()
   profileId: number; // кажется profile - в другом сервисе
-
-
 }

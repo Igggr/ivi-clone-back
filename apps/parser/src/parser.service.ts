@@ -1,7 +1,5 @@
 import puppeteer, { Page } from 'puppeteer';
-import {
-  premierXpath,
-} from './xpath/main-page';
+import { premierXpath } from './xpath/main-page';
 import {
   previewElement,
   previewFrame,
@@ -34,7 +32,10 @@ export class ParserService {
     await this.optimizePageLoad(page);
 
     try {
-      const mainPageInfo = await this.mainPageParserService.parseMainPage(page, film);
+      const mainPageInfo = await this.mainPageParserService.parseMainPage(
+        page,
+        film,
+      );
       const preview = await this.getPreview(page, film);
       const views = await this.parseViews(page, film);
       const persons = await this.actorParserService.parsePersons(page, film);
@@ -82,8 +83,8 @@ export class ParserService {
       ];
       const requestUrl = request.url().split('?')[0];
       if (
-        blockedTypes.includes(resourceType)
-        || blockResourceName.some((resource) => requestUrl.includes(resource))
+        blockedTypes.includes(resourceType) ||
+        blockResourceName.some((resource) => requestUrl.includes(resource))
       ) {
         request.abort();
       } else {

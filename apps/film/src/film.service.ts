@@ -46,7 +46,11 @@ export class FilmService {
 
     await this.actorService.bulkCreate(film.id, dto.persons);
 
-    const reviews = dto.reviews.map((review) => ({ ...review, filmId: film.id, profileId: 1 }));
+    const reviews = dto.reviews.map((review) => ({
+      ...review,
+      filmId: film.id,
+      profileId: 1,
+    }));
     await this.revieWService.createReviews(reviews);
   }
 
