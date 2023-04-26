@@ -1,7 +1,12 @@
 import { Body, Controller } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
-import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
-import { REGISTRATION } from '@app/shared';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
+import { DELETE_PROFILE, REGISTRATION, UPDATE_PROFILE } from '@app/shared';
 
 @Controller()
 export class ProfilesController {
@@ -17,17 +22,39 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: REGISTRATION })
-  async registration(
-    @Body() userProfileDtoAndPhoto,
+  async registration(@Body() userProfileInfo, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.profileService.createUserProfile(
+      userProfileInfo.userProfileDto,
+      userProfileInfo.namePhoto,
+    );
+  }
+
+  @MessagePattern({ cmd: UPDATE_PROFILE })
+  async updateProfile(@Body() userProfileInfo, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.profileService.updateUserProfile(
+      userProfileInfo.profileId,
+      userProfileInfo.userProfileDto,
+      userProfileInfo.namePhoto,
+    );
+  }
+
+  @MessagePattern({ cmd: DELETE_PROFILE })
+  async deleteProfile(
+    @Payload() profileId: number,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return await this.profileService.createUserProfile(
-      userProfileDtoAndPhoto.userProfileDto,
-      userProfileDtoAndPhoto.namePhoto,
-    );
+    return await this.profileService.deleteUserProfile(profileId);
   }
 }

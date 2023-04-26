@@ -40,7 +40,7 @@ export class FilesService {
    */
   async deleteFile(fileName): Promise<string> {
     try {
-      const filePath = path.join(process.cwd(), '/src', 'static');
+      const filePath = path.join(process.cwd(), '/libs', 'static');
       fs.unlinkSync(path.join(filePath, fileName));
       return 'Success';
     } catch (error) {
@@ -59,7 +59,7 @@ export class FilesService {
    */
   async readFile(fileName): Promise<string> {
     try {
-      const filePath = path.join(process.cwd(), '/src', 'static');
+      const filePath = path.join(process.cwd(), '/libs', 'static');
       fs.readFileSync(path.join(filePath, fileName), 'utf-8');
       return fileName;
     } catch (error) {

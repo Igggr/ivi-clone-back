@@ -46,7 +46,7 @@ export class Profile {
     example: '21.02.2023',
     description: 'Дата создания аккаунта',
   })
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   creationDate: Date;
 
   @Column({ nullable: true })

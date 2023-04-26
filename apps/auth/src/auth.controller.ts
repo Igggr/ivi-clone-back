@@ -8,7 +8,14 @@ import {
 } from '@nestjs/microservices';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { UsersService } from './users/users.service';
-import { CREATE_USER, GET_TOKEN, GET_USER_BY_EMAIL, LOGIN } from '@app/shared';
+import {
+  CREATE_USER,
+  DELETE_USER,
+  GET_TOKEN,
+  GET_USER_BY_EMAIL,
+  LOGIN,
+  UPDATE_USER,
+} from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 
@@ -56,5 +63,26 @@ export class AuthController {
     channel.ack(message);
 
     return this.authService.generateToken(user);
+  }
+
+  @MessagePattern({ cmd: UPDATE_USER })
+  updateUser(@Body() userProfileInfo, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.updateUser(
+      userProfileInfo.userProfileDto,
+      userProfileInfo.userId,
+    );
+  }
+
+  @MessagePattern({ cmd: DELETE_USER })
+  deleteUser(@Payload() userId, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.deleteUser(userId);
   }
 }
