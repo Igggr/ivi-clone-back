@@ -37,35 +37,33 @@ describe('ActorParserService', () => {
     expect(service).toBeDefined();
   });
 
-
   it('should parse main page', async () => {
     const result = await service.parseMainPage(page, film);
     const expected = {
-      url: "https://www.kinopoisk.ru/film/326/",
+      url: 'https://www.kinopoisk.ru/film/326/',
       title: 'Побег из Шоушенка',
       originalTitle: 'The Shawshank Redemption',
       year: 1994,
       slogan: '«Страх - это кандалы. Надежда - это свобода»',
       genres: ['драма'],
       country: {
-        countryName: "США",
-        url: "https://www.kinopoisk.ru/lists/movies/country--1/?b=films&b=top",
+        countryName: 'США',
+        url: 'https://www.kinopoisk.ru/lists/movies/country--1/?b=films&b=top',
       },
-      duration: "142 minutes",
+      duration: '142 minutes',
       ageRestriction: {
-        abbreviation: "R",
-        description: "лицам до 17 лет обязательно присутствие взрослого",
-        minAge: "16+",
-        url: "https://www.kinopoisk.ru//film/326/rn/R/",
+        abbreviation: 'R',
+        description: 'лицам до 17 лет обязательно присутствие взрослого',
+        minAge: '16+',
+        url: 'https://www.kinopoisk.ru//film/326/rn/R/',
       },
     };
     expect(result).toEqual(expected);
-  },
-  10000)
+  }, 10000);
 
   afterEach(async () => {
     mock.restore();
     await page.close();
     await browser.close();
-  })
+  });
 });

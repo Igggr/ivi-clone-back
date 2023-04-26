@@ -15,7 +15,7 @@ import {
   writersXpath,
 } from '../xpath/role';
 import { ParsedActorDTO } from '@app/shared';
-export { fullUrl } from '../constants'
+export { fullUrl } from '../constants';
 
 @Injectable()
 export class ActorParserService {
@@ -71,7 +71,6 @@ export class ActorParserService {
     xpath: string,
     isActor = false,
   ): Promise<ParsedActorDTO[]> {
-    const personHandle: ElementHandle<Node> = (await page.$x(xpath))[0];
     const persons = await page.$x(xpath).then((handles) =>
       handles.map(async (personHandle) => {
         const { url, fullName } = await personHandle.$eval(

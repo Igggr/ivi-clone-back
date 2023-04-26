@@ -47,7 +47,8 @@ export class MainPageParserService {
           countryName: node.textContent,
           url: node.getAttribute('href'),
         })),
-      ).then(({countryName, url}) => ({ countryName, url: fullUrl(url)}));
+      )
+      .then(({ countryName, url }) => ({ countryName, url: fullUrl(url) }));
 
     const slogan = await page
       .waitForXPath(sloganXpath)
@@ -73,7 +74,7 @@ export class MainPageParserService {
       title,
       originalTitle,
       year: parseInt(year),
-      genres: genres.map(({genreName}) => genreName),
+      genres: genres.map(({ genreName }) => genreName),
       country,
       slogan,
       duration: this.extractTime(duration),
