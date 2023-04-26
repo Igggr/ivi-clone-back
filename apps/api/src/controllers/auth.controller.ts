@@ -1,4 +1,6 @@
-import { LOGIN } from '@app/shared';
+import { CREATE_ROLE, LOGIN } from '@app/shared';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
+import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import {
   Body,
@@ -10,11 +12,11 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
-@Controller('/auth')
+@Controller()
 export class AuthController {
   constructor(@Inject('AUTH') private authService: ClientProxy) {}
 
-  @Post('/login')
+  @Post('/auth/login')
   async login(@Body() userDto: CreateUserDto) {
     const res = await firstValueFrom(
       this.authService.send(
@@ -28,5 +30,25 @@ export class AuthController {
       throw new UnauthorizedException(res.error);
     }
     return res;
+  }
+
+  @Post('/roles')
+  async createRole(@Body() roleDto: CreateRoleDto) {
+    return await this.authService.send(
+      {
+        cmd: CREATE_ROLE,
+      },
+      roleDto,
+    );
+  }
+
+  @Post('/users/role')
+  async addRole(@Body() roleDto: AddRoleDto) {
+    return await this.authService.send(
+      {
+        cmd: ADD_ROLE,
+      },
+      roleDto,
+    );
   }
 }

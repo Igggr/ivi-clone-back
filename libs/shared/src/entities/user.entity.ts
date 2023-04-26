@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsEmail, IsString, Length } from 'class-validator';
+import { Role } from './role.entity';
 
 @Entity()
 export class User {
@@ -18,4 +25,8 @@ export class User {
   @Length(4, 16, { message: 'Не меньше 4 и не больше 16 символов' })
   @Column({ nullable: false })
   password: string;
+
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable()
+  roles: Role[];
 }

@@ -18,12 +18,15 @@ import {
 } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
+import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
+import { RolesService } from './roles/roles.service';
 
 @Controller()
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,
+    private readonly roleService: RolesService,
   ) {}
 
   @MessagePattern({ cmd: LOGIN })
@@ -84,5 +87,14 @@ export class AuthController {
     channel.ack(message);
 
     return this.userService.deleteUser(userId);
+  }
+
+  @MessagePattern({ cmd: CREATE_USER })
+  createRole(@Body() roleDto: CreateRoleDto, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.roleService.createRole(roleDto);
   }
 }

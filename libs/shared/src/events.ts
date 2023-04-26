@@ -7,3 +7,5 @@ export const UPDATE_PROFILE = 'update-profile';
 export const UPDATE_USER = 'update-user';
 export const DELETE_PROFILE = 'delete-profile';
 export const DELETE_USER = 'delete-user';
+export const CREATE_ROLE = 'create-role';
+export const ADD_ROLE = 'add-role';
