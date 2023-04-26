@@ -74,15 +74,18 @@ export class ActorParserService {
     xpath: string,
     isActor = false,
   ): Promise<ParsedActorDTO[]> {
-    const personHandle: ElementHandle<Node> = (await page.$x(xpath))[0]
+    const personHandle: ElementHandle<Node> = (await page.$x(xpath))[0];
     const persons = await page.$x(xpath).then((handles) =>
       handles.map(async (personHandle) => {
- 
-        const { url, fullName } = await personHandle.$eval('div.info > div.name>a', (node) => ({
-          url: node.getAttribute('href'),
-          fullName: node.text,
-        }));
-        const fullNameEn = await personHandle.$eval('div.info > div.name>span',
+        const { url, fullName } = await personHandle.$eval(
+          'div.info > div.name>a',
+          (node) => ({
+            url: node.getAttribute('href'),
+            fullName: node.text,
+          }),
+        );
+        const fullNameEn = await personHandle.$eval(
+          'div.info > div.name>span',
           (node) => node.textContent,
         );
         const photo = await personHandle.$eval('div.photo>a>img', (node) =>
@@ -102,40 +105,47 @@ export class ActorParserService {
           dub: isActor ? await this.getDublers(personHandle, role) : undefined,
         };
         return res;
-      })
-
+      }),
     );
 
     return Promise.all(persons);
   }
 
-  async getDublers(personHandle: ElementHandle<Node>, role: string): Promise<ParsedActorDTO[]> {
+  async getDublers(
+    personHandle: ElementHandle<Node>,
+    role: string,
+  ): Promise<ParsedActorDTO[]> {
     try {
       // не у всех актеров есть дублер => возможно исключение. Решение конечно костыльненькое
 
-      const dublers = await personHandle.$x('following-sibling::div[@class="dubInfo"]//div[contains(@class, "photo")]')
-        .then((handles) => handles.map(async (handle) => {
-          const url = await handle.$eval('a', (el) => el.getAttribute('href'));
-          const { fullName, photo } = await handle.$eval('a>img', (el) => ({
-            fullName: el.getAttribute('alt'),
-            photo: el.getAttribute('src')
-          }));
+      const dublers = await personHandle
+        .$x(
+          'following-sibling::div[@class="dubInfo"]//div[contains(@class, "photo")]',
+        )
+        .then((handles) =>
+          handles.map(async (handle) => {
+            const url = await handle.$eval('a', (el) =>
+              el.getAttribute('href'),
+            );
+            const { fullName, photo } = await handle.$eval('a>img', (el) => ({
+              fullName: el.getAttribute('alt'),
+              photo: el.getAttribute('src'),
+            }));
 
-          return {
-            url: this.fullUrl(url),
-            fullName,
-            role,
-            photo: this.fullUrl(photo)
-          }
-        })
+            return {
+              url: this.fullUrl(url),
+              fullName,
+              role,
+              photo: this.fullUrl(photo),
+            };
+          }),
         );
 
       return Promise.all(dublers);
     } catch (e) {
-      console.log('Не удалось спасить дублепа')
+      console.log('Не удалось спасить дублепа');
       console.log(e);
       return;
     }
-  
   }
 }
