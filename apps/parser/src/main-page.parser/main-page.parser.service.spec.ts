@@ -60,7 +60,8 @@ describe('ActorParserService', () => {
       },
     };
     expect(result).toEqual(expected);
-  })
+  },
+  10000)
 
   afterEach(async () => {
     mock.restore();

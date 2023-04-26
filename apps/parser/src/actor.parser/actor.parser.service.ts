@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DOMEN } from '../constants';
+import { DOMEN, fullUrl } from '../constants';
 import { ElementHandle, Page } from 'puppeteer';
 import {
   actorsXpath,
@@ -15,6 +15,7 @@ import {
   writersXpath,
 } from '../xpath/role';
 import { ParsedActorDTO } from '@app/shared';
+export { fullUrl } from '../constants'
 
 @Injectable()
 export class ActorParserService {
@@ -65,10 +66,6 @@ export class ActorParserService {
     }
   }
 
-  private fullUrl(url: string) {
-    return DOMEN + url;
-  }
-
   async parsePersonsWithRole(
     page: Page,
     xpath: string,
@@ -97,10 +94,10 @@ export class ActorParserService {
         );
 
         const res = {
-          url: this.fullUrl(url),
+          url: fullUrl(url),
           fullName,
           fullNameEn,
-          photo: this.fullUrl(photo),
+          photo: fullUrl(photo),
           role,
           dub: isActor ? await this.getDublers(personHandle, role) : undefined,
         };
@@ -133,10 +130,10 @@ export class ActorParserService {
             }));
 
             return {
-              url: this.fullUrl(url),
+              url: fullUrl(url),
               fullName,
               role,
-              photo: this.fullUrl(photo),
+              photo: fullUrl(photo),
             };
           }),
         );

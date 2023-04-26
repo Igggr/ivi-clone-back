@@ -1,40 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { Page } from 'puppeteer';
-import { DOMEN } from '../constants';
+import { DOMEN, fullUrl } from '../constants';
+import { nextPageXpath, reviewPageXpath } from '../xpath/reviews';
 
 @Injectable()
 export class ReviewParserService {
-  async parseComments(page: Page, film: number) {
-    // по идее так я только первую страницу паршу - то есть надо дорабатывать
-    const reviewsPage = `${DOMEN}/film/${film}/reviews/?ord=rating`;
-    await page.goto(reviewsPage, {
-      waitUntil: 'networkidle0',
-    });
-
-    const reviewHandels = await page.$x(
-      '//div[contains(@class, "userReview")]/div[contains(@class, "response")]',
-    );
-
-    const reviews = await Promise.all(
-      reviewHandels.map(async (handle) => {
-        const res = {
-          isPositive: true, // TODO: исправить
-          title: await handle.$eval('meta', (node) =>
-            node.getAttribute('content'),
-          ),
-
-          // кто же хранит ответ пользователя в таблице ???
-          text: await handle.$eval('table', (node) => node.textContent.trim()),
-          // user: await handle.$eval('/xpath/div[@itemprop="author"]/div/p[@class="profile_name"]/a[@itemprop="name"]', (node) => ({
-          //   userName: node.textContent,
-          //   url: node.getAttribute('href'),
-          // }))
-        };
-        console.log(res);
-        return res;
-      }),
-    );
-
+  async parseReviews(page: Page, film: number) {
+    const reviews = [];
+    
+    const links = await this.getAllReviewLinks(page, film);
+    for (const link of links) {
+      // ага, ПОСЛЕДОВАТЕЛЬНО - иначе будут перетирать page
+      // Возможно можно сделать неколько page?
+      reviews.push(await this.parseOneReview(page, link))
+    }
     return reviews;
+  }
+
+  async getReviewLinksForOnePage(page: Page): Promise<string[]> {
+    const links = await page.$x(reviewPageXpath).then((handles) => handles.map((handle) => handle.$eval('a', (el) => el.getAttribute('href'))));
+           
+    return (await Promise.all(links)).map((link) => fullUrl(link))
+  }
+
+  async getAllReviewLinks(page: Page, film: number) {
+    let reviewsUrl = `${DOMEN}/film/${film}/reviews/ord/date/status/all/perpage/10/page/1/`;
+    const links = []
+    try {
+      while (true) {
+        await page.goto(reviewsUrl, {
+          waitUntil: 'networkidle0'
+        });
+        links.push(...await this.getReviewLinksForOnePage(page));
+        reviewsUrl = fullUrl(await page.waitForXPath(nextPageXpath).then((h) => h.$eval('a', (el) => el.getAttribute('href'))));
+
+      }
+    } catch (e) {
+      // когда ссылки на новую страницу не будет произойдет исключение ==> все ссылки уже были получены
+      return links;
+    }
+
+  }
+
+  async parseOneReview(page: Page, url: string) {
+    await page.goto(url, {
+      waitUntil: 'networkidle0'
+    });
   }
 }

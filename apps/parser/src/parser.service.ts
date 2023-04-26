@@ -40,7 +40,7 @@ export class ParserService {
       const views = await this.parseViews(page, film);
       const persons = await this.actorParserService.parsePersons(page, film);
       console.log('Спарсил persons');
-      const reviews = await this.reviewParserService.parseComments(page, film);
+      const reviews = await this.reviewParserService.parseReviews(page, film);
       console.log('Спарсил комменты');
 
       const res = { ...mainPageInfo, persons, views, preview, reviews };
