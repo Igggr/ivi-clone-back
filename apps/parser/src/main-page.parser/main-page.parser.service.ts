@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DOMEN } from '../constants';
+import { DOMEN, fullUrl } from '../constants';
 import { Page } from 'puppeteer';
 import {
   countryXpath,
@@ -22,7 +22,6 @@ import { CreateAgeRestrictionDTO } from '@app/shared';
 export class MainPageParserService {
   async parseMainPage(page: Page, film: number) {
     const mainUrl = `${DOMEN}/film/${film}/`;
-    console.log(`Начал парсить main page - navigatre to :${mainUrl}`);
 
     await page.goto(mainUrl, {
       waitUntil: 'networkidle0',
@@ -32,7 +31,6 @@ export class MainPageParserService {
       .waitForXPath(origTitleXpath)
       .then((handle) => handle.evaluate((node) => node.textContent));
 
-    console.log(`Получил originalTitle ${originalTitle}`);
     const { title, year } = await page
       .waitForXPath(titleXpath)
       .then((handle) =>
@@ -42,8 +40,6 @@ export class MainPageParserService {
         ),
       );
 
-    console.log(`Get title: ${title} and year: ${year}`);
-
     const country: CreateCountryDTO = await page
       .waitForXPath(countryXpath)
       .then((handle) =>
@@ -51,15 +47,12 @@ export class MainPageParserService {
           countryName: node.textContent,
           url: node.getAttribute('href'),
         })),
-      );
-
-    console.log(`Get country ${country}`);
+      ).then(({countryName, url}) => ({ countryName, url: fullUrl(url)}));
 
     const slogan = await page
       .waitForXPath(sloganXpath)
       .then((handle) => handle.evaluate((node) => node.textContent));
 
-    console.log(`Get slogan: ${slogan}`);
     const genres = await Promise.all(
       await page
         .$x(genreXpath)
@@ -70,27 +63,22 @@ export class MainPageParserService {
         ),
     );
 
-    console.log(`Get genres ${genres}`);
-
     const duration = await (
       await page.waitForXPath(timeXpath)
     ).evaluate((node) => node.textContent);
 
-    console.log(`Get duration: ${duration}`);
     const ageRestriction = await this.parseAgeRestrictions(page);
-    console.log(`Get ageRestrictions: ${ageRestriction}`);
     const res = {
       url: mainUrl,
       title,
       originalTitle,
       year: parseInt(year),
-      genres,
+      genres: genres.map(({genreName}) => genreName),
       country,
       slogan,
       duration: this.extractTime(duration),
       ageRestriction,
     };
-    console.log(`Закончил парсить main page for film ${film}`);
 
     return res;
   }
@@ -98,7 +86,6 @@ export class MainPageParserService {
   private async parseAgeRestrictions(
     page: Page,
   ): Promise<CreateAgeRestrictionDTO> {
-    console.log('Parsing age restrictions:');
     const minAge = await page
       .waitForXPath(minAgeXpath)
       .then((handle) => handle.evaluate((node) => node.textContent));
@@ -112,7 +99,6 @@ export class MainPageParserService {
       .$(`xpath/${MPAA_Link}`)
       .then((handle) => handle.evaluate((node) => node.getAttribute('href')));
 
-    console.log('Закончил парсить age restrictions');
     return {
       url: `${DOMEN}/${url}`,
       minAge: minAge,
@@ -123,9 +109,7 @@ export class MainPageParserService {
 
   private extractTime(time: string) {
     let minutes: string;
-    if (time.includes('/')) {
-      minutes = time.trim().split(/ *\/ */)[1];
-    } else if (/\d* мин\./.test(time)) {
+    if (/\d* мин\./.test(time)) {
       minutes = /(?<minutes>\d*) мин\./.exec(time).groups['minutes'];
     } else {
       throw new Error(

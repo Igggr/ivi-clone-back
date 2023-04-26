@@ -11,7 +11,7 @@ describe('ActorParserService', () => {
   let service: ActorParserService;
   let browser: Browser;
   let page: Page;
-  const url = `${DOMEN}/film/1/cast`;
+  const url = `${DOMEN}/film/326/cast`;
   let mock;
 
   beforeEach(async () => {
@@ -31,6 +31,10 @@ describe('ActorParserService', () => {
         [url]: 'apps/parser/src/actor.parser/actor.html',
       },
     });
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
   it('should parse directors', async () => {
