@@ -10,7 +10,7 @@ export class Role {
 
   @ApiProperty({ example: 'Администратор', description: 'Роль пользователя' })
   @IsString({ message: 'Должно быть строкой' })
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   value: string;
 
   @IsString({ message: 'Должно быть строкой' })

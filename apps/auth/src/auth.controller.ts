@@ -9,9 +9,12 @@ import {
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { UsersService } from './users/users.service';
 import {
+  ADD_ROLE,
+  CREATE_ROLE,
   CREATE_USER,
   DELETE_USER,
   GET_TOKEN,
+  GET_USERS,
   GET_USER_BY_EMAIL,
   LOGIN,
   UPDATE_USER,
@@ -20,6 +23,7 @@ import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { RolesService } from './roles/roles.service';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 
 @Controller()
 export class AuthController {
@@ -89,12 +93,30 @@ export class AuthController {
     return this.userService.deleteUser(userId);
   }
 
-  @MessagePattern({ cmd: CREATE_USER })
+  @MessagePattern({ cmd: CREATE_ROLE })
   createRole(@Body() roleDto: CreateRoleDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     return this.roleService.createRole(roleDto);
+  }
+
+  @MessagePattern({ cmd: ADD_ROLE })
+  addRole(@Body() roleDto: AddRoleDto, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.addRole(roleDto);
+  }
+
+  @MessagePattern({ cmd: GET_USERS })
+  getUsers(@Body() roleDto: AddRoleDto, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.getUsers();
   }
 }

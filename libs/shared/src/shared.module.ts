@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { SharedService } from './shared.service';
-import { FilesService } from './files.service';
+import { SharedService } from './services/shared.service';
+import { FilesService } from './services/files.service';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 

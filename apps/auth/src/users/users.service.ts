@@ -4,11 +4,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly roleService: RolesService,
   ) {}
 
   async createUser(userDto: CreateUserProfileDto) {
@@ -85,7 +88,7 @@ export class UsersService {
    * @returns Объект пользователя
    */
   async getUserByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email: email } });
+    const user = await this.userRepository.findOneBy({ email: email });
     return user;
   }
 
@@ -93,5 +96,27 @@ export class UsersService {
     return await bcrypt.compare(userDtoPassword, userPassword);
   }
 
-  
+  /**
+   * Добавляет новую роль
+   *
+   * @param dto Дто добавления роли
+   * @returns Дто добавленной роли
+   */
+  async addRole(dto: AddRoleDto) {
+    const user = await this.userRepository.findOneBy({ id: dto.userId });
+    const role = await this.roleService.getRoleByValue(dto.value);
+    if (user && role) {
+      user.roles = [role];
+      await this.userRepository.save(user);
+      return user;
+    }
+    return {
+      status: 'error',
+      error: 'Пользователь или роль не найдены',
+    };
+  }
+
+  async getUsers() {
+    return await this.userRepository.find({ relations: { roles: true } });
+  }
 }

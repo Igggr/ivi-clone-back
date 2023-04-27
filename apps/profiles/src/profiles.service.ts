@@ -7,7 +7,7 @@ import {
 } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { Profile } from '@app/shared/entities/profile.entity';
-import { FilesService } from '@app/shared/files.service';
+import { FilesService } from '@app/shared/services/files.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -49,7 +49,9 @@ export class ProfilesService {
       const newUser = await firstValueFrom(
         this.authService.send({ cmd: CREATE_USER }, userProfileDto),
       );
-      console.log(__dirname);
+      if (newUser.status === 'error') {
+        return newUser;
+      }
       const profile = await this.profileRepository.create({
         ...userProfileDto,
         userId: newUser.id,
@@ -57,7 +59,6 @@ export class ProfilesService {
         creationDate: new Date(),
       });
       await this.profileRepository.save(profile);
-
       return await firstValueFrom(
         this.authService.send({ cmd: GET_TOKEN }, newUser),
       );

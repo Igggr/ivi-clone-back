@@ -9,3 +9,4 @@ export const DELETE_PROFILE = 'delete-profile';
 export const DELETE_USER = 'delete-user';
 export const CREATE_ROLE = 'create-role';
 export const ADD_ROLE = 'add-role';
+export const GET_USERS = 'get-users';

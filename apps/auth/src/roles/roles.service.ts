@@ -17,9 +17,27 @@ export class RolesService {
    * @returns Объект роли
    */
   async createRole(dto: CreateRoleDto) {
-    const role = await this.roleRepository.create(dto);
-    await this.roleRepository.save(role);
+    const role = await this.roleRepository.findOneBy({ value: dto.value });
+    if (role) {
+      return {
+        status: 'error',
+        error: 'Такая роль уже существует',
+      };
+    }
+    const newRole = await this.roleRepository.create(dto);
+    await this.roleRepository.save(newRole);
 
+    return newRole;
+  }
+
+  /**
+   * Получает роль по значению
+   *
+   * @param value Значение роли
+   * @returns Объект роли
+   */
+  async getRoleByValue(value: string) {
+    const role = await this.roleRepository.findOneBy({ value: value });
     return role;
   }
 }

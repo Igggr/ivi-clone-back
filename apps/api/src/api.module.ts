@@ -6,7 +6,8 @@ import { ProfilesController } from './controllers/profile.controller';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { SharedModule } from '@app/shared/shared.module';
-import { FilesService } from '@app/shared/files.service';
+import { FilesService } from '@app/shared/services/files.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -31,6 +32,12 @@ import { FilesService } from '@app/shared/files.service';
         },
       },
     ]),
+    JwtModule.register({
+      secret: process.env.PRIVATE_KEY ?? 'SECRET',
+      signOptions: {
+        expiresIn: '24h',
+      },
+    }),
     ClientsModule.register([
       {
         name: 'PROFILES',

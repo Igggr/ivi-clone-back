@@ -1,6 +1,6 @@
 import { DELETE_PROFILE, REGISTRATION, UPDATE_PROFILE } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { FilesService } from '@app/shared/files.service';
+import { FilesService } from '@app/shared/services/files.service';
 import {
   Body,
   Controller,
@@ -12,11 +12,15 @@ import {
   Post,
   Put,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { firstValueFrom } from 'rxjs';
+import { ProfilesGuard } from '../guards/profile-auth.guard';
+import { Roles } from '../guards/roles-auth.decorator';
+import { RolesGuard } from '../guards/roles.guard';
 
 @Controller()
 export class ProfilesController {
@@ -44,12 +48,15 @@ export class ProfilesController {
       ),
     );
     if (res.status === 'error') {
+      await this.fileService.deleteFile(namePhoto);
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;
   }
 
   @Put('/profiles/:id')
+  @UseGuards(ProfilesGuard)
+  @Roles('ADMIN')
   @UseInterceptors(FileInterceptor('photo'))
   async updateProfile(
     @Param('id') profileId: number,
@@ -73,12 +80,15 @@ export class ProfilesController {
       ),
     );
     if (res.status === 'error') {
+      await this.fileService.deleteFile(namePhoto);
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;
   }
 
   @Delete('/profiles/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN')
   async deleteProfile(@Param('id') profileId: number) {
     const res = await firstValueFrom(
       this.profileService.send(
