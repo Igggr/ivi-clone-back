@@ -12,14 +12,14 @@ import { DELETE_PROFILE, REGISTRATION, UPDATE_PROFILE } from '@app/shared';
 export class ProfilesController {
   constructor(private readonly profileService: ProfilesService) {}
 
-  @MessagePattern({ cmd: 'get-profiles' })
-  getProfiles(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+  // @MessagePattern({ cmd: 'get-profiles' })
+  // getProfiles(@Ctx() context: RmqContext) {
+  //   const channel = context.getChannelRef();
+  //   const message = context.getMessage();
+  //   channel.ack(message);
 
-    return this.profileService.getAllProfiles();
-  }
+  //   return this.profileService.getAllProfiles();
+  // }
 
   @MessagePattern({ cmd: REGISTRATION })
   async registration(@Body() userProfileInfo, @Ctx() context: RmqContext) {

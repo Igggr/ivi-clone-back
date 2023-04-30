@@ -112,11 +112,20 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: GET_USERS })
-  getUsers(@Body() roleDto: AddRoleDto, @Ctx() context: RmqContext) {
+  getUsers(@Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     return this.userService.getUsers();
   }
+
+  // @MessagePattern({ cmd: GET_ROLES })
+  // getRoles(@Body() user: User, @Ctx() context: RmqContext) {
+  //   const channel = context.getChannelRef();
+  //   const message = context.getMessage();
+  //   channel.ack(message);
+
+  //   return this.userService.getRoles(user);
+  // }
 }

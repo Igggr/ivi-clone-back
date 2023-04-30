@@ -11,9 +11,11 @@ import {
   Inject,
   Post,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller()
 export class AuthController {
@@ -68,6 +70,7 @@ export class AuthController {
   }
 
   @Get('/users')
+  @UseGuards(JwtAuthGuard)
   async getUsers() {
     return await this.authService.send(
       {

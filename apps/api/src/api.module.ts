@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthController } from './controllers/auth.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
@@ -8,6 +8,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { SharedModule } from '@app/shared/shared.module';
 import { FilesService } from '@app/shared/services/files.service';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtMiddleware } from './jwt-middleware';
 
 @Module({
   imports: [
@@ -56,4 +57,8 @@ import { JwtModule } from '@nestjs/jwt';
   controllers: [AuthController, ProfilesController],
   providers: [FilesService],
 })
-export class ApiModule {}
+export class ApiModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleware).forRoutes(ProfilesController);
+  }
+}

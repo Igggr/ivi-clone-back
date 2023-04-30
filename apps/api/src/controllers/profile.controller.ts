@@ -20,7 +20,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { firstValueFrom } from 'rxjs';
 import { ProfilesGuard } from '../guards/profile-auth.guard';
 import { Roles } from '../guards/roles-auth.decorator';
-import { RolesGuard } from '../guards/roles.guard';
 
 @Controller()
 export class ProfilesController {
@@ -35,7 +34,11 @@ export class ProfilesController {
     @Body() userProfileDto: CreateUserProfileDto,
     @UploadedFile() photo,
   ) {
-    const namePhoto = await this.fileService.createFile(photo);
+    let namePhoto;
+    console.log(photo);
+    if (photo) {
+      namePhoto = await this.fileService.createFile(photo);
+    }
     const res = await firstValueFrom(
       this.profileService.send(
         {
@@ -48,7 +51,9 @@ export class ProfilesController {
       ),
     );
     if (res.status === 'error') {
-      await this.fileService.deleteFile(namePhoto);
+      if (namePhoto) {
+        await this.fileService.deleteFile(namePhoto);
+      }
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;
@@ -80,14 +85,16 @@ export class ProfilesController {
       ),
     );
     if (res.status === 'error') {
-      await this.fileService.deleteFile(namePhoto);
+      if (namePhoto) {
+        await this.fileService.deleteFile(namePhoto);
+      }
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;
   }
 
   @Delete('/profiles/:id')
-  @UseGuards(RolesGuard)
+  @UseGuards(ProfilesGuard)
   @Roles('ADMIN')
   async deleteProfile(@Param('id') profileId: number) {
     const res = await firstValueFrom(

@@ -7,13 +7,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { ROLES_KEY } from './roles-auth.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(private reflector: Reflector) {}
 
   /**
    * Дает разрешение на использование эндпоинта
@@ -42,11 +41,8 @@ export class RolesGuard implements CanActivate {
           message: 'Пользователь не авторизован',
         });
       }
-      const user = this.jwtService.verify(token);
-      console.log(user);
 
-      req.user = user;
-      return user.roles.some((role) => requiredRoles.includes(role.value));
+      return req.user.roles.some((role) => requiredRoles.includes(role.value));
     } catch (error) {
       throw new HttpException({ message: 'Нет доступа' }, HttpStatus.FORBIDDEN);
     }

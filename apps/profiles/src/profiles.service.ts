@@ -114,6 +114,12 @@ export class ProfilesService {
   async deleteUserProfile(profileId: number) {
     try {
       const profile = await this.profileRepository.findOneBy({ id: profileId });
+      if (!profile) {
+        return {
+          status: 'error',
+          error: 'Профиль не найден',
+        };
+      }
       const userId = profile.userId;
       const user = await firstValueFrom(
         this.authService.send({ cmd: DELETE_USER }, userId),

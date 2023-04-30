@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
@@ -27,8 +26,14 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Role, (role) => role.users, { cascade: true })
   @JoinTable()
-  @JoinColumn({ name: 'roles' })
   roles: Role[];
+
+  addRole(role: Role) {
+    if (this.roles == null) {
+      this.roles = new Array<Role>();
+    }
+    this.roles.push(role);
+  }
 }

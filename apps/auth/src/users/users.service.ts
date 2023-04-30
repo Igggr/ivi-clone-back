@@ -4,8 +4,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { RolesService } from '../roles/roles.service';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +21,8 @@ export class UsersService {
         ...userDto,
         password: hashPassword,
       });
+      const role = await this.roleService.getRoleByValue('USER');
+      user.addRole(role);
       await this.userRepository.save(user);
 
       return user;
@@ -88,7 +90,10 @@ export class UsersService {
    * @returns Объект пользователя
    */
   async getUserByEmail(email: string) {
-    const user = await this.userRepository.findOneBy({ email: email });
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+      relations: { roles: true },
+    });
     return user;
   }
 
@@ -106,7 +111,7 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({ id: dto.userId });
     const role = await this.roleService.getRoleByValue(dto.value);
     if (user && role) {
-      user.roles = [role];
+      user.addRole(role);
       await this.userRepository.save(user);
       return user;
     }
