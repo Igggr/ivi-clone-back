@@ -59,8 +59,7 @@ export class AuthController {
 
   @Get('status')
   googleUser(@Req() request: Request) {
-    console.log(request.user);
-    if (request) {
+    if (request.user) {
       return { msg: 'Authenticated' };
     } else {
       return { msg: 'Not Authenticated' };
@@ -69,6 +68,6 @@ export class AuthController {
 
   @Get()
   getHello(): string {
-    return 'HI';
+    return 'Hi';
   }
 }

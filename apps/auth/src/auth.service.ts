@@ -64,11 +64,15 @@ export class AuthService {
   async validateGoogleUser(details: CreateGoogleUserDetailsDto) {
     console.log('Auth Service');
     console.log(details);
-    const user = this.googleUserRepository.findOneBy({ email: details.email });
-    console.log(user);
-    if (user) return user;
-    const newGoogleUser = this.googleUserRepository.create(details);
-    return this.googleUserRepository.save(newGoogleUser);
+    const user = await this.googleUserRepository.findOneBy({
+      email: details.email,
+    });
+    if (user) {
+      return user;
+    }
+    console.log('User not found');
+    const newGoogleUser = await this.googleUserRepository.create(details);
+    return await this.googleUserRepository.save(newGoogleUser);
   }
 
   async findGoogleUser(userId: number) {

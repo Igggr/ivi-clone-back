@@ -4,6 +4,7 @@ import { Controller, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
+import { firstValueFrom } from 'rxjs';
 
 @Controller()
 @Injectable()
@@ -27,12 +28,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       profile.displayName,
     );
     console.log(details);
-    const user = await this.authService.send(
-      {
-        cmd: VALIDATE_GOOGLE_USER,
-      },
-      details,
+    const user = await firstValueFrom(
+      this.authService.send(
+        {
+          cmd: VALIDATE_GOOGLE_USER,
+        },
+        details,
+      ),
     );
+    console.log('Validate');
+    console.log(user);
     return user || null;
   }
 }
