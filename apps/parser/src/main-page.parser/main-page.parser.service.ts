@@ -16,7 +16,7 @@ import {
   restrictionShortDescriptionXpath,
 } from '../xpath/age-restriction';
 import { CreateCountryDTO } from '@app/shared/dto/create-country.dto';
-import { CreateAgeRestrictionDTO } from '@app/shared';
+import { CreateAgeRestrictionDTO, CreateGenreDTO } from '@app/shared';
 
 @Injectable()
 export class MainPageParserService {
@@ -54,16 +54,7 @@ export class MainPageParserService {
       .waitForXPath(sloganXpath)
       .then((handle) => handle.evaluate((node) => node.textContent));
 
-    const genres = await Promise.all(
-      await page
-        .$x(genreXpath)
-        .then((handles) =>
-          handles.map((handle) =>
-            handle.evaluate((node) => ({ genreName: node.textContent })),
-          ),
-        ),
-    );
-
+    const genres = await this.getGenres(page);
     const duration = await (
       await page.waitForXPath(timeXpath)
     ).evaluate((node) => node.textContent);
@@ -74,7 +65,7 @@ export class MainPageParserService {
       title,
       originalTitle,
       year: parseInt(year),
-      genres: genres.map(({ genreName }) => genreName),
+      genres,
       country,
       slogan,
       duration: this.extractTime(duration),
@@ -84,6 +75,24 @@ export class MainPageParserService {
     return res;
   }
 
+  private async getGenres(page: Page): Promise<CreateGenreDTO[]> {
+    const regexp = /\/lists\/movies\/genre--(?<genreNameEn>[A-Za-z]+)\//
+    const genres = await Promise.all(
+      await page
+        .$x(genreXpath)
+        .then((handles) =>
+          handles.map((handle) =>
+            handle.$eval('a', (el) => ({
+              genreName: el.textContent,
+              href: el.getAttribute('href'),
+            })
+            )
+          ),
+      )
+    )
+    return genres.map(({href, genreName}) => ({genreName, url: fullUrl(href), genreNameEn: regexp.exec(href).groups.genreNameEn }));
+  }
+  
   private async parseAgeRestrictions(
     page: Page,
   ): Promise<CreateAgeRestrictionDTO> {

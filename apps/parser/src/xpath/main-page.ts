@@ -2,7 +2,7 @@ export const titleXpath =
   '//div[starts-with(@class, "styles_title")]/h1[starts-with(@class, "styles_title")]/span';
 export const origTitleXpath =
   '//span[starts-with(@class, "styles_originalTitle")]';
-export const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]';
+export const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]/parent::*';
 export const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
 
 // DOM состоит просто из мусора. Ни id, ни внятных классов.

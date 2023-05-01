@@ -45,7 +45,13 @@ describe('ActorParserService', () => {
       originalTitle: 'The Shawshank Redemption',
       year: 1994,
       slogan: '«Страх - это кандалы. Надежда - это свобода»',
-      genres: ['драма'],
+      genres: [
+        {
+          genreName: "драма",
+          genreNameEn: "drama",
+          url: "https://www.kinopoisk.ru/lists/movies/genre--drama/?b=films&b=top",
+        },
+      ],
       country: {
         countryName: 'США',
         url: 'https://www.kinopoisk.ru/lists/movies/country--1/?b=films&b=top',
