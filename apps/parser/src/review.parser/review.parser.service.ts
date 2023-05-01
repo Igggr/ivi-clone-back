@@ -83,15 +83,19 @@ export class ReviewParserService {
         userName,
         url: fullUrl(userUrl),
       },
-      comments: await this.parseComments(page)
+      comments: await this.parseComments(page),
     };
   }
 
   async parseComments(page: Page) {
     const handles = await page.$x(commentXpath);
     const comments = handles.map(async (handle) => ({
-      url: fullUrl(await handle.$eval('div.toppy>a.anchor', (el) => el.getAttribute('href'))),
-      text: replaceNbsp(await handle.$eval('p.text', el => el.textContent)),
+      url: fullUrl(
+        await handle.$eval('div.toppy>a.anchor', (el) =>
+          el.getAttribute('href'),
+        ),
+      ),
+      text: replaceNbsp(await handle.$eval('p.text', (el) => el.textContent)),
       commentId: await this.getCommentId(handle),
       parentId: await this.getParentId(handle),
       user: await this.getUserInfo(handle),
@@ -101,20 +105,28 @@ export class ReviewParserService {
   }
 
   private async getCommentDate(handle: ElementHandle<Node>) {
-    const date = (await handle.$eval('b.date', (el) => el.textContent)).replace(' пожаловаться', '')
+    const date = (await handle.$eval('b.date', (el) => el.textContent)).replace(
+      ' пожаловаться',
+      '',
+    );
     return replaceNbsp(date);
   }
   private async getUserPhoto(handle: ElementHandle<Node>) {
     try {
-      return await handle.$eval('div.toppy>img', el => el.getAttribute('src'));
+      return await handle.$eval('div.toppy>img', (el) =>
+        el.getAttribute('src'),
+      );
     } catch {
       return null; // увы - отсутствие этого элемента вполне допустимо - больше задержек
     }
-  }  
+  }
 
   private async getParentId(handle: ElementHandle<Node>) {
     try {
-      const gotoParent = await handle.$eval('b.arrows>a[onclick*="gotoParent"]', el => el.getAttribute('onclick'));
+      const gotoParent = await handle.$eval(
+        'b.arrows>a[onclick*="gotoParent"]',
+        (el) => el.getAttribute('onclick'),
+      );
       const regexp = /gotoParent\((?<parentId>\d*), *(?<commentId>\d*)\)/;
       if (regexp.test(gotoParent)) {
         return regexp.exec(gotoParent).groups.parentId;
@@ -125,17 +137,22 @@ export class ReviewParserService {
   }
 
   private async getCommentId(handle: ElementHandle<Node>) {
-    const commentId = await handle.$eval('div.toppy', (el) => el.getAttribute('id'));
+    const commentId = await handle.$eval('div.toppy', (el) =>
+      el.getAttribute('id'),
+    );
     return /comment(?<commentId>\d*)/.exec(commentId).groups.commentId;
   }
 
   private async getUserInfo(handle: ElementHandle<Node>) {
     const photo = await this.getUserPhoto(handle);
-    const { name, url } = await handle.$eval('p.profile_name>a.name', (el) => ({ name: el.textContent, url: el.getAttribute('href') }));
+    const { name, url } = await handle.$eval('p.profile_name>a.name', (el) => ({
+      name: el.textContent,
+      url: el.getAttribute('href'),
+    }));
     return {
       photo: fullUrl(photo),
       url: fullUrl(url),
-      name
-    }
+      name,
+    };
   }
 }

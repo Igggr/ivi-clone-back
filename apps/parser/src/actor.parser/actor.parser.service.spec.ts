@@ -71,15 +71,13 @@ describe('ActorParserService', () => {
         dub: [
           {
             fullName: 'Диомид Виноградов',
-            photo:
-              'https://st.kp.yandex.net/images/sm_actor/1781077.jpg',
+            photo: 'https://st.kp.yandex.net/images/sm_actor/1781077.jpg',
             role: '... Andy Dufresne',
             url: 'https://www.kinopoisk.ru/name/1781077/',
           },
           {
             fullName: 'Иван Литвиненко',
-            photo:
-              'https://st.kp.yandex.net/images/sm_actor/1826342.jpg',
+            photo: 'https://st.kp.yandex.net/images/sm_actor/1826342.jpg',
             role: '... Andy Dufresne',
             url: 'https://www.kinopoisk.ru/name/1826342/',
           },
@@ -94,8 +92,7 @@ describe('ActorParserService', () => {
         dub: [
           {
             fullName: 'Игорь Старосельцев',
-            photo:
-              'https://st.kp.yandex.net/images/sm_actor/701366.jpg',
+            photo: 'https://st.kp.yandex.net/images/sm_actor/701366.jpg',
             role: '... Ellis Boyd «Red» Redding',
             url: 'https://www.kinopoisk.ru/name/701366/',
           },

@@ -8,4 +8,5 @@ export const reviewerXpath =
   '//p[contains(@class, "profile_name")]/a[starts-with(@href, "/user/") and not (contains(@href, "comment")) ]';
 
 // хождение вверх-вниз для фильтрации
-export const commentXpath = '//ul[@class="comment_list"]/li[starts-with(@class, "answer")]//p[@class="text"]/ancestor::li[starts-with(@class, "answer")]';
+export const commentXpath =
+  '//ul[@class="comment_list"]/li[starts-with(@class, "answer")]//p[@class="text"]/ancestor::li[starts-with(@class, "answer")]';

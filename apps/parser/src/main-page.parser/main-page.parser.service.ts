@@ -76,23 +76,24 @@ export class MainPageParserService {
   }
 
   private async getGenres(page: Page): Promise<CreateGenreDTO[]> {
-    const regexp = /\/lists\/movies\/genre--(?<genreNameEn>[A-Za-z]+)\//
+    const regexp = /\/lists\/movies\/genre--(?<genreNameEn>[A-Za-z]+)\//;
     const genres = await Promise.all(
-      await page
-        .$x(genreXpath)
-        .then((handles) =>
-          handles.map((handle) =>
-            handle.$eval('a', (el) => ({
-              genreName: el.textContent,
-              href: el.getAttribute('href'),
-            })
-            )
-          ),
-      )
-    )
-    return genres.map(({href, genreName}) => ({genreName, url: fullUrl(href), genreNameEn: regexp.exec(href).groups.genreNameEn }));
+      await page.$x(genreXpath).then((handles) =>
+        handles.map((handle) =>
+          handle.$eval('a', (el) => ({
+            genreName: el.textContent,
+            href: el.getAttribute('href'),
+          })),
+        ),
+      ),
+    );
+    return genres.map(({ href, genreName }) => ({
+      genreName,
+      url: fullUrl(href),
+      genreNameEn: regexp.exec(href).groups.genreNameEn,
+    }));
   }
-  
+
   private async parseAgeRestrictions(
     page: Page,
   ): Promise<CreateAgeRestrictionDTO> {

@@ -47,9 +47,9 @@ describe('ActorParserService', () => {
       slogan: '«Страх - это кандалы. Надежда - это свобода»',
       genres: [
         {
-          genreName: "драма",
-          genreNameEn: "drama",
-          url: "https://www.kinopoisk.ru/lists/movies/genre--drama/?b=films&b=top",
+          genreName: 'драма',
+          genreNameEn: 'drama',
+          url: 'https://www.kinopoisk.ru/lists/movies/genre--drama/?b=films&b=top',
         },
       ],
       country: {

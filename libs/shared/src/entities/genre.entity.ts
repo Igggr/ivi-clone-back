@@ -6,10 +6,10 @@ export class Genre {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   url: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   genreName: string;
 
   @Column({ nullable: true })
