@@ -9,6 +9,7 @@ import {
   reviewTitleXpath,
   reviewerXpath,
 } from '../xpath/reviews';
+import { ParsedCommentDTO, ParsedProfileDTO, ParsedReviewDTO } from '@app/shared';
 
 @Injectable()
 export class ReviewParserService {
@@ -57,7 +58,7 @@ export class ReviewParserService {
     }
   }
 
-  async parseOneReview(page: Page, url: string) {
+  async parseOneReview(page: Page, url: string): Promise<ParsedReviewDTO> {
     await page.goto(url, {
       waitUntil: 'networkidle0',
     });
@@ -66,30 +67,33 @@ export class ReviewParserService {
       `xpath/${reviewTitleXpath}`,
       (el) => el.textContent,
     );
-    const body = await page.$eval(
+    const text = await page.$eval(
       `xpath/${reviewBodyXpath}`,
       (el) => el.innerHTML,
     );
-    const { userName, userUrl } = await page.$eval(
+    const { name, userUrl } = await page.$eval(
       `xpath/${reviewerXpath}`,
-      (el) => ({ userName: el.textContent, userUrl: el.getAttribute('href') }),
+      (el) => ({ name: el.textContent, userUrl: el.getAttribute('href') }),
     );
+
+    const photo = await page.$eval(`xpath/${reviewerXpath}/parent::p/parent::div/parent::td/parent::tr/parent::tbody/tr/td/img`, (el) => el.getAttribute('src'))
 
     return {
       url,
       title,
-      body,
-      user: {
-        userName,
+      text,
+      profile: {
+        name,
         url: fullUrl(userUrl),
+        photo: fullUrl(photo),
       },
       comments: await this.parseComments(page),
     };
   }
 
-  async parseComments(page: Page) {
+  async parseComments(page: Page): Promise<ParsedCommentDTO[]> {
     const handles = await page.$x(commentXpath);
-    const comments = handles.map(async (handle) => ({
+    const comments: Promise<ParsedCommentDTO>[] = handles.map(async (handle) => ({
       url: fullUrl(
         await handle.$eval('div.toppy>a.anchor', (el) =>
           el.getAttribute('href'),
@@ -98,7 +102,7 @@ export class ReviewParserService {
       text: replaceNbsp(await handle.$eval('p.text', (el) => el.textContent)),
       commentId: await this.getCommentId(handle),
       parentId: await this.getParentId(handle),
-      user: await this.getUserInfo(handle),
+      profile: await this.getUserInfo(handle),
       date: await this.getCommentDate(handle),
     }));
     return Promise.all(comments);
@@ -111,6 +115,7 @@ export class ReviewParserService {
     );
     return replaceNbsp(date);
   }
+
   private async getUserPhoto(handle: ElementHandle<Node>) {
     try {
       return await handle.$eval('div.toppy>img', (el) =>
@@ -143,7 +148,7 @@ export class ReviewParserService {
     return /comment(?<commentId>\d*)/.exec(commentId).groups.commentId;
   }
 
-  private async getUserInfo(handle: ElementHandle<Node>) {
+  private async getUserInfo(handle: ElementHandle<Node>): Promise<ParsedProfileDTO> {
     const photo = await this.getUserPhoto(handle);
     const { name, url } = await handle.$eval('p.profile_name>a.name', (el) => ({
       name: el.textContent,

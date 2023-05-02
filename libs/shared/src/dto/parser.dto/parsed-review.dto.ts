@@ -1,7 +1,13 @@
-import { CreateReviewDTO } from '../create-review.dto';
-import { OmitType } from '@nestjs/swagger';
+import { OmitType, PickType } from '@nestjs/swagger';
+import { ParsedCommentDTO } from './parsed-comment.dto';
+import { ParsedProfileDTO } from './parsed-profile.dto';
+import { Review } from '@app/shared/entities';
 
-export class ParsedReviewDTO extends OmitType(CreateReviewDTO, [
-  'filmId',
-  'profileId',
-]) {}
+export class ParsedReviewDTO extends PickType(Review, [
+  'title',
+  'text',
+  'url'
+]) {
+  comments: ParsedCommentDTO[];
+  profile: ParsedProfileDTO;
+}

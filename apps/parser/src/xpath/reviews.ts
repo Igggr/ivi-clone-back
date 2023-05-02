@@ -5,7 +5,7 @@ export const reviewPageXpath =
 export const reviewTitleXpath = '//p[@class="sub_title"]';
 export const reviewBodyXpath = '//span[@itemProp="reviewBody"]';
 export const reviewerXpath =
-  '//p[contains(@class, "profile_name")]/a[starts-with(@href, "/user/") and not (contains(@href, "comment")) ]';
+  '//div[@class="profileCommentHeader"]/p[contains(@class, "profile_name")]/a[starts-with(@href, "/user/") and not (contains(@href, "comment")) ]';
 
 // хождение вверх-вниз для фильтрации
 export const commentXpath =

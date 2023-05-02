@@ -66,17 +66,18 @@ describe('ReviewParserService', () => {
 
   it('should be able to parse review', async () => {
     const review = await service.parseOneReview(page, review1);
-    expect(review.body).toContain('Рискуя вызвать критику');
+    expect(review.text).toContain('Рискуя вызвать критику');
 
-    delete review.body;
+    delete review.text;
     delete review.comments;
 
     const expected = {
       title: 'Фактор денег',
       url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/',
-      user: {
+      profile: {
         url: 'https://www.kinopoisk.ru/user/1928945/',
-        userName: 'Дмитрий Кожин',
+        name: 'Дмитрий Кожин',
+        photo: "https://avatars.mds.yandex.net/get-kino-vod-users-avatar/57335/1928945-10.jpg/46x73",
       },
     };
 
@@ -96,7 +97,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'для меня малоубедительно.',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1155555/#comm1155555',
-        user: {
+        profile: {
           name: 'cyberlaw',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/33806/2026005-59-477839.jpg/46x73',
@@ -109,7 +110,7 @@ describe('ReviewParserService', () => {
         parentId: '1155555',
         text: 'не хватает мозгов понять, что это',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1446367/#comm1446367',
-        user: {
+        profile: {
           name: 'Sheemoozeeck',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/34118/954629-04-229914.jpg/46x73',
@@ -122,7 +123,7 @@ describe('ReviewParserService', () => {
         parentId: '1446367',
         text: '@Sheemoozeeck смешной комментарий, очень',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1452794/#comm1452794',
-        user: {
+        profile: {
           name: 'cyberlaw',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/33806/2026005-59-477839.jpg/46x73',
@@ -135,7 +136,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Хм фильм на реальных событиях,',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1227419/#comm1227419',
-        user: {
+        profile: {
           name: '-EcLiPsE-',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/27708/946161-44-400456.jpg/46x73',
@@ -148,7 +149,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'О деньгах??',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1287097/#comm1287097',
-        user: {
+        profile: {
           name: 'DinamiTT',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/69337/2137198-07-491933.jpg/46x73',
@@ -161,7 +162,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Главный герой рассказывает о несчастной',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1312811/#comm1312811',
-        user: {
+        profile: {
           name: 'dbz',
           photo: null,
           url: 'https://www.kinopoisk.ru/user/2371585/',
@@ -173,7 +174,7 @@ describe('ReviewParserService', () => {
         parentId: '1312811',
         text: 'Да причем тут зависть? Я делаю',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1312875/#comm1312875',
-        user: {
+        profile: {
           name: 'Дмитрий Кожин',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/57335/1928945-10.jpg/46x73',
@@ -186,7 +187,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Все по теме абсолютно. Взывают',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1534041/#comm1534041',
-        user: {
+        profile: {
           name: 'lowkick89',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/33806/2844182-37-301425.jpg/46x73',
@@ -199,7 +200,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Рецензия прямо транслирует мои мысли',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1584291/#comm1584291',
-        user: {
+        profile: {
           name: 'MaryJames',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/69337/617531-44-388736.jpg/46x73',
@@ -212,7 +213,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Черт, рецензия убедила, но и фильм',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1605204/#comm1605204',
-        user: {
+        profile: {
           name: 'GenneArt',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/27708/1477606-24-682768.jpg/46x73',
@@ -225,7 +226,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Вообще не об этом…',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2439644/#comm2439644',
-        user: {
+        profile: {
           name: 'Nadispb',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/28790/1009469-56-565657.jpg/46x73',
@@ -238,7 +239,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Ваша точка зрения имеет место быть, но,',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2462169/#comm2462169',
-        user: {
+        profile: {
           name: 'Эльдар Горов',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/27708/75502679-21-974867.jpg/46x73',
@@ -251,7 +252,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Автор, чвно, не читал и не слышал',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2479510/#comm2479510',
-        user: {
+        profile: {
           name: 'Иван Плотников - 5289',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/28790/56750570-49-623079.jpg/46x73',
@@ -264,7 +265,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Вау! А что не сравнить',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2488953/#comm2488953',
-        user: {
+        profile: {
           name: 'Nadispb',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/28790/1009469-56-565657.jpg/46x73',
@@ -277,7 +278,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'бред высказал, человек. абсолютный бред.',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2495973/#comm2495973',
-        user: {
+        profile: {
           name: 'convall',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/1659927/2a0000016f388480b978cbbfbfe5dc114b5f/46x73',
@@ -290,7 +291,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Чтобы понять о чем фильм, достаточно',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2496730/#comm2496730',
-        user: {
+        profile: {
           name: 'maxsmola',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/34118/2a000001668b9748f2c2e179f7df705e7751/46x73',
@@ -303,7 +304,7 @@ describe('ReviewParserService', () => {
         parentId: undefined,
         text: 'Вы смотрели с какой-то обидной',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2502575/#comm2502575',
-        user: {
+        profile: {
           name: 'kapitan.ekler',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/69337/63778975-6-588178.jpg/46x73',

@@ -15,6 +15,9 @@ export class Review {
   id: number;
 
   @Column()
+  url: string;
+
+  @Column()
   title: string;
 
   @Column()
