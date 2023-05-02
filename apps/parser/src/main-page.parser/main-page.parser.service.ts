@@ -90,7 +90,7 @@ export class MainPageParserService {
     return genres.map(({ href, genreName }) => ({
       genreName,
       url: fullUrl(href),
-      genreNameEn: regexp.exec(href).groups.genreNameEn,
+      genreNameEn: regexp.exec(href)?.groups?.genreNameEn,
     }));
   }
 

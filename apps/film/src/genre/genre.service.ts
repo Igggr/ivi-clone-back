@@ -28,7 +28,9 @@ export class GenreService {
   }
 
   async ensureAllGenresExists(genresDTO: CreateGenreDTO[]): Promise<Genre[]> {
-    const genres = genresDTO.map(async (dto) => await this.ensureGenreExist(dto));
+    const genres = genresDTO.map(
+      async (dto) => await this.ensureGenreExist(dto),
+    );
     return Promise.all(genres);
   }
 }

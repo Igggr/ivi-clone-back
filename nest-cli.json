@@ -6,7 +6,9 @@
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/api/tsconfig.app.json",
-    "plugins": ["@nestjs/swagger/plugin"]
+    "plugins": [
+      "@nestjs/swagger/plugin"
+    ]
   },
   "monorepo": true,
   "root": "apps/api",
@@ -81,6 +83,15 @@
       "sourceRoot": "apps/profiles/src",
       "compilerOptions": {
         "tsConfigPath": "apps/profiles/tsconfig.app.json"
+      }
+    },
+    "parser-simulator": {
+      "type": "application",
+      "root": "apps/parser-simulator",
+      "entryFile": "main",
+      "sourceRoot": "apps/parser-simulator/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/parser-simulator/tsconfig.app.json"
       }
     }
   }

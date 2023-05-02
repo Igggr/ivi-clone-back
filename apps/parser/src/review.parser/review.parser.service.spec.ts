@@ -77,7 +77,8 @@ describe('ReviewParserService', () => {
       profile: {
         url: 'https://www.kinopoisk.ru/user/1928945/',
         name: 'Дмитрий Кожин',
-        photo: "https://avatars.mds.yandex.net/get-kino-vod-users-avatar/57335/1928945-10.jpg/46x73",
+        photo:
+          'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/57335/1928945-10.jpg/46x73',
       },
     };
 

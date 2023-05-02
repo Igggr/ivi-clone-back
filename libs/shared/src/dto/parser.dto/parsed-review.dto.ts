@@ -6,7 +6,7 @@ import { Review } from '@app/shared/entities';
 export class ParsedReviewDTO extends PickType(Review, [
   'title',
   'text',
-  'url'
+  'url',
 ]) {
   comments: ParsedCommentDTO[];
   profile: ParsedProfileDTO;
