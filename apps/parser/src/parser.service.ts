@@ -108,7 +108,7 @@ export class ParserService {
       const src = await page
         .$(`xpath/${previewFrame(film)}`)
         .then((handle) => handle.evaluate((el) => el.getAttribute('src')));
-      console.log(`Успешно спарисл preview для ${film}`);
+      console.log(`Успешно спарсил preview для ${film}`);
       return src;
     } catch {
       console.log(`Не удалось спарить preview для ${film}`);
@@ -147,7 +147,7 @@ export class ParserService {
       ),
     );
 
-    console.log('Спарисл views');
+    console.log('Спарсил views');
     return views;
   }
 }

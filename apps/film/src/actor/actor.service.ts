@@ -15,7 +15,7 @@ export class ActorService {
     private readonly actorRoleService: ActorRoleService,
   ) {}
 
-  async ensureActorExist(dto: CreateActorDTO) {
+  private async ensureActorExist(dto: CreateActorDTO) {
     const actor = await this.actorRepository.findOne({
       where: { url: Equal(dto.url) },
     });
@@ -24,6 +24,23 @@ export class ActorService {
     }
     const newActor = await this.actorRepository.create(dto);
     return await this.actorRepository.save(newActor);
+  }
+
+  private async ensureAllActorsExists(
+    persons: Record<RoleType, ParsedActorDTO[]>,
+  ) {
+    const savedActors = new Map<string, Actor>();
+
+    // да. именно одн за другим - иначе один актер может одновременно начать сохраняться 2 раза
+    // например как продюсер и режисер - нарушт ограничение уникальностт url на его страницу на кинопоиске
+    Object.values(persons)
+      .flat()
+      .forEach(async (actor) => {
+        if (!savedActors.has(actor.url)) {
+          savedActors.set(actor.url, await this.ensureActorExist(actor));
+        }
+      });
+    return savedActors;
   }
 
   async bulkCreate(
@@ -37,10 +54,12 @@ export class ActorService {
       Object.keys(persons),
     );
 
+    const savedActors = await this.ensureAllActorsExists(persons);
+
     const actorRoles = await Promise.all(
       Object.entries(persons).flatMap(([roleName, actors]) =>
         actors.map(async (dto) => ({
-          actor: await this.ensureActorExist(dto),
+          actor: savedActors.get(dto.url),
           role: roles.get(roleName),
           dto,
         })),
