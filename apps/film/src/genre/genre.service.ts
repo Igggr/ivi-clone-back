@@ -11,7 +11,7 @@ export class GenreService {
     private readonly genreRepository: Repository<Genre>,
   ) {}
 
-  private async ensureGenreExist(dto: CreateGenreDTO) {
+  private async ensureGenreExist(dto: CreateGenreDTO): Promise<Genre> {
     const genre = this.genreRepository.findOne({
       where: {
         genreName: Equal(dto.genreName),
@@ -27,10 +27,8 @@ export class GenreService {
     return await this.genreRepository.save(newGenre);
   }
 
-  async ensureAllGenresExists(genresDTO: CreateGenreDTO[]) {
-    const genres = await Promise.all(
-      genresDTO.map((dto) => this.ensureGenreExist(dto)),
-    );
-    return genres;
+  async ensureAllGenresExists(genresDTO: CreateGenreDTO[]): Promise<Genre[]> {
+    const genres = genresDTO.map(async (dto) => await this.ensureGenreExist(dto));
+    return Promise.all(genres);
   }
 }

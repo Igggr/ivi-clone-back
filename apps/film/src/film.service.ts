@@ -51,7 +51,7 @@ export class FilmService {
       filmId: film.id,
       profileId: 1,
     }));
-    await this.revieWService.createReviews(reviews);
+    await this.revieWService.createReviews(reviews, film.id);
   }
 
   find(dto: FilmQueryDTO) {
