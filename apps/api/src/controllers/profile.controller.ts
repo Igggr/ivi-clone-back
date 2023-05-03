@@ -1,10 +1,16 @@
-import { DELETE_PROFILE, REGISTRATION, UPDATE_PROFILE } from '@app/shared';
+import {
+  DELETE_PROFILE,
+  GET_PROFILES,
+  REGISTRATION,
+  UPDATE_PROFILE,
+} from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { FilesService } from '@app/shared/services/files.service';
 import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpException,
   HttpStatus,
   Inject,
@@ -35,7 +41,6 @@ export class ProfilesController {
     @UploadedFile() photo,
   ) {
     let namePhoto;
-    console.log(photo);
     if (photo) {
       namePhoto = await this.fileService.createFile(photo);
     }
@@ -52,7 +57,7 @@ export class ProfilesController {
     );
     if (res.status === 'error') {
       if (namePhoto) {
-        await this.fileService.deleteFile(namePhoto);
+        this.fileService.deleteFile(namePhoto);
       }
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
@@ -86,7 +91,7 @@ export class ProfilesController {
     );
     if (res.status === 'error') {
       if (namePhoto) {
-        await this.fileService.deleteFile(namePhoto);
+        this.fileService.deleteFile(namePhoto);
       }
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
@@ -109,5 +114,15 @@ export class ProfilesController {
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;
+  }
+
+  @Get('/profiles')
+  async getProfiles() {
+    return this.profileService.send(
+      {
+        cmd: GET_PROFILES,
+      },
+      {},
+    );
   }
 }

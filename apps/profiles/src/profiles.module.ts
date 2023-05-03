@@ -36,6 +36,20 @@ import { FilesService } from '@app/shared/services/files.service';
         },
       },
     ]),
+    ClientsModule.register([
+      {
+        name: 'FILES-RECORD',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'files_queue',
+          noAck: false,
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
+    ]),
     TypeOrmModule.forFeature([Profile]),
   ],
   controllers: [ProfilesController],

@@ -1,4 +1,10 @@
-import { ADD_ROLE, CREATE_ROLE, GET_USERS, LOGIN } from '@app/shared';
+import {
+  ADD_ROLE,
+  CREATE_ROLE,
+  GET_ROLES,
+  GET_USERS,
+  LOGIN,
+} from '@app/shared';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
@@ -15,7 +21,8 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { Roles } from '../guards/roles-auth.decorator';
+import { RolesGuard } from '../guards/roles.guard';
 
 @Controller()
 export class AuthController {
@@ -38,6 +45,8 @@ export class AuthController {
   }
 
   @Post('/roles')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN')
   async createRole(@Body() roleDto: CreateRoleDto) {
     const res = await firstValueFrom(
       this.authService.send(
@@ -54,6 +63,8 @@ export class AuthController {
   }
 
   @Post('/users/role')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN')
   async addRole(@Body() roleDto: AddRoleDto) {
     const res = await firstValueFrom(
       this.authService.send(
@@ -70,11 +81,22 @@ export class AuthController {
   }
 
   @Get('/users')
-  @UseGuards(JwtAuthGuard)
   async getUsers() {
     return await this.authService.send(
       {
         cmd: GET_USERS,
+      },
+      {},
+    );
+  }
+
+  @Get('/roles')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN')
+  async getRoles() {
+    return await this.authService.send(
+      {
+        cmd: GET_ROLES,
       },
       {},
     );

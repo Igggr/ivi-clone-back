@@ -14,7 +14,7 @@ export class FilesService {
   async createFile(file): Promise<string> {
     try {
       const fileName = uuid.v4() + '.jpg';
-      const filePath = path.join(process.cwd(), '/libs', 'static');
+      const filePath = path.join(process.cwd(), 'libs', 'static');
 
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });
@@ -37,7 +37,7 @@ export class FilesService {
    */
   async deleteFile(fileName): Promise<string> {
     try {
-      const filePath = path.join(process.cwd(), '/libs', 'static');
+      const filePath = path.join(process.cwd(), 'libs', 'static');
       fs.unlinkSync(path.join(filePath, fileName));
       return 'Success';
     } catch (error) {
@@ -56,7 +56,7 @@ export class FilesService {
    */
   async readFile(fileName): Promise<string> {
     try {
-      const filePath = path.join(process.cwd(), '/libs', 'static');
+      const filePath = path.join(process.cwd(), 'libs', 'static');
       fs.readFileSync(path.join(filePath, fileName), 'utf-8');
       return fileName;
     } catch (error) {

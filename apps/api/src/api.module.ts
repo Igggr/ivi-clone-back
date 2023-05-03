@@ -59,6 +59,6 @@ import { JwtMiddleware } from './jwt-middleware';
 })
 export class ApiModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes(ProfilesController);
+    consumer.apply(JwtMiddleware).forRoutes(ProfilesController, AuthController);
   }
 }

@@ -13,6 +13,7 @@ import {
   CREATE_ROLE,
   CREATE_USER,
   DELETE_USER,
+  GET_ROLES,
   GET_TOKEN,
   GET_USERS,
   GET_USER_BY_EMAIL,
@@ -120,12 +121,12 @@ export class AuthController {
     return this.userService.getUsers();
   }
 
-  // @MessagePattern({ cmd: GET_ROLES })
-  // getRoles(@Body() user: User, @Ctx() context: RmqContext) {
-  //   const channel = context.getChannelRef();
-  //   const message = context.getMessage();
-  //   channel.ack(message);
+  @MessagePattern({ cmd: GET_ROLES })
+  getRoles(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
 
-  //   return this.userService.getRoles(user);
-  // }
+    return this.roleService.getRoles();
+  }
 }

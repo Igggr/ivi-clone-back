@@ -8,11 +8,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: './.env',
+      envFilePath: '.env',
     }),
     ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), '/libs', 'static'),
+      rootPath: path.join(process.cwd(), 'libs', 'static'),
     }),
   ],
   providers: [SharedService, FilesService],

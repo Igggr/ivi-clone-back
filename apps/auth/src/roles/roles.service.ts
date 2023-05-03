@@ -40,4 +40,18 @@ export class RolesService {
     const role = await this.roleRepository.findOneBy({ value: value });
     return role;
   }
+
+  // async ensureRoleByValue(value: string) {
+  //   const role = await this.roleRepository.findOneBy({ value: value });
+  //   if (role) {
+  //     return role;
+  //   }
+  //   const newRole = await this.roleRepository.create({ value: value });
+  //   await this.roleRepository.save(newRole);
+
+  //   return newRole;
+
+  async getRoles() {
+    return await this.roleRepository.find();
+  }
 }

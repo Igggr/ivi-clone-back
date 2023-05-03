@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { RolesService } from '../roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
+import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,12 +17,17 @@ export class UsersService {
 
   async createUser(userDto: CreateUserProfileDto) {
     try {
-      const hashPassword = await bcrypt.hash(userDto.password, 5);
+      const hashPassword = await User.setPassword(userDto.password);
       const user = await this.userRepository.create({
         ...userDto,
         password: hashPassword,
       });
-      const role = await this.roleService.getRoleByValue('USER');
+      let role = await this.roleService.getRoleByValue('USER');
+      if (!role) {
+        const roleDto = new CreateRoleDto('USER');
+        await this.roleService.createRole(roleDto);
+      }
+      role = await this.roleService.getRoleByValue('USER');
       user.addRole(role);
       await this.userRepository.save(user);
 
@@ -48,7 +54,7 @@ export class UsersService {
       const user = await this.userRepository.findOneBy({ id: userId });
       let newUser;
       if (userDto.password) {
-        const hashPassword = await bcrypt.hash(userDto.password, 5);
+        const hashPassword = await User.setPassword(userDto.password);
         newUser = await this.userRepository.save({
           ...user,
           ...userDto,
@@ -74,7 +80,10 @@ export class UsersService {
       const user = await this.userRepository.findOneBy({ id: userId });
       await this.userRepository.remove(user);
 
-      return 'Success';
+      return {
+        status: 'Success',
+        message: 'Пользователь успешно удален',
+      };
     } catch (error) {
       return {
         status: 'error',

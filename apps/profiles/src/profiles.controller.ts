@@ -6,20 +6,25 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { DELETE_PROFILE, REGISTRATION, UPDATE_PROFILE } from '@app/shared';
+import {
+  DELETE_PROFILE,
+  GET_PROFILES,
+  REGISTRATION,
+  UPDATE_PROFILE,
+} from '@app/shared';
 
 @Controller()
 export class ProfilesController {
   constructor(private readonly profileService: ProfilesService) {}
 
-  // @MessagePattern({ cmd: 'get-profiles' })
-  // getProfiles(@Ctx() context: RmqContext) {
-  //   const channel = context.getChannelRef();
-  //   const message = context.getMessage();
-  //   channel.ack(message);
+  @MessagePattern({ cmd: GET_PROFILES })
+  getProfiles(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
 
-  //   return this.profileService.getAllProfiles();
-  // }
+    return this.profileService.getAllProfiles();
+  }
 
   @MessagePattern({ cmd: REGISTRATION })
   async registration(@Body() userProfileInfo, @Ctx() context: RmqContext) {

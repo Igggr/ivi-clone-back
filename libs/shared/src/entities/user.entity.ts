@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { Role } from './role.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Entity()
 export class User {
@@ -35,5 +36,9 @@ export class User {
       this.roles = new Array<Role>();
     }
     this.roles.push(role);
+  }
+
+  static async setPassword(password, hash = 5) {
+    return await bcrypt.hash(password, hash);
   }
 }

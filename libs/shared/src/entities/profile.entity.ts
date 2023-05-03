@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsString } from 'class-validator';
 
 @Entity()
@@ -43,11 +48,14 @@ export class Profile {
   city: string;
 
   @ApiProperty({
-    example: '21.02.2023',
+    example: '2023-05-02 19:42:24.926691',
     description: 'Дата создания аккаунта',
   })
-  @Column({ nullable: false })
-  creationDate: Date;
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  createdAt: Date;
 
   @Column({ nullable: true })
   photo: string;
