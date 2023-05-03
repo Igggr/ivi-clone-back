@@ -4,7 +4,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
 import { FILM } from '@app/rabbit/queues';
-import { OPTIONS } from '@app/rabbit';
+import { RABIT_OPTIONS } from '@app/rabbit';
 import { FilmController } from './controllers/film.controller';
 
 @Module({
@@ -15,7 +15,7 @@ import { FilmController } from './controllers/film.controller';
     ClientsModule.register([
       {
         name: FILM,
-        ...OPTIONS(FILM),
+        ...RABIT_OPTIONS(FILM),
       },
     ]),
     ClientsModule.register([

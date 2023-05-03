@@ -12,7 +12,7 @@ export class GenreService {
   ) {}
 
   private async ensureGenreExist(dto: CreateGenreDTO): Promise<Genre> {
-    const genre = this.genreRepository.findOne({
+    const genre = await this.genreRepository.findOne({
       where: {
         genreName: Equal(dto.genreName),
       },
@@ -20,10 +20,8 @@ export class GenreService {
     if (genre) {
       return genre;
     }
-    const newGenre = await this.genreRepository.create({
-      genreName: dto.genreName,
-      genreNameEn: dto.genreNameEn,
-    });
+  
+    const newGenre = await this.genreRepository.create(dto);
     return await this.genreRepository.save(newGenre);
   }
 

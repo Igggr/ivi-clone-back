@@ -1,7 +1,11 @@
-import { ParsedReviewDTO } from '@app/shared';
+import { CREATE_PROFILE_WITH_DUMMY_USER, PARSER } from '@app/rabbit';
+import { ParsedProfileDTO, ParsedReviewDTO } from '@app/shared';
 import { Review, Comment } from '@app/shared/entities';
-import { Injectable } from '@nestjs/common';
+import { Profile } from '@app/shared/entities/profile.entity';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
+import { firstValueFrom } from 'rxjs';
 import { Equal, Repository } from 'typeorm';
 
 @Injectable()
@@ -11,14 +15,33 @@ export class ReviewService {
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
-  ) {}
+    @Inject("AUTH") private client: ClientProxy,
+  ) { }
+  
+  async ensureProfile(saved: Map<string, Profile>, dto: ParsedProfileDTO) {
+    if (saved.has(dto.url)) {
+      return saved.get(dto.url);
+    }
+    console.log('Отправляю запрос на создание профиля')
+    const profile = await firstValueFrom(
+      this.client.send({ cmd: CREATE_PROFILE_WITH_DUMMY_USER }, dto)
+    );
+    
+    saved.set(dto.url, profile)
+    return profile;
+  }
 
   async createReviews(dtos: ParsedReviewDTO[], filmId: number) {
-    console.log('Review is not implemented yet');
+    const savedProfiles = new Map<string, Profile>();
 
-    const reviews = this.reviewRepository.create(
-      dtos.map((dto) => ({ ...dto, filmId })),
-    );
+    const reviewDTOs = []
+    for (const dto of dtos) {
+      const profile = await this.ensureProfile(savedProfiles, dto.profile);
+      reviewDTOs.push({...dto, profile, filmId, comments: undefined})
+    }
+
+
+    const reviews = this.reviewRepository.create(reviewDTOs);
     await this.reviewRepository.save(reviews);
 
     const savedReviews = new Map<string, Review>();

@@ -21,7 +21,9 @@ export class FilmService {
     private readonly restrictionService: AgeRestrictionService,
   ) {}
 
-  async createFromParsedData(dto: ParsedFilmDTO) {
+  async createFromParsedData(
+    dto: ParsedFilmDTO,
+  ) {
     console.log('Creating films from parsed data');
 
     const country = await this.countryService.ensureCountry(dto.country);
@@ -49,7 +51,6 @@ export class FilmService {
     const reviews = dto.reviews.map((review) => ({
       ...review,
       filmId: film.id,
-      profileId: 1,
     }));
     await this.revieWService.createReviews(reviews, film.id);
   }

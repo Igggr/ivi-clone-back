@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ParserSimulatorService } from './parser-simulator.service';
 import { ClientsModule } from '@nestjs/microservices';
-import { OPTIONS, PARSER } from '@app/rabbit';
+import { RABIT_OPTIONS, PARSER } from '@app/rabbit';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
@@ -10,7 +10,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ClientsModule.register([
     {
       name: PARSER,
-      ...OPTIONS(PARSER),
+      ...RABIT_OPTIONS(PARSER),
     },
   ]),],
   controllers: [],

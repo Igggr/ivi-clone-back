@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { FilmModule } from './film.module';
-import { OPTIONS } from '@app/rabbit';
+import { RABIT_OPTIONS } from '@app/rabbit';
 import { PARSER } from '@app/rabbit/queues';
 import { RmqOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<RmqOptions>(
     FilmModule,
-    OPTIONS(PARSER),
+    RABIT_OPTIONS(PARSER),
   );
   app.listen();
 }

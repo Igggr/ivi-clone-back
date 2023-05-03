@@ -8,7 +8,7 @@ import { ClientsModule } from '@nestjs/microservices';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const redisStore = require('cache-manager-redis-store').redisStore;
 
-import { OPTIONS } from '@app/rabbit';
+import { RABIT_OPTIONS } from '@app/rabbit';
 import { PARSER } from '@app/rabbit/queues';
 import { ParserService } from './parser.service';
 import { TasksService } from './task.service';
@@ -22,7 +22,7 @@ import { MainPageParserService } from './main-page.parser/main-page.parser.servi
     ClientsModule.register([
       {
         name: PARSER,
-        ...OPTIONS(PARSER),
+        ...RABIT_OPTIONS(PARSER),
       },
     ]),
     CacheModule.register({

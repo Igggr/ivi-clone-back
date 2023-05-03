@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { ClientsModule } from '@nestjs/microservices';
 import { PARSER } from '@app/rabbit/queues';
-import { OPTIONS } from '@app/rabbit';
+import { RABIT_OPTIONS } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
 import { Film } from '@app/shared/entities/film.entity';
 import {
@@ -32,8 +32,12 @@ import { AgeRestriction } from '@app/shared/entities/age-restriction';
     ClientsModule.register([
       {
         name: PARSER,
-        ...OPTIONS(PARSER),
+        ...RABIT_OPTIONS(PARSER),
       },
+      {
+        name: 'AUTH',
+        ...RABIT_OPTIONS('AUTH')
+      }
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
