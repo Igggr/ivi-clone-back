@@ -52,7 +52,7 @@ export class Film {
   @Column({ type: 'interval' })
   duration: string; // кривоватое хранение для интервала
 
-  @OneToMany(() => AgeRestriction, (restriction) => restriction.films)
+  @ManyToOne(() => AgeRestriction, (restriction) => restriction.films)
   ageRestriction: AgeRestriction;
 
   @Column()

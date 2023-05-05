@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Film } from './film.entity';
 
 @Entity()
@@ -23,6 +23,6 @@ export class AgeRestriction {
   // @Column()
   // fullDescription: string;
 
-  @ManyToOne(() => Film, (film) => film.ageRestriction)
+  @OneToMany(() => Film, (film) => film.ageRestriction)
   films: Film[];
 }

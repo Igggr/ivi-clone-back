@@ -3,7 +3,7 @@ import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
 import { Profile } from '@app/shared/entities/profile.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { RABIT_OPTIONS } from '@app/rabbit';
 
@@ -25,7 +25,7 @@ import { RABIT_OPTIONS } from '@app/rabbit';
     ClientsModule.register([
       {
         name: 'AUTH',
-        ...RABIT_OPTIONS('auth')
+        ...RABIT_OPTIONS('auth'),
       },
     ]),
     TypeOrmModule.forFeature([Profile]),

@@ -1,6 +1,11 @@
-import { Body, Controller } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
-import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { ParsedProfileDTO, REGISTRATION } from '@app/shared';
 import { CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
@@ -35,13 +40,11 @@ export class ProfilesController {
     @Ctx() context: RmqContext,
     @Payload() dto: ParsedProfileDTO,
   ) {
-    console.log('should create dummy profile')
+    console.log('should create dummy profile');
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     this.profileService.createProfileForDummyUser(dto);
-    
   }
-
 }

@@ -15,31 +15,30 @@ export class ReviewService {
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
-    @Inject("AUTH") private client: ClientProxy,
-  ) { }
-  
+    @Inject('AUTH') private client: ClientProxy,
+  ) {}
+
   async ensureProfile(saved: Map<string, Profile>, dto: ParsedProfileDTO) {
     if (saved.has(dto.url)) {
       return saved.get(dto.url);
     }
-    console.log('Отправляю запрос на создание профиля')
+    console.log('Отправляю запрос на создание профиля');
     const profile = await firstValueFrom(
-      this.client.send({ cmd: CREATE_PROFILE_WITH_DUMMY_USER }, dto)
+      this.client.send({ cmd: CREATE_PROFILE_WITH_DUMMY_USER }, dto),
     );
-    
-    saved.set(dto.url, profile)
+
+    saved.set(dto.url, profile);
     return profile;
   }
 
   async createReviews(dtos: ParsedReviewDTO[], filmId: number) {
     const savedProfiles = new Map<string, Profile>();
 
-    const reviewDTOs = []
+    const reviewDTOs = [];
     for (const dto of dtos) {
       const profile = await this.ensureProfile(savedProfiles, dto.profile);
-      reviewDTOs.push({...dto, profile, filmId, comments: undefined})
+      reviewDTOs.push({ ...dto, profile, filmId, comments: undefined });
     }
-
 
     const reviews = this.reviewRepository.create(reviewDTOs);
     await this.reviewRepository.save(reviews);

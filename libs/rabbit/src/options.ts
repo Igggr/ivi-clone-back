@@ -9,6 +9,6 @@ export const RABIT_OPTIONS = (name: string) => ({
     queueOptions: {
       durable: false,
     },
-    noAck: false
+    noAck: false,
   },
 });

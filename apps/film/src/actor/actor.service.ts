@@ -34,10 +34,10 @@ export class ActorService {
     // да. именно одн за другим - иначе один актер может одновременно начать сохраняться 2 раза
     // например как продюсер и режисер - нарушт ограничение уникальностт url на его страницу на кинопоиске
     for (const dto of Object.values(persons).flat()) {
-        if (!savedActors.has(dto.url)) {
-          const actor = await this.ensureActorExist(dto);
-          savedActors.set(dto.url, actor);
-        }
+      if (!savedActors.has(dto.url)) {
+        const actor = await this.ensureActorExist(dto);
+        savedActors.set(dto.url, actor);
+      }
     }
     return savedActors;
   }
@@ -55,7 +55,7 @@ export class ActorService {
 
     const savedActors = await this.ensureAllActorsExists(persons);
 
-    const actorRoles = (await Promise.all(
+    const actorRoles = await Promise.all(
       Object.entries(persons).flatMap(([roleName, actors]) =>
         actors.map(async (dto) => ({
           actor: savedActors.get(dto.url),
@@ -63,8 +63,8 @@ export class ActorService {
           dto,
         })),
       ),
-    ));
-    
+    );
+
     const actorRolesInput = actorRoles.map(({ actor, role, dto }) => ({
       actorId: actor.id,
       filmId,

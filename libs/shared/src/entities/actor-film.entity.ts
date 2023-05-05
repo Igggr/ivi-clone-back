@@ -9,7 +9,7 @@ export class ActorFilm {
   id: number;
 
   @ManyToOne(() => Film, (film) => film.personsInFilm)
-  film: Film[];
+  film: Film;
 
   @Column()
   filmId: number;

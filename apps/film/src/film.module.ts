@@ -29,14 +29,17 @@ import { AgeRestriction } from '@app/shared/entities/age-restriction';
 
 @Module({
   imports: [
-    ClientsModule.register([{
+    ClientsModule.register([
+      {
         name: PARSER,
         ...RABIT_OPTIONS(PARSER),
-      },]),
-      ClientsModule.register([{
+      },
+    ]),
+    ClientsModule.register([
+      {
         name: 'AUTH',
-        ...RABIT_OPTIONS('auth')
-      }
+        ...RABIT_OPTIONS('auth'),
+      },
     ]),
     ConfigModule.forRoot({
       isGlobal: true,

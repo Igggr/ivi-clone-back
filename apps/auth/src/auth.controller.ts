@@ -8,7 +8,13 @@ import {
 } from '@nestjs/microservices';
 import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import { UsersService } from './users/users.service';
-import { CREATE_USER, GET_TOKEN, GET_USER_BY_EMAIL, LOGIN, ParsedProfileDTO } from '@app/shared';
+import {
+  CREATE_USER,
+  GET_TOKEN,
+  GET_USER_BY_EMAIL,
+  LOGIN,
+  ParsedProfileDTO,
+} from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { CREATE_DUMMY_USER } from '@app/rabbit';
@@ -50,7 +56,7 @@ export class AuthController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.userService.createDummyUser(dto)
+    return this.userService.createDummyUser(dto);
   }
 
   @MessagePattern({ cmd: GET_USER_BY_EMAIL })

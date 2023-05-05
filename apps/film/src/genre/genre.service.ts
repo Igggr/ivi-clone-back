@@ -20,7 +20,7 @@ export class GenreService {
     if (genre) {
       return genre;
     }
-  
+
     const newGenre = await this.genreRepository.create(dto);
     return await this.genreRepository.save(newGenre);
   }

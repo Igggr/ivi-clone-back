@@ -8,11 +8,12 @@ import { ScheduleModule } from '@nestjs/schedule';
   imports: [
     ScheduleModule.forRoot(),
     ClientsModule.register([
-    {
-      name: PARSER,
-      ...RABIT_OPTIONS(PARSER),
-    },
-  ]),],
+      {
+        name: PARSER,
+        ...RABIT_OPTIONS(PARSER),
+      },
+    ]),
+  ],
   controllers: [],
   providers: [ParserSimulatorService],
 })

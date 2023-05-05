@@ -21,9 +21,7 @@ export class FilmService {
     private readonly restrictionService: AgeRestrictionService,
   ) {}
 
-  async createFromParsedData(
-    dto: ParsedFilmDTO,
-  ) {
+  async createFromParsedData(dto: ParsedFilmDTO) {
     console.log('Creating films from parsed data');
 
     const country = await this.countryService.ensureCountry(dto.country);

@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Comment } from './comment.entity';
-import { Profile } from './profile.entity';
 import { Film } from './film.entity';
 
 @Entity()
@@ -23,7 +22,7 @@ export class Review {
   @Column()
   text: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   isPositive: boolean; // вот из-за этого (и title) приходится выносить review и comment в рвзные таблицы
 
   @OneToMany(() => Comment, (comment) => comment.review)

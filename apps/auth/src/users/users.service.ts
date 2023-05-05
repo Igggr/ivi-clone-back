@@ -29,11 +29,11 @@ export class UsersService {
     const dummyData: CreateUserProfileDto = {
       ...dto,
       surname: '',
-      phoneNumber: '', 
+      phoneNumber: '',
       password: '111111',
-      email: uuid.v4() + '@com'
+      email: uuid.v4() + '@com',
     };
-    return this.createUser(dummyData)
+    return this.createUser(dummyData);
   }
 
   /**

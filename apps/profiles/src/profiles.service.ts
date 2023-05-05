@@ -1,5 +1,10 @@
 import { CREATE_DUMMY_USER } from '@app/rabbit';
-import { CREATE_USER, GET_TOKEN, GET_USER_BY_EMAIL, ParsedProfileDTO } from '@app/shared';
+import {
+  CREATE_USER,
+  GET_TOKEN,
+  GET_USER_BY_EMAIL,
+  ParsedProfileDTO,
+} from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { Profile } from '@app/shared/entities/profile.entity';
 import { Inject, Injectable } from '@nestjs/common';
@@ -14,7 +19,7 @@ export class ProfilesService {
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
     @Inject('AUTH') private authService: ClientProxy,
-  ) { }
+  ) {}
 
   /**
    * Получает все профили
@@ -50,16 +55,22 @@ export class ProfilesService {
   }
 
   async createProfileForDummyUser(dto: ParsedProfileDTO) {
-    console.log('dummy user profile')
+    console.log('dummy user profile');
     const profile = await this.profileRepository.findOne({
-      where: { url: Equal(dto.url) }
+      where: { url: Equal(dto.url) },
     });
-    if (profile) {  // для этого профиля с кинопоиска уже создавали и профиль и юзера
+    if (profile) {
+      // для этого профиля с кинопоиска уже создавали и профиль и юзера
       return profile;
     }
-    
+
     const phoneNumber = '+7950' + Math.floor(Math.random() * 10000000);
-    const user = await firstValueFrom(this.authService.send({ cmd: CREATE_DUMMY_USER }, { ...dto, surname: '', phoneNumber, }));
+    const user = await firstValueFrom(
+      this.authService.send(
+        { cmd: CREATE_DUMMY_USER },
+        { ...dto, surname: '', phoneNumber },
+      ),
+    );
     const newProfile = await this.profileRepository.create({
       ...dto,
       surname: '', // на кинопоиске в профиле 1 только ник
