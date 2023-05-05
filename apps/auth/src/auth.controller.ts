@@ -19,6 +19,7 @@ import {
   GET_USER_BY_EMAIL,
   LOGIN,
   UPDATE_USER,
+  VERIFY_TOKEN,
 } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
@@ -128,5 +129,14 @@ export class AuthController {
     channel.ack(message);
 
     return this.roleService.getRoles();
+  }
+
+  @MessagePattern({ cmd: VERIFY_TOKEN })
+  verifyToken(@Payload() token, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.authService.verifyToken(token);
   }
 }

@@ -15,3 +15,4 @@ export const RECORD_FILE = 'record-file';
 export const GET_ROLES = 'get_roles';
 export const UPDATE_FILE = 'update-file';
 export const DELETE_FILE = 'delete-file';
+export const VERIFY_TOKEN = 'verify-token';

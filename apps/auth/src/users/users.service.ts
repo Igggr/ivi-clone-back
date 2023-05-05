@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { RolesService } from '../roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
-import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
+import { USER } from '@app/shared/constants/role.const';
 
 @Injectable()
 export class UsersService {
@@ -21,12 +21,11 @@ export class UsersService {
         ...userDto,
       });
       await user.setPassword(userDto.password);
-      let role = await this.roleService.getRoleByValue('USER');
+      let role = await this.roleService.getRoleByValue('User');
       if (!role) {
-        const roleDto = new CreateRoleDto('USER');
-        await this.roleService.createRole(roleDto);
+        await this.roleService.createRole(USER);
       }
-      role = await this.roleService.getRoleByValue('USER');
+      role = await this.roleService.getRoleByValue('User');
       user.addRole(role);
       await this.userRepository.save(user);
 
@@ -41,25 +40,32 @@ export class UsersService {
 
   async updateUser(userDto: CreateUserProfileDto, userId: number) {
     try {
-      const userEmail = await this.userRepository.findOneBy({
+      const foundUser = await this.userRepository.findOneBy({
         email: userDto.email,
       });
-      if (userEmail) {
+      if (foundUser && foundUser.id != userId) {
         return {
           status: 'error',
           error: 'Пользователь с таким email уже существует',
         };
       }
       const user = await this.userRepository.findOneBy({ id: userId });
-      const newUser = await this.userRepository.save({
-        ...user,
-        ...userDto,
-      });
+      if (!user) {
+        return {
+          status: 'error',
+          error: 'Пользователя с таким id не существует',
+        };
+      }
       if (userDto.password) {
         await user.setPassword(userDto.password);
       }
+      await this.userRepository.save({
+        ...user,
+        ...userDto,
+        password: user.password,
+      });
 
-      return newUser;
+      return user;
     } catch (error) {
       return {
         status: 'error',
@@ -110,16 +116,24 @@ export class UsersService {
    * @returns Дто добавленной роли
    */
   async addRole(dto: AddRoleDto) {
-    const user = await this.userRepository.findOneBy({ id: dto.userId });
+    const user = await this.userRepository.findOne({
+      where: { id: dto.userId },
+      relations: { roles: true },
+    });
     const role = await this.roleService.getRoleByValue(dto.value);
-    if (user && role) {
+    if (
+      user &&
+      role &&
+      !user.roles.some((role) => dto.value.includes(role.value))
+    ) {
       user.addRole(role);
       await this.userRepository.save(user);
       return user;
     }
     return {
       status: 'error',
-      error: 'Пользователь или роль не найдены',
+      error:
+        'Пользователь или роль не найдены, либо данная роль уже присвоена пользователю',
     };
   }
 

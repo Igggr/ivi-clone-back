@@ -69,7 +69,7 @@ export class ProfilesController {
 
   @Put('/profiles/:id')
   @UseGuards(ProfilesGuard)
-  @Roles('ADMIN')
+  @Roles('Admin')
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('photo'))
   async updateProfile(
@@ -104,7 +104,7 @@ export class ProfilesController {
 
   @Delete('/profiles/:id')
   @UseGuards(ProfilesGuard)
-  @Roles('ADMIN')
+  @Roles('Admin')
   async deleteProfile(@Param('id') profileId: number) {
     const res = await firstValueFrom(
       this.profileService.send(

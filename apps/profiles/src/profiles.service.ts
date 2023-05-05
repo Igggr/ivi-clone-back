@@ -109,10 +109,9 @@ export class ProfilesService {
           return user;
         }
       }
-      if (namePhoto && profile.photo) {
+      if (namePhoto) {
         if (profile.photo) {
           await this.fileService.deleteFile(profile.photo);
-        } else {
           await this.profileRepository.save({
             ...profile,
             ...userProfileDto,
@@ -127,19 +126,19 @@ export class ProfilesService {
               },
             ),
           );
+        } else {
+          await this.profileRepository.save({ ...profile, ...userProfileDto });
+          await firstValueFrom(
+            this.fileRecordService.send(
+              { cmd: RECORD_FILE },
+              {
+                essenceId: profileId,
+                essenceTable: 'profiles',
+                fileName: namePhoto,
+              },
+            ),
+          );
         }
-      } else {
-        await this.profileRepository.save({ ...profile, ...userProfileDto });
-        await firstValueFrom(
-          this.fileRecordService.send(
-            { cmd: RECORD_FILE },
-            {
-              essenceId: profileId,
-              essenceTable: 'profiles',
-              fileName: namePhoto,
-            },
-          ),
-        );
       }
 
       return await this.profileRepository.findOneBy({ id: profileId });

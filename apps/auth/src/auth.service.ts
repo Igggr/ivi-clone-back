@@ -54,4 +54,16 @@ export class AuthService {
       error: 'Неккоректный емэйл или пароль',
     };
   }
+
+  async verifyToken(token) {
+    try {
+      const user = await this.jwtService.verify(token);
+      return await this.userService.getUserByEmail(user.email);
+    } catch (error) {
+      return {
+        status: 'error',
+        error: 'Не удалось проверить токен',
+      };
+    }
+  }
 }

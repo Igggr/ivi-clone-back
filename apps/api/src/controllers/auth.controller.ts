@@ -49,7 +49,7 @@ export class AuthController {
 
   @Post('/roles')
   @UseGuards(RolesGuard)
-  @Roles('ADMIN')
+  @Roles('Admin')
   @UsePipes(ValidationPipe)
   async createRole(@Body() roleDto: CreateRoleDto) {
     const res = await firstValueFrom(
@@ -68,8 +68,7 @@ export class AuthController {
 
   @Post('/users/role')
   @UseGuards(RolesGuard)
-  @Roles('ADMIN')
-  @UsePipes(ValidationPipe)
+  @Roles('Admin')
   async addRole(@Body() roleDto: AddRoleDto) {
     const res = await firstValueFrom(
       this.authService.send(
@@ -97,7 +96,7 @@ export class AuthController {
 
   @Get('/roles')
   @UseGuards(RolesGuard)
-  @Roles('ADMIN')
+  @Roles('Admin')
   async getRoles() {
     return await this.authService.send(
       {

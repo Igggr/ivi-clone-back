@@ -20,8 +20,14 @@ export class Profile {
 
   @ApiProperty({ example: 'Иванов', description: 'Фамилия пользователя' })
   @IsString({ message: 'Должно быть строкой' })
-  @Column({ nullable: false })
+  @IsOptional()
+  @Column({ nullable: true })
   surname: string;
+
+  @ApiProperty({ example: 'stas9n', description: 'Никнейм пользователя' })
+  @IsString({ message: 'Должно быть строкой' })
+  @Column({ nullable: false })
+  nickname: string;
 
   // @ApiProperty({
   //   example: '+79275046543',

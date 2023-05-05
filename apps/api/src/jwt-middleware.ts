@@ -1,4 +1,4 @@
-import { GET_USER_BY_EMAIL } from '@app/shared';
+import { VERIFY_TOKEN } from '@app/shared';
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
@@ -20,16 +20,17 @@ export class JwtMiddleware implements NestMiddleware {
 
     const [bearer, token] = auth.split(' ');
     if (bearer === 'Bearer' && token) {
-      const user = this.jwtService.verify(token);
       const response = await firstValueFrom(
         this.authService.send(
           {
-            cmd: GET_USER_BY_EMAIL,
+            cmd: VERIFY_TOKEN,
           },
-          user.email,
+          token,
         ),
       );
-      req.user = response;
+      if (response.status != 'error') {
+        req.user = response;
+      }
       next();
     }
   }

@@ -19,32 +19,14 @@ export class FilesRecordService {
    * @returns Объект картинки
    */
   async recordFile(essenceId: number, essenceTable: string, fileName: string) {
-    let fileRecord;
-    if (!essenceId) {
-      fileRecord = await this.fileRepository.create({
-        essenceId: null,
-        essenceTable: essenceTable,
-        file: fileName,
-      });
-    }
-    fileRecord = await this.fileRepository.create({
+    const fileRecord = await this.fileRepository.create({
       essenceId: essenceId,
       essenceTable: essenceTable,
       file: fileName,
     });
-    await this.fileRepository.save(fileRecord);
 
-    return fileRecord;
+    return this.fileRepository.save(fileRecord);
   }
-
-  //   /**
-  //    * Получает все картинки
-  //    *
-  //    * @returns Массив объектов картинки
-  //    */
-  //   async findAllImages() {
-  //     return await this.imageRepository.findAll({ include: { all: true } });
-  //   }
 
   /**
    * Обновляет информации о картинке
