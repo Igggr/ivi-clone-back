@@ -1,21 +1,3 @@
-export const titleXpath =
-  '//div[starts-with(@class, "styles_title")]/h1[starts-with(@class, "styles_title")]/span';
-export const origTitleXpath =
-  '//span[starts-with(@class, "styles_originalTitle")]';
-export const genreXpath = '//a[starts-with(@href, "/lists/movies/genre--")]';
-export const countryXpath = '//a[starts-with(@href, "/lists/movies/country")]';
-
-// DOM состоит просто из мусора. Ни id, ни внятных классов. В принципе можно зацепиться за содержание элемента === 'Слоган'
-// Но цепляться за содержимое тега это кажется еще больший треш.
-export const sloganXpath =
-  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[4]/div[2]/div/text()';
-export const timeXpath =
-  '//*[@id="__next"]/div[2]/div[2]/div[2]/div[2]/div/div[3]/div/div/div[2]/div[1]/div/div[23]/div[2]/div';
-
-// часть td - просто разделители. Этот спуск, а потом подъем в родимтеля нужен для фильтарция
-export const premierXpath =
-  '//*[@id="block_left"]/div/table/tbody/tr[2]/td/table/tbody/tr/td/a/parent::td/parent::tr';
-
 type Role =
   | 'director'
   | 'actor'

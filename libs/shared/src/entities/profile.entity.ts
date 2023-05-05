@@ -7,6 +7,9 @@ export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  url: string;
+
   @ApiProperty({ example: 'Alex', description: 'Имя пользователя' })
   @IsString({ message: 'Должно быть строкой' })
   @Column({ nullable: true })

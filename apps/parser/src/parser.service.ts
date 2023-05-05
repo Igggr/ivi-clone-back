@@ -1,43 +1,52 @@
 import puppeteer, { Page } from 'puppeteer';
+import { premierXpath } from './xpath/main-page';
 import {
-  actorsXpath,
-  composersXpath,
-  countryXpath,
-  designersXpath,
-  directorsXpath,
-  editorsXpath,
-  genreXpath,
-  operatorsXpath,
-  origTitleXpath,
-  premierXpath,
-  producersXpath,
-  sloganXpath,
-  timeXpath,
-  titleXpath,
-  translatorsXpath,
-  voiceDirectorsXpath,
-  voicesXpath,
-  writersXpath,
-} from './xpath';
+  previewElement,
+  previewFrame,
+  previewPageXPath,
+} from './xpath/trailer';
 import { Injectable } from '@nestjs/common';
+import { ParsedFilmDTO } from '@app/shared';
+import { ResponseDTO } from '@app/rabbit';
+import { ActorParserService } from './actor.parser/actor.parser.service';
+import { ReviewParserService } from './review.parser/review.parser.service';
+import { MainPageParserService } from './main-page.parser/main-page.parser.service';
+import { DOMEN } from './constants';
 
 @Injectable()
 export class ParserService {
-  async parse(film = 535341) {
-    const browser = await puppeteer.launch();
+  constructor(
+    private readonly actorParserService: ActorParserService,
+    private readonly reviewParserService: ReviewParserService,
+    private readonly mainPageParserService: MainPageParserService,
+  ) {}
+
+  async parse(film: number): Promise<ResponseDTO<ParsedFilmDTO>> {
+    const browser = await puppeteer.launch({
+      ignoreHTTPSErrors: true,
+    });
+
+    console.log(`Start parseing film ${film}`);
     const page = await browser.newPage();
+
     await this.optimizePageLoad(page);
 
     try {
-      const mainPageInfo = await this.parseMainPage(page, film);
+      const mainPageInfo = await this.mainPageParserService.parseMainPage(
+        page,
+        film,
+      );
+      const preview = await this.getPreview(page, film);
       const views = await this.parseViews(page, film);
-      const persons = await this.parsePersons(page, film);
-      const comments = await this.parseComments(page, film);
+      const persons = await this.actorParserService.parsePersons(page, film);
+      console.log('Спарсил persons');
+      const reviews = await this.reviewParserService.parseReviews(page, film);
+      console.log('Спарсил комменты');
 
-      const res = { ...mainPageInfo, persons, views, comments };
+      const res = { ...mainPageInfo, persons, views, preview, reviews };
       return { status: 'ok', value: res };
     } catch (e) {
-      return { status: 'error', error: e };
+      return { status: 'error', error: e.message };
     } finally {
       await page.close();
       await browser.close();
@@ -84,65 +93,33 @@ export class ParserService {
     });
   }
 
-  private async parseMainPage(page: Page, film: number) {
-    const mainUrl = `https://www.kinopoisk.ru/film/${film}/`;
+  private async getPreview(page: Page, film: number) {
+    console.log('Патаюсь спаристь preview');
+    try {
+      const url = await page
+        .$(`xpath/${previewPageXPath(film)}`)
+        .then((handle) => handle.evaluate((node) => node.getAttribute('href')));
+      console.log(`Navigating to ${DOMEN}${url}`);
+      await page.goto(`${DOMEN}${url}`, {
+        waitUntil: 'networkidle0',
+      });
 
-    await page.goto(mainUrl, {
-      waitUntil: 'domcontentloaded',
-    });
-
-    const originalTitle = await page
-      .waitForXPath(origTitleXpath)
-      .then((handle) => handle.evaluate((node) => node.textContent));
-
-    const { title, year } = await page
-      .waitForXPath(titleXpath)
-      .then((handle) =>
-        handle.evaluate(
-          (node) =>
-            node.textContent.match(/(?<title>.*) \((?<year>\d{4})\)/).groups,
-        ),
-      );
-
-    const country = await page.waitForXPath(countryXpath).then((handle) =>
-      handle.evaluate((node: HTMLAnchorElement) => ({
-        country: node.textContent,
-        countryLink: node.getAttribute('href'),
-      })),
-    );
-
-    const slogan = await page
-      .waitForXPath(sloganXpath)
-      .then((handle) => handle.evaluate((node) => node.textContent));
-
-    const genres = await Promise.all(
-      await page
-        .$x(genreXpath)
-        .then((handles) =>
-          handles.map((handle) => handle.evaluate((node) => node.textContent)),
-        ),
-    );
-
-    const duration = await (
-      await page.waitForXPath(timeXpath)
-    ).evaluate((node) => node.textContent);
-
-    const res = {
-      title,
-      originalTitle,
-      year,
-      genres,
-      country,
-      slogan,
-      duration,
-    };
-
-    return res;
+      await page.click(`xpath/${previewElement}`);
+      const src = await page
+        .$(`xpath/${previewFrame(film)}`)
+        .then((handle) => handle.evaluate((el) => el.getAttribute('src')));
+      console.log(`Успешно спарсил preview для ${film}`);
+      return src;
+    } catch {
+      console.log(`Не удалось спарить preview для ${film}`);
+      return null;
+    }
   }
 
   private async parseViews(page: Page, film: number) {
-    const datesUrl = `https://www.kinopoisk.ru/film/${film}/dates/`;
+    const datesUrl = `${DOMEN}/film/${film}/dates/`;
 
+    console.log(`Паршу views, navigate to ${datesUrl}`);
     await page.goto(datesUrl, {
       waitUntil: 'networkidle0',
     });
@@ -170,129 +147,7 @@ export class ParserService {
       ),
     );
 
+    console.log('Спарсил views');
     return views;
-  }
-
-  private async parsePersons(page: Page, film: number) {
-    const actorsUrl = `https://www.kinopoisk.ru/film/${film}/cast`;
-
-    await page.goto(actorsUrl, {
-      waitUntil: 'domcontentloaded',
-    });
-
-    const directors = await this.parsePersonsWithRole(page, directorsXpath);
-    const actors = await this.parsePersonsWithRole(page, actorsXpath);
-    const producers = await this.parsePersonsWithRole(page, producersXpath);
-    const voiceDirectors = await this.parsePersonsWithRole(
-      page,
-      voiceDirectorsXpath,
-    );
-    const translators = await this.parsePersonsWithRole(page, translatorsXpath);
-    const voices = await this.parsePersonsWithRole(page, voicesXpath);
-    const writers = await this.parsePersonsWithRole(page, writersXpath);
-    const operators = await this.parsePersonsWithRole(page, operatorsXpath);
-    const composers = await this.parsePersonsWithRole(page, composersXpath);
-    const designers = await this.parsePersonsWithRole(page, designersXpath);
-    const editors = await this.parsePersonsWithRole(page, editorsXpath);
-
-    const res = {
-      directors,
-      actors,
-      producers,
-      voiceDirectors,
-      translators,
-      voices,
-      writers,
-      operators,
-      composers,
-      designers,
-      editors,
-    };
-    return res;
-  }
-
-  private async parsePersonsWithRole(page: Page, xpath: string) {
-    const persons = await Promise.all(
-      (
-        await page.$x(xpath)
-      ).map(async (personHandle) => {
-        const nameHandler = await personHandle.$('div.info>div.name');
-
-        const { url, name } = await nameHandler.$eval('a', (node) => ({
-          url: node.getAttribute('href'),
-          name: node.text,
-        }));
-        const name_en = await nameHandler.$eval(
-          'span',
-          (node) => node.textContent,
-        );
-
-        // в src почему-то какой-то мусор. Хотя в коже страницы все нормально. Пришлось брать из атрибута title
-        // (в коде старницы он совпадает c src, но здесь коректен только title)
-        const photo = await personHandle.$eval('div.photo>a>img', (node) =>
-          node.getAttribute('title'),
-        );
-        const role = await personHandle.$eval(
-          'div.info>div.role',
-          (node) => node.textContent,
-        );
-
-        let dub;
-        try {
-          // этот элемент есть не везде (не у всех актеров есть дублер) => исключение. Решение конечно костыльненькое
-          dub = await personHandle.$eval(
-            'xpath/following-sibling::div[@class="dubInfo"]/div[@class="name"]/a',
-            (node) => ({
-              who: node.textContent,
-              url: node.getAttribute('href'),
-            }),
-          );
-        } catch (e) {}
-        const res = {
-          url,
-          name,
-          name_en,
-          photo,
-          role,
-          dub,
-        };
-        return res;
-      }),
-    );
-
-    return persons;
-  }
-
-  private async parseComments(page: Page, film: number) {
-    // по идее так я только первую страницу паршу - то есть надо дорабатывать
-    const reviewsPage = `https://www.kinopoisk.ru/film/${film}/reviews/?ord=rating`;
-    await page.goto(reviewsPage, {
-      waitUntil: 'networkidle0',
-    });
-
-    const reviewHandels = await page.$x(
-      '//div[contains(@class, "userReview")]/div[contains(@class, "response")]',
-    );
-
-    const reviews = await Promise.all(
-      reviewHandels.map(async (handle) => {
-        const res = {
-          title: await handle.$eval('meta', (node) =>
-            node.getAttribute('content'),
-          ),
-
-          // кто же хранит ответ пользователя в таблице ???
-          text: await handle.$eval('table', (node) => node.textContent.trim()),
-          // user: await handle.$eval('/xpath/div[@itemprop="author"]/div/p[@class="profile_name"]/a[@itemprop="name"]', (node) => ({
-          //   userName: node.textContent,
-          //   url: node.getAttribute('href'),
-          // }))
-        };
-        console.log(res);
-        return res;
-      }),
-    );
-
-    return reviews;
   }
 }
