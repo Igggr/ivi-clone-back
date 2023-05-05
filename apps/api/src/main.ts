@@ -16,8 +16,8 @@ async function bootstrap() {
     )
     .build();
 
-  const documnet = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/docs', app, documnet);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
 
