@@ -6,7 +6,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { CreateUserDto } from '@app/shared/dto/create-user.dto';
+import { LoginDto } from '@app/shared/dto/login.dto';
 import { UsersService } from './users/users.service';
 import {
   CREATE_USER,
@@ -27,7 +27,7 @@ export class AuthController {
   ) {}
 
   @MessagePattern({ cmd: LOGIN })
-  login(@Body() userDto: CreateUserDto, @Ctx() context: RmqContext) {
+  login(@Body() userDto: LoginDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);

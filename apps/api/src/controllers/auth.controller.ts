@@ -1,5 +1,5 @@
 import { LOGIN } from '@app/shared';
-import { CreateUserDto } from '@app/shared/dto/create-user.dto';
+import { LoginDto } from '@app/shared/dto/login.dto';
 import {
   Body,
   Controller,
@@ -15,7 +15,7 @@ export class AuthController {
   constructor(@Inject('AUTH') private authService: ClientProxy) {}
 
   @Post('/login')
-  async login(@Body() userDto: CreateUserDto) {
+  async login(@Body() userDto: LoginDto) {
     const res = await firstValueFrom(
       this.authService.send(
         {
