@@ -31,7 +31,7 @@ export class AuthController {
 
   @MessagePattern({ cmd: CREATE_USER })
   createUser(
-    @Body() userDto: CreateUserProfileDto,
+    @Payload() userDto: CreateUserProfileDto,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
@@ -44,7 +44,7 @@ export class AuthController {
   @MessagePattern({ cmd: CREATE_DUMMY_USER })
   createDummyUser(
     @Ctx() context: RmqContext,
-    @() dto: ParsedProfileDTO,
+    @Payload() dto: ParsedProfileDTO,
   ) {
     const channel = context.getChannelRef();
     const message = context.getMessage();

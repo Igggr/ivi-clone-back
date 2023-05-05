@@ -20,7 +20,7 @@ export class ProfilesController {
 
   @MessagePattern({ cmd: REGISTRATION })
   registration(
-    @Body() userProfileDto: CreateUserProfileDto,
+    @Payload() userProfileDto: CreateUserProfileDto,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
@@ -30,10 +30,10 @@ export class ProfilesController {
     return this.profileService.createUserProfile(userProfileDto);
   }
 
-  @MessagePattern({ cmd: CREATE_PROFILE_WITH_DUMMY_USER,  })
+  @MessagePattern({ cmd: CREATE_PROFILE_WITH_DUMMY_USER })
   createProfileWithDummmyUser(
     @Ctx() context: RmqContext,
-    @Body() dto: ParsedProfileDTO,
+    @Payload() dto: ParsedProfileDTO,
   ) {
     console.log('should create dummy profile')
     const channel = context.getChannelRef();

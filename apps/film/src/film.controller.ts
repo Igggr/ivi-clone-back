@@ -12,9 +12,9 @@ export class FilmController {
   async saveParsedData(@Payload() data: ParsedFilmDTO, @Ctx() context: RmqContext) {
     console.log('Recieve parsed data');
 
-    // const channel = context.getChannelRef();
-    // const message = context.getMessage();
-    // channel.ack(message);
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
     
     await this.filmService.createFromParsedData(data);
     console.log('Saved to DB');
