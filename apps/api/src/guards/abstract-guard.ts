@@ -23,6 +23,7 @@ export abstract class AbstractRoleGuard implements CanActivate {
         return true;
       }
       const req = context.switchToHttp().getRequest();
+      console.log(req.user);
       if (!req.user) {
         return false;
       }

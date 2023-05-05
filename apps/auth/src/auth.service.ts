@@ -56,14 +56,14 @@ export class AuthService {
   }
 
   async verifyToken(token) {
-    try {
-      const user = await this.jwtService.verify(token);
-      return await this.userService.getUserByEmail(user.email);
-    } catch (error) {
-      return {
-        status: 'error',
-        error: 'Не удалось проверить токен',
-      };
+    const userInfo = await this.jwtService.verify(token);
+    const user = await this.userService.getUserByEmail(userInfo.email);
+    if (user) {
+      return user;
     }
+    return {
+      status: 'error',
+      error: 'Не удалось проверить токен',
+    };
   }
 }

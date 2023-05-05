@@ -7,10 +7,14 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import { DELETE_FILE, RECORD_FILE, UPDATE_FILE } from '@app/shared';
+import { FilesService } from './files.service';
 
 @Controller()
 export class FilesRecordController {
-  constructor(private readonly filesRecordService: FilesRecordService) {}
+  constructor(
+    private readonly filesRecordService: FilesRecordService,
+    private readonly fileService: FilesService,
+  ) {}
 
   @MessagePattern({ cmd: RECORD_FILE })
   recordFile(@Payload() recordInfo, @Ctx() context: RmqContext) {
@@ -21,7 +25,7 @@ export class FilesRecordController {
     return this.filesRecordService.recordFile(
       recordInfo.essenceId,
       recordInfo.essenceTable,
-      recordInfo.fileName,
+      recordInfo.photo,
     );
   }
 

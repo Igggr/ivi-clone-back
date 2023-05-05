@@ -2,12 +2,14 @@ import { FileRecord } from '@app/shared/entities/file-record.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FilesService } from './files.service';
 
 @Injectable()
 export class FilesRecordService {
   constructor(
     @InjectRepository(FileRecord)
     private readonly fileRepository: Repository<FileRecord>,
+    private readonly fileService: FilesService,
   ) {}
 
   /**
@@ -18,7 +20,8 @@ export class FilesRecordService {
    * @param fileName Название картинки
    * @returns Объект картинки
    */
-  async recordFile(essenceId: number, essenceTable: string, fileName: string) {
+  async recordFile(essenceId: number, essenceTable: string, file: any) {
+    const fileName = await this.fileService.createFile(file);
     const fileRecord = await this.fileRepository.create({
       essenceId: essenceId,
       essenceTable: essenceTable,

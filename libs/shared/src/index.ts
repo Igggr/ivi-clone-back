@@ -1,3 +1,3 @@
 // export * from './modules/shared.module';
-export * from './services/shared.service';
+export * from './shared.service';
 export * from './events';

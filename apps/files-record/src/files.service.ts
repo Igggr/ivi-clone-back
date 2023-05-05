@@ -19,7 +19,9 @@ export class FilesService {
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });
       }
+      console.log('write file');
       fs.writeFileSync(path.join(filePath, fileName), file.buffer);
+      console.log('ok');
       return fileName;
     } catch (error) {
       throw new HttpException(

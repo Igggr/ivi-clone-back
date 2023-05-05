@@ -5,7 +5,7 @@ import {
   UPDATE_PROFILE,
 } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { FilesService } from '@app/shared/services/files.service';
+import { FilesService } from 'apps/files-record/src/files.service';
 import {
   Body,
   Controller,
@@ -43,10 +43,10 @@ export class ProfilesController {
     @Body() userProfileDto: CreateUserProfileDto,
     @UploadedFile() photo,
   ) {
-    let namePhoto;
-    if (photo) {
-      namePhoto = await this.fileService.createFile(photo);
-    }
+    // let namePhoto;
+    // if (photo) {
+    //   namePhoto = await this.fileService.createFile(photo);
+    // }
     const res = await firstValueFrom(
       this.profileService.send(
         {
@@ -54,14 +54,14 @@ export class ProfilesController {
         },
         {
           userProfileDto,
-          namePhoto,
+          photo,
         },
       ),
     );
     if (res.status === 'error') {
-      if (namePhoto) {
-        this.fileService.deleteFile(namePhoto);
-      }
+      // if (namePhoto) {
+      //   this.fileService.deleteFile(namePhoto);
+      // }
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;

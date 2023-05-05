@@ -34,7 +34,7 @@ export class ProfilesController {
 
     return await this.profileService.createUserProfile(
       userProfileInfo.userProfileDto,
-      userProfileInfo.namePhoto,
+      userProfileInfo.photo,
     );
   }
 

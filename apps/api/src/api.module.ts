@@ -3,10 +3,8 @@ import { AuthController } from './controllers/auth.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
-import * as path from 'path';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { SharedModule } from '@app/shared/shared.module';
-import { FilesService } from '@app/shared/services/files.service';
+import { FilesService } from 'apps/files-record/src/files.service';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtMiddleware } from './jwt-middleware';
 
@@ -16,9 +14,9 @@ import { JwtMiddleware } from './jwt-middleware';
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
-    ServeStaticModule.forRoot({
-      rootPath: path.join(__dirname, '..', 'static'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: path.join(__dirname, '..', 'static'),
+    // }),
     ClientsModule.register([
       {
         name: 'AUTH',

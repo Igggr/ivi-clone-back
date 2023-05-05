@@ -5,7 +5,7 @@ import { Profile } from '@app/shared/entities/profile.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { FilesService } from '@app/shared/services/files.service';
+import { FilesService } from 'apps/files-record/src/files.service';
 
 @Module({
   imports: [
