@@ -1,5 +1,5 @@
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { User } from '@app/shared/entities/user.entity';
+import { User } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

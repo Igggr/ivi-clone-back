@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { ActorFilm } from './actor-film.entity';
 import { Genre } from './genre.entity';
-import { Country } from './contry.entity';
+import { Country } from './country.entity';
 import { AgeRestriction } from './age-restriction';
 import { Review } from './review.entity';
 

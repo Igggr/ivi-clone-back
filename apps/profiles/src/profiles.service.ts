@@ -6,7 +6,7 @@ import {
 } from '@app/rabbit';
 import { ParsedProfileDTO } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { Profile } from '@app/shared/entities/profile.entity';
+import { Profile } from '@app/shared';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';

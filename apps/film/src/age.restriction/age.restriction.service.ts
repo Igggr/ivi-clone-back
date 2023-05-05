@@ -1,5 +1,5 @@
 import { CreateAgeRestrictionDTO } from '@app/shared/dto/create-age-restriction.dto';
-import { AgeRestriction } from '@app/shared/entities/age-restriction';
+import { AgeRestriction } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';

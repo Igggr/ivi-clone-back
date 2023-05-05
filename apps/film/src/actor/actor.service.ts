@@ -1,5 +1,10 @@
-import { CreateActorDTO, ParsedActorDTO, RoleType } from '@app/shared';
-import { Actor, ActorFilm } from '@app/shared/entities';
+import {
+  CreateActorDTO,
+  ParsedActorDTO,
+  RoleType,
+  Actor,
+  ActorFilm,
+} from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Equal } from 'typeorm';

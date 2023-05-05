@@ -1,5 +1,5 @@
 import { LoginDto } from '@app/shared/dto/login.dto';
-import { User } from '@app/shared/entities/user.entity';
+import { User } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';

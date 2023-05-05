@@ -1,6 +1,6 @@
 import { GET_FILMS } from '@app/rabbit/events';
 import { FILM } from '@app/rabbit/queues';
-import { Film } from '@app/shared/entities/film.entity';
+import { Film } from '@app/shared';
 import { Controller, Get, HttpStatus, Inject, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';

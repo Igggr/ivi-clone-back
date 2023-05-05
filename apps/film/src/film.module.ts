@@ -8,8 +8,8 @@ import { ClientsModule } from '@nestjs/microservices';
 import { PARSER } from '@app/rabbit/queues';
 import { RABIT_OPTIONS } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
-import { Film } from '@app/shared/entities/film.entity';
 import {
+  Film,
   Actor,
   ActorFilm,
   ActorRole,
@@ -18,14 +18,14 @@ import {
   Genre,
   Review,
   Comment,
-} from '@app/shared/entities';
+  AgeRestriction,
+} from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CountryService } from './country/country.service';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { ReviewService } from './review/review.service';
 import { GenreService } from './genre/genre.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
-import { AgeRestriction } from '@app/shared/entities/age-restriction';
 
 @Module({
   imports: [

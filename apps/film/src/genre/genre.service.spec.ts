@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GenreService } from './genre.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Genre } from '@app/shared/entities';
+import { Genre } from '@app/shared';
 
 describe('GenreService', () => {
   let service: GenreService;
