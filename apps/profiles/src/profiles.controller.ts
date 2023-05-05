@@ -7,8 +7,8 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { ParsedProfileDTO, REGISTRATION } from '@app/shared';
-import { CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
+import { ParsedProfileDTO } from '@app/shared';
+import { REGISTRATION, CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
 
 @Controller()
 export class ProfilesController {

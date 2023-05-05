@@ -8,13 +8,8 @@ import {
 } from '@nestjs/microservices';
 import { LoginDto } from '@app/shared/dto/login.dto';
 import { UsersService } from './users/users.service';
-import {
-  CREATE_USER,
-  GET_TOKEN,
-  GET_USER_BY_EMAIL,
-  LOGIN,
-  ParsedProfileDTO,
-} from '@app/shared';
+import { CREATE_USER, GET_TOKEN, GET_USER_BY_EMAIL, LOGIN } from '@app/rabbit';
+import { ParsedProfileDTO } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { CREATE_DUMMY_USER } from '@app/rabbit';

@@ -1,4 +1,4 @@
-import { LOGIN } from '@app/shared';
+import { LOGIN } from '@app/rabbit';
 import { LoginDto } from '@app/shared/dto/login.dto';
 import {
   Body,
