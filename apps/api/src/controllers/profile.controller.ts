@@ -20,12 +20,14 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { firstValueFrom } from 'rxjs';
 import { ProfilesGuard } from '../guards/profile-auth.guard';
 import { Roles } from '../guards/roles-auth.decorator';
+import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 
 @Controller()
 export class ProfilesController {
@@ -35,6 +37,7 @@ export class ProfilesController {
   ) {}
 
   @Post('/registration')
+  @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('photo'))
   async registration(
     @Body() userProfileDto: CreateUserProfileDto,
@@ -67,6 +70,7 @@ export class ProfilesController {
   @Put('/profiles/:id')
   @UseGuards(ProfilesGuard)
   @Roles('ADMIN')
+  @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('photo'))
   async updateProfile(
     @Param('id') profileId: number,

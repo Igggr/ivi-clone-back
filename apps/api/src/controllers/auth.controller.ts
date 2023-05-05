@@ -18,17 +18,20 @@ import {
   Post,
   UnauthorizedException,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
+import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 
 @Controller()
 export class AuthController {
   constructor(@Inject('AUTH') private authService: ClientProxy) {}
 
   @Post('/auth/login')
+  @UsePipes(ValidationPipe)
   async login(@Body() userDto: CreateUserDto) {
     const res = await firstValueFrom(
       this.authService.send(
@@ -47,6 +50,7 @@ export class AuthController {
   @Post('/roles')
   @UseGuards(RolesGuard)
   @Roles('ADMIN')
+  @UsePipes(ValidationPipe)
   async createRole(@Body() roleDto: CreateRoleDto) {
     const res = await firstValueFrom(
       this.authService.send(
@@ -65,6 +69,7 @@ export class AuthController {
   @Post('/users/role')
   @UseGuards(RolesGuard)
   @Roles('ADMIN')
+  @UsePipes(ValidationPipe)
   async addRole(@Body() roleDto: AddRoleDto) {
     const res = await firstValueFrom(
       this.authService.send(

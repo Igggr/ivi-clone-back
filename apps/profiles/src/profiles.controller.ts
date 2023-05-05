@@ -1,4 +1,4 @@
-import { Body, Controller } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import {
   Ctx,
@@ -27,7 +27,7 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: REGISTRATION })
-  async registration(@Body() userProfileInfo, @Ctx() context: RmqContext) {
+  async registration(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
@@ -39,7 +39,7 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: UPDATE_PROFILE })
-  async updateProfile(@Body() userProfileInfo, @Ctx() context: RmqContext) {
+  async updateProfile(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);

@@ -38,7 +38,7 @@ export class User {
     this.roles.push(role);
   }
 
-  static async setPassword(password, hash = 5) {
-    return await bcrypt.hash(password, hash);
+  async setPassword(password, hash = 5) {
+    this.password = await bcrypt.hash(password, hash);
   }
 }

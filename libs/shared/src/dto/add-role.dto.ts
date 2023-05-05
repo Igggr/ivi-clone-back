@@ -1,10 +1,10 @@
-import { IsNumber, IsString } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { IsInt, IsNumber, IsPositive } from 'class-validator';
+import { Role } from '../entities/role.entity';
 
-export class AddRoleDto {
-  @IsString({ message: 'Должно быть строкой' })
-  readonly value: string;
+export class AddRoleDto extends PickType(Role, ['value']) {
   @IsNumber({}, { message: 'Должно быть числом' })
+  @IsPositive()
+  @IsInt()
   readonly userId: number;
-  @IsString({ message: 'Должно быть строкой' })
-  readonly description: string;
 }

@@ -1,4 +1,4 @@
-import { Body, Controller } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { FilesRecordService } from './files-record.service';
 import {
   Ctx,
@@ -13,7 +13,7 @@ export class FilesRecordController {
   constructor(private readonly filesRecordService: FilesRecordService) {}
 
   @MessagePattern({ cmd: RECORD_FILE })
-  recordFile(@Body() recordInfo, @Ctx() context: RmqContext) {
+  recordFile(@Payload() recordInfo, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
@@ -26,7 +26,7 @@ export class FilesRecordController {
   }
 
   @MessagePattern({ cmd: UPDATE_FILE })
-  updateFile(@Body() recordInfo, @Ctx() context: RmqContext) {
+  updateFile(@Payload() recordInfo, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);

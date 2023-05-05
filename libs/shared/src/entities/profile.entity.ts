@@ -5,7 +5,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 @Entity()
 export class Profile {
@@ -14,6 +14,7 @@ export class Profile {
 
   @ApiProperty({ example: 'Александр', description: 'Имя пользователя' })
   @IsString({ message: 'Должно быть строкой' })
+  @IsOptional()
   @Column({ nullable: true })
   name: string;
 
@@ -36,6 +37,7 @@ export class Profile {
     description: 'Страна проживания пользователя',
   })
   @IsString({ message: 'Должно быть строкой ' })
+  @IsOptional()
   @Column({ nullable: true })
   country: string;
 
@@ -44,6 +46,7 @@ export class Profile {
     description: 'Город проживания пользователя',
   })
   @IsString({ message: 'Должно быть строкой ' })
+  @IsOptional()
   @Column({ nullable: true })
   city: string;
 
@@ -58,6 +61,7 @@ export class Profile {
   createdAt: Date;
 
   @Column({ nullable: true })
+  @IsOptional()
   photo: string;
 
   @Column({ nullable: false })

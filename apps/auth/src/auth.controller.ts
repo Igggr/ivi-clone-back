@@ -1,4 +1,4 @@
-import { Body, Controller } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   Ctx,
@@ -35,7 +35,7 @@ export class AuthController {
   ) {}
 
   @MessagePattern({ cmd: LOGIN })
-  login(@Body() userDto: CreateUserDto, @Ctx() context: RmqContext) {
+  login(@Payload() userDto: CreateUserDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
@@ -45,7 +45,7 @@ export class AuthController {
 
   @MessagePattern({ cmd: CREATE_USER })
   createUser(
-    @Body() userDto: CreateUserProfileDto,
+    @Payload() userDto: CreateUserProfileDto,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
@@ -74,7 +74,7 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: UPDATE_USER })
-  updateUser(@Body() userProfileInfo, @Ctx() context: RmqContext) {
+  updateUser(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
@@ -95,7 +95,7 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: CREATE_ROLE })
-  createRole(@Body() roleDto: CreateRoleDto, @Ctx() context: RmqContext) {
+  createRole(@Payload() roleDto: CreateRoleDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
@@ -104,7 +104,7 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: ADD_ROLE })
-  addRole(@Body() roleDto: AddRoleDto, @Ctx() context: RmqContext) {
+  addRole(@Payload() roleDto: AddRoleDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);

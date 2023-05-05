@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { User } from './user.entity';
 
 @Entity()
@@ -14,6 +14,7 @@ export class Role {
   value: string;
 
   @IsString({ message: 'Должно быть строкой' })
+  @IsOptional()
   @Column({ nullable: true })
   description: string;
 

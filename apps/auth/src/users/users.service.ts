@@ -17,11 +17,10 @@ export class UsersService {
 
   async createUser(userDto: CreateUserProfileDto) {
     try {
-      const hashPassword = await User.setPassword(userDto.password);
       const user = await this.userRepository.create({
         ...userDto,
-        password: hashPassword,
       });
+      await user.setPassword(userDto.password);
       let role = await this.roleService.getRoleByValue('USER');
       if (!role) {
         const roleDto = new CreateRoleDto('USER');
@@ -52,20 +51,14 @@ export class UsersService {
         };
       }
       const user = await this.userRepository.findOneBy({ id: userId });
-      let newUser;
+      const newUser = await this.userRepository.save({
+        ...user,
+        ...userDto,
+      });
       if (userDto.password) {
-        const hashPassword = await User.setPassword(userDto.password);
-        newUser = await this.userRepository.save({
-          ...user,
-          ...userDto,
-          password: hashPassword,
-        });
-      } else {
-        newUser = await this.userRepository.save({
-          ...user,
-          ...userDto,
-        });
+        await user.setPassword(userDto.password);
       }
+
       return newUser;
     } catch (error) {
       return {
