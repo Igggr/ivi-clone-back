@@ -2,7 +2,7 @@
 /dist
 /node_modules
 
-/libs/static
+/apps/files-record/src/static
 
 # Logs
 logs

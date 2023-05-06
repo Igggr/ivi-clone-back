@@ -27,8 +27,9 @@ export class FilesRecordService {
       essenceTable: essenceTable,
       file: fileName,
     });
+    await this.fileRepository.save(fileRecord);
 
-    return this.fileRepository.save(fileRecord);
+    return fileName;
   }
 
   /**
@@ -38,11 +39,15 @@ export class FilesRecordService {
    * @param fileName Название картинки
    * @returns Обновленную информацию о картинке
    */
-  async updateFile(essenceId: number, fileName: string) {
-    const file = await this.fileRepository.findOneBy({ essenceId: essenceId });
-    await this.fileRepository.save({ ...file, file: fileName });
+  async updateFile(essenceId: number, file: any, oldFileName: string) {
+    const foundFile = await this.fileRepository.findOneBy({
+      essenceId: essenceId,
+    });
+    await this.fileService.deleteFile(oldFileName);
+    const fileName = await this.fileService.createFile(file);
+    await this.fileRepository.save({ ...foundFile, file: fileName });
 
-    return await this.fileRepository.findOneBy({ id: essenceId });
+    return fileName;
   }
 
   /**
@@ -51,8 +56,9 @@ export class FilesRecordService {
    * @param essenceId Идентификатор сущности
    * @returns Обновленную информацию о картинке
    */
-  async deleteFile(essenceId: number) {
+  async deleteFile(essenceId: number, photoName: string) {
     const file = await this.fileRepository.findOneBy({ essenceId: essenceId });
+    await this.fileService.deleteFile(photoName);
 
     return this.fileRepository.remove(file);
   }

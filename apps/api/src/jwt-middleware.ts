@@ -28,7 +28,7 @@ export class JwtMiddleware implements NestMiddleware {
           token,
         ),
       );
-      console.log(response);
+
       if (response.status != 'error') {
         req.user = response;
       }

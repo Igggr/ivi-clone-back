@@ -47,7 +47,7 @@ export class ProfilesController {
     return await this.profileService.updateUserProfile(
       userProfileInfo.profileId,
       userProfileInfo.userProfileDto,
-      userProfileInfo.namePhoto,
+      userProfileInfo.photo,
     );
   }
 

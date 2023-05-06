@@ -25,7 +25,7 @@ export class FilesRecordController {
     return this.filesRecordService.recordFile(
       recordInfo.essenceId,
       recordInfo.essenceTable,
-      recordInfo.photo,
+      recordInfo.file,
     );
   }
 
@@ -37,16 +37,20 @@ export class FilesRecordController {
 
     return this.filesRecordService.updateFile(
       recordInfo.essenceId,
-      recordInfo.fileName,
+      recordInfo.fileForCreate,
+      recordInfo.fileForDelete,
     );
   }
 
   @MessagePattern({ cmd: DELETE_FILE })
-  deleteFile(@Payload() essenceId: number, @Ctx() context: RmqContext) {
+  deleteFile(@Payload() recordInfo, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.filesRecordService.deleteFile(essenceId);
+    return this.filesRecordService.deleteFile(
+      recordInfo.essenceId,
+      recordInfo.fileName,
+    );
   }
 }

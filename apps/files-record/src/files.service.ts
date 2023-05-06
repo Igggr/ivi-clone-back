@@ -14,14 +14,19 @@ export class FilesService {
   async createFile(file): Promise<string> {
     try {
       const fileName = uuid.v4() + '.jpg';
-      const filePath = path.join(process.cwd(), 'libs', 'static');
+      const filePath = path.join(
+        process.cwd(),
+        'apps',
+        'files-record',
+        'src',
+        'static',
+      );
 
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });
       }
-      console.log('write file');
-      fs.writeFileSync(path.join(filePath, fileName), file.buffer);
-      console.log('ok');
+      fs.writeFileSync(path.join(filePath, fileName), Buffer.from(file.buffer));
+
       return fileName;
     } catch (error) {
       throw new HttpException(
@@ -39,7 +44,13 @@ export class FilesService {
    */
   async deleteFile(fileName): Promise<string> {
     try {
-      const filePath = path.join(process.cwd(), 'libs', 'static');
+      const filePath = path.join(
+        process.cwd(),
+        'apps',
+        'files-record',
+        'src',
+        'static',
+      );
       fs.unlinkSync(path.join(filePath, fileName));
       return 'Success';
     } catch (error) {

@@ -5,7 +5,6 @@ import {
   UPDATE_PROFILE,
 } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { FilesService } from 'apps/files-record/src/files.service';
 import {
   Body,
   Controller,
@@ -31,22 +30,15 @@ import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 
 @Controller()
 export class ProfilesController {
-  constructor(
-    @Inject('PROFILES') private profileService: ClientProxy,
-    private fileService: FilesService,
-  ) {}
+  constructor(@Inject('PROFILES') private profileService: ClientProxy) {}
 
   @Post('/registration')
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('photo'))
   async registration(
     @Body() userProfileDto: CreateUserProfileDto,
-    @UploadedFile() photo,
+    @UploadedFile() photo: Express.Multer.File,
   ) {
-    // let namePhoto;
-    // if (photo) {
-    //   namePhoto = await this.fileService.createFile(photo);
-    // }
     const res = await firstValueFrom(
       this.profileService.send(
         {
@@ -59,9 +51,6 @@ export class ProfilesController {
       ),
     );
     if (res.status === 'error') {
-      // if (namePhoto) {
-      //   this.fileService.deleteFile(namePhoto);
-      // }
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;
@@ -75,12 +64,8 @@ export class ProfilesController {
   async updateProfile(
     @Param('id') profileId: number,
     @Body() userProfileDto: CreateUserProfileDto,
-    @UploadedFile() photo,
+    @UploadedFile() photo: Express.Multer.File,
   ) {
-    let namePhoto;
-    if (photo) {
-      namePhoto = await this.fileService.createFile(photo);
-    }
     const res = await firstValueFrom(
       this.profileService.send(
         {
@@ -89,14 +74,11 @@ export class ProfilesController {
         {
           profileId,
           userProfileDto,
-          namePhoto,
+          photo,
         },
       ),
     );
     if (res.status === 'error') {
-      if (namePhoto) {
-        this.fileService.deleteFile(namePhoto);
-      }
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;

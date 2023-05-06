@@ -10,7 +10,6 @@ import {
 } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { Profile } from '@app/shared/entities/profile.entity';
-import { FilesService } from 'apps/files-record/src/files.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -24,7 +23,6 @@ export class ProfilesService {
     private readonly profileRepository: Repository<Profile>,
     @Inject('AUTH') private authService: ClientProxy,
     @Inject('FILES-RECORD') private fileRecordService: ClientProxy,
-    private fileService: FilesService,
   ) {}
 
   /**
@@ -66,7 +64,7 @@ export class ProfilesService {
             {
               essenceId: profile.id,
               essenceTable: 'profiles',
-              fileName: photo,
+              file: photo,
             },
           ),
         );
@@ -91,6 +89,7 @@ export class ProfilesService {
     photo: any,
   ) {
     try {
+      let photoName;
       const profile = await this.profileRepository.findOneBy({
         id: profileId,
       });
@@ -108,12 +107,7 @@ export class ProfilesService {
       }
       if (photo) {
         if (profile.photo) {
-          await this.fileService.deleteFile(profile.photo);
-          await this.profileRepository.save({
-            ...profile,
-            ...userProfileDto,
-          });
-          await firstValueFrom(
+          photoName = await firstValueFrom(
             this.fileRecordService.send(
               { cmd: UPDATE_FILE },
               {
@@ -124,21 +118,27 @@ export class ProfilesService {
             ),
           );
         } else {
-          await this.profileRepository.save({ ...profile, ...userProfileDto });
-          await firstValueFrom(
+          photoName = await firstValueFrom(
             this.fileRecordService.send(
               { cmd: RECORD_FILE },
               {
                 essenceId: profileId,
                 essenceTable: 'profiles',
-                fileName: photo,
+                file: photo,
               },
             ),
           );
         }
       }
+      await this.profileRepository.save({
+        ...profile,
+        ...userProfileDto,
+        photo: photoName,
+      });
 
-      return await this.profileRepository.findOneBy({ id: profileId });
+      return await this.profileRepository.findOneBy({
+        id: profileId,
+      });
     } catch (error) {
       return {
         status: 'error',
@@ -164,12 +164,18 @@ export class ProfilesService {
         return user;
       }
       if (profile.photo) {
-        await this.fileService.deleteFile(profile.photo);
         await firstValueFrom(
-          this.fileRecordService.send({ cmd: DELETE_FILE }, profileId),
+          this.fileRecordService.send(
+            { cmd: DELETE_FILE },
+            {
+              essenceId: profile.id,
+              fileName: profile.photo,
+            },
+          ),
         );
       }
       await this.profileRepository.remove(profile);
+
       return {
         status: 'Success',
         message: 'Профиль и пользователь успешно удалены',

@@ -14,7 +14,13 @@ import { FilesService } from './files.service';
       envFilePath: '.env',
     }),
     ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), 'libs', 'static'),
+      rootPath: path.join(
+        process.cwd(),
+        'apps',
+        'files-record',
+        'src',
+        'static',
+      ),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
