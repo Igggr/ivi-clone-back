@@ -41,7 +41,7 @@ export class ProfilesController {
   @UseInterceptors(FileInterceptor('photo'))
   async registration(
     @Body() userProfileDto: CreateUserProfileDto,
-    @UploadedFile() photo,
+    @UploadedFile() photo: Express.Multer.File,
   ) {
     // let namePhoto;
     // if (photo) {

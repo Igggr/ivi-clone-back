@@ -20,7 +20,7 @@ export class FilesService {
         fs.mkdirSync(filePath, { recursive: true });
       }
       console.log('write file');
-      fs.writeFileSync(path.join(filePath, fileName), file.buffer);
+      fs.writeFileSync(path.join(filePath, fileName), Buffer.from(file.buffer));
       console.log('ok');
       return fileName;
     } catch (error) {

@@ -25,7 +25,7 @@ export class FilesRecordController {
     return this.filesRecordService.recordFile(
       recordInfo.essenceId,
       recordInfo.essenceTable,
-      recordInfo.photo,
+      recordInfo.fileName,
     );
   }
 
