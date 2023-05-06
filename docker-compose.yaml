@@ -104,10 +104,12 @@ services:
     container_name: "swagger-ui"
     ports:
       - "8082:8080"
+    depends_on:
+      - api
     volumes:
-      - ./openapi.json:/openapi.json
+      - ./swagger.json:/swagger.json
     environment:
-      SWAGGER_JSON: /openapi.json
+      SWAGGER_JSON: /swagger.json
 
 networks:
   postgres_film:

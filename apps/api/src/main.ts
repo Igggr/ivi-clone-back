@@ -3,6 +3,7 @@ import { ApiModule } from './api.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from '@app/shared';
+import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiModule);
@@ -18,10 +19,11 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  fs.writeFileSync('swagger.json', JSON.stringify(document));
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new HttpExceptionFilter())
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(3000);
 }
