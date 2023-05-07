@@ -5,6 +5,7 @@ import {
   ArgumentsHost,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
+import { ValidationException } from '../exceptions/validation-exception';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -19,7 +20,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      error: exception.message,
+      error: exception instanceof ValidationException ? exception.messages : exception.message,
     });
   }
 }
