@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ActorRoleService } from './actor.role.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ActorRole } from '@app/shared/entities';
+import { ActorRole } from '@app/shared';
 
 describe('ActorRoleService', () => {
   let service: ActorRoleService;

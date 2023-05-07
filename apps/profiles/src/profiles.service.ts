@@ -1,12 +1,12 @@
-import { CREATE_DUMMY_USER } from '@app/rabbit';
 import {
+  CREATE_DUMMY_USER,
   CREATE_USER,
   GET_TOKEN,
   GET_USER_BY_EMAIL,
-  ParsedProfileDTO,
-} from '@app/shared';
+} from '@app/rabbit';
+import { ParsedProfileDTO } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { Profile } from '@app/shared/entities/profile.entity';
+import { Profile } from '@app/shared';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';

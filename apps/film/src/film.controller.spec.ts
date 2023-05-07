@@ -2,23 +2,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FilmController } from './film.controller';
 import { FilmService } from './film.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Film } from '@app/shared/entities/film.entity';
 import { FILM } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
 import {
+  Film,
   Actor,
   ActorFilm,
   ActorRole,
   Country,
   Genre,
   Review,
-} from '@app/shared/entities';
+  AgeRestriction,
+} from '@app/shared';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
 import { GenreService } from './genre/genre.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
-import { AgeRestriction } from '@app/shared/entities/age-restriction';
 
 describe('FilmController', () => {
   let filmController: FilmController;

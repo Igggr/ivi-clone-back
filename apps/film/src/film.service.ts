@@ -1,5 +1,5 @@
 import { FilmQueryDTO, ParsedFilmDTO } from '@app/shared';
-import { Film } from '@app/shared/entities/film.entity';
+import { Film } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';

@@ -1,4 +1,4 @@
-import { ActorRole } from '@app/shared/entities';
+import { ActorRole } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';

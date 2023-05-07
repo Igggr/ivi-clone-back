@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Country } from './contry.entity';
+import { Country } from './country.entity';
 
 @Entity()
 export class FilmViewsCountry {

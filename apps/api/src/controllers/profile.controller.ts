@@ -1,4 +1,4 @@
-import { REGISTRATION } from '@app/shared';
+import { REGISTRATION } from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import {
   Body,

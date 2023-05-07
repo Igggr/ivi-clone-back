@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AgeRestrictionService } from './age.restriction.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { AgeRestriction } from '@app/shared/entities/age-restriction';
+import { AgeRestriction } from '@app/shared';
 
 describe('AgeRestrictionService', () => {
   let service: AgeRestrictionService;

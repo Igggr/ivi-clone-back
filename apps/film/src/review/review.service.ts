@@ -1,7 +1,6 @@
-import { CREATE_PROFILE_WITH_DUMMY_USER, PARSER } from '@app/rabbit';
+import { CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
 import { ParsedProfileDTO, ParsedReviewDTO } from '@app/shared';
-import { Review, Comment } from '@app/shared/entities';
-import { Profile } from '@app/shared/entities/profile.entity';
+import { Review, Comment, Profile } from '@app/shared';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';

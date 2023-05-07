@@ -1,5 +1,5 @@
-import { CreateUserDto } from '@app/shared/dto/create-user.dto';
-import { User } from '@app/shared/entities/user.entity';
+import { LoginDto } from '@app/shared/dto/login.dto';
+import { User } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
@@ -11,7 +11,7 @@ export class AuthService {
     private userService: UsersService,
   ) {}
 
-  async login(userDto: CreateUserDto) {
+  async login(userDto: LoginDto) {
     const user = await this.validateUser(userDto);
     if (user instanceof User) {
       return this.generateToken(user);
@@ -38,7 +38,7 @@ export class AuthService {
    * @param userDto Дто пользователя
    * @returns Объект пользователя
    */
-  private async validateUser(userDto: CreateUserDto) {
+  private async validateUser(userDto: LoginDto) {
     const user = await this.userService.getUserByEmail(userDto.email);
     if (user) {
       const passwordEquals = await this.userService.checkPassword(

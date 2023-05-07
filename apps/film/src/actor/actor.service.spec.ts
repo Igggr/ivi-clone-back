@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ActorService } from './actor.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Actor, ActorFilm, ActorRole } from '@app/shared/entities';
+import { Actor, ActorFilm, ActorRole } from '@app/shared';
 import { ActorRoleService } from '../actor.role/actor.role.service';
 
 describe('ActorService', () => {

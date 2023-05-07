@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CountryService } from './country.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Country } from '@app/shared/entities';
+import { Country } from '@app/shared';
 
 describe('CountryService', () => {
   let service: CountryService;
