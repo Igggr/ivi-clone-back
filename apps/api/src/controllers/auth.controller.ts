@@ -25,6 +25,7 @@ import { firstValueFrom } from 'rxjs';
 import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
+import { ADMIN } from '@app/shared/constants/role-guard.const';
 
 @Controller()
 export class AuthController {
@@ -49,7 +50,7 @@ export class AuthController {
 
   @Post('/roles')
   @UseGuards(RolesGuard)
-  @Roles('Admin')
+  @Roles(ADMIN)
   @UsePipes(ValidationPipe)
   async createRole(@Body() roleDto: CreateRoleDto) {
     const res = await firstValueFrom(
@@ -68,7 +69,7 @@ export class AuthController {
 
   @Post('/users/role')
   @UseGuards(RolesGuard)
-  @Roles('Admin')
+  @Roles(ADMIN)
   async addRole(@Body() roleDto: AddRoleDto) {
     const res = await firstValueFrom(
       this.authService.send(
@@ -96,7 +97,7 @@ export class AuthController {
 
   @Get('/roles')
   @UseGuards(RolesGuard)
-  @Roles('Admin')
+  @Roles(ADMIN)
   async getRoles() {
     return await this.authService.send(
       {

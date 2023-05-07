@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SharedService } from './shared.service';
-import { FilesService } from '../../../apps/files-record/src/files.service';
 
 @Module({
   imports: [
@@ -9,7 +8,7 @@ import { FilesService } from '../../../apps/files-record/src/files.service';
       envFilePath: '.env',
     }),
   ],
-  providers: [SharedService, FilesService],
-  exports: [SharedService, FilesService],
+  providers: [SharedService],
+  exports: [SharedService],
 })
 export class SharedModule {}

@@ -27,6 +27,7 @@ import { firstValueFrom } from 'rxjs';
 import { ProfilesGuard } from '../guards/profile-auth.guard';
 import { Roles } from '../guards/roles-auth.decorator';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
+import { ADMIN } from '@app/shared/constants/role-guard.const';
 
 @Controller()
 export class ProfilesController {
@@ -58,7 +59,7 @@ export class ProfilesController {
 
   @Put('/profiles/:id')
   @UseGuards(ProfilesGuard)
-  @Roles('Admin')
+  @Roles(ADMIN)
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('photo'))
   async updateProfile(
@@ -86,7 +87,7 @@ export class ProfilesController {
 
   @Delete('/profiles/:id')
   @UseGuards(ProfilesGuard)
-  @Roles('Admin')
+  @Roles(ADMIN)
   async deleteProfile(@Param('id') profileId: number) {
     const res = await firstValueFrom(
       this.profileService.send(
