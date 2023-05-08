@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
-import { Profile } from '@app/shared/entities/profile.entity';
+import { Profile } from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { FilesService } from 'apps/files-record/src/files.service';
+import { RABIT_OPTIONS } from '@app/rabbit';
 
 @Module({
   imports: [
@@ -25,34 +25,18 @@ import { FilesService } from 'apps/files-record/src/files.service';
     ClientsModule.register([
       {
         name: 'AUTH',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://localhost:5672'],
-          queue: 'auth_queue',
-          noAck: false,
-          queueOptions: {
-            durable: true,
-          },
-        },
+        ...RABIT_OPTIONS('auth'),
       },
     ]),
     ClientsModule.register([
       {
         name: 'FILES-RECORD',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://localhost:5672'],
-          queue: 'files_queue',
-          noAck: false,
-          queueOptions: {
-            durable: true,
-          },
-        },
+        ...RABIT_OPTIONS('files'),
       },
     ]),
     TypeOrmModule.forFeature([Profile]),
   ],
   controllers: [ProfilesController],
-  providers: [ProfilesService, FilesService],
+  providers: [ProfilesService],
 })
 export class ProfilesModule {}

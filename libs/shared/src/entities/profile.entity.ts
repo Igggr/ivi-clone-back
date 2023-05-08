@@ -12,6 +12,9 @@ export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  url: string;
+
   @ApiProperty({ example: 'Александр', description: 'Имя пользователя' })
   @IsString({ message: 'Должно быть строкой' })
   @IsOptional()

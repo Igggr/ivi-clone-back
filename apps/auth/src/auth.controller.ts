@@ -6,8 +6,9 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { CreateUserDto } from '@app/shared/dto/create-user.dto';
+import { LoginDto } from '@app/shared/dto/login.dto';
 import { UsersService } from './users/users.service';
+import { ParsedProfileDTO } from '@app/shared';
 import {
   ADD_ROLE,
   CREATE_ROLE,
@@ -20,7 +21,8 @@ import {
   LOGIN,
   UPDATE_USER,
   VERIFY_TOKEN,
-} from '@app/shared';
+  CREATE_DUMMY_USER,
+} from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
@@ -36,7 +38,7 @@ export class AuthController {
   ) {}
 
   @MessagePattern({ cmd: LOGIN })
-  login(@Payload() userDto: CreateUserDto, @Ctx() context: RmqContext) {
+  login(@Payload() userDto: LoginDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
@@ -54,6 +56,18 @@ export class AuthController {
     channel.ack(message);
 
     return this.userService.createUser(userDto);
+  }
+
+  @MessagePattern({ cmd: CREATE_DUMMY_USER })
+  createDummyUser(
+    @Ctx() context: RmqContext,
+    @Payload() dto: ParsedProfileDTO,
+  ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.createDummyUser(dto);
   }
 
   @MessagePattern({ cmd: GET_USER_BY_EMAIL })

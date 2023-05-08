@@ -1,6 +1,19 @@
 version: "3"
 services:
 
+  postgres_film:
+    container_name: postgres_film
+    image: postgres:latest
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./db_data/film/postgres/:/var/lib/postgresql/data
+      - ./db_data/film/run/postgres.sock:/var/run/postgres/postgres.sock
+    env_file:
+    - docker.film_db.env
+    networks:
+    - postgres_film
+  
   postgres_profile:
     container_name: postgres_profile
     image: postgres:latest
@@ -53,6 +66,7 @@ services:
     env_file:
     - docker.pgadmin.env
     networks:
+    - postgres_film
     - postgres_auth
     - postgres_profile
     - postgres_file
@@ -86,8 +100,35 @@ services:
       - "8081:8081"
     depends_on:
         - redis
+  
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      target: development
+    command: npm run start:dev api
+    depends_on:
+      - rabbit
+    ports:
+      - '3000:3000'
+    networks:
+      - rabbit
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui"
+    ports:
+      - "8082:8080"
+    depends_on:
+      - api
+    volumes:
+      - ./swagger.json:/swagger.json
+    environment:
+      SWAGGER_JSON: /swagger.json
 
 networks:
+  postgres_film:
+    driver: bridge
   postgres_auth:
     driver: bridge
   postgres_profile:

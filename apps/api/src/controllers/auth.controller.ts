@@ -1,13 +1,14 @@
+import { LoginDto } from '@app/shared/dto/login.dto';
+import { LoggingInterceptor } from '@app/shared/interceptors/logging.interceptor';
 import {
   ADD_ROLE,
   CREATE_ROLE,
   GET_ROLES,
   GET_USERS,
   LOGIN,
-} from '@app/shared';
+} from '@app/rabbit';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
-import { CreateUserDto } from '@app/shared/dto/create-user.dto';
 import {
   Body,
   Controller,
@@ -17,6 +18,7 @@ import {
   Inject,
   Post,
   UnauthorizedException,
+  UseInterceptors,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
@@ -27,13 +29,14 @@ import { RolesGuard } from '../guards/roles.guard';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 
-@Controller()
+@UseInterceptors(LoggingInterceptor)
+@Controller('/auth')
 export class AuthController {
   constructor(@Inject('AUTH') private authService: ClientProxy) {}
 
-  @Post('/auth/login')
+  @Post('/login')
   @UsePipes(ValidationPipe)
-  async login(@Body() userDto: CreateUserDto) {
+  async login(@Body() userDto: LoginDto) {
     const res = await firstValueFrom(
       this.authService.send(
         {

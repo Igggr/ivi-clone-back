@@ -6,12 +6,14 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
+import { ParsedProfileDTO } from '@app/shared';
 import {
   DELETE_PROFILE,
   GET_PROFILES,
-  REGISTRATION,
   UPDATE_PROFILE,
-} from '@app/shared';
+  REGISTRATION,
+  CREATE_PROFILE_WITH_DUMMY_USER,
+} from '@app/rabbit';
 
 @Controller()
 export class ProfilesController {
@@ -61,5 +63,18 @@ export class ProfilesController {
     channel.ack(message);
 
     return await this.profileService.deleteUserProfile(profileId);
+  }
+
+  @MessagePattern({ cmd: CREATE_PROFILE_WITH_DUMMY_USER })
+  createProfileWithDummmyUser(
+    @Ctx() context: RmqContext,
+    @Payload() dto: ParsedProfileDTO,
+  ) {
+    console.log('should create dummy profile');
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    this.profileService.createProfileForDummyUser(dto);
   }
 }

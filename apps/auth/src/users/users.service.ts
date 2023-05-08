@@ -1,9 +1,10 @@
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { User } from '@app/shared/entities/user.entity';
+import { User, ParsedProfileDTO } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import * as uuid from 'uuid';
 import { RolesService } from '../roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { USER } from '@app/shared/constants/role.const';
@@ -15,6 +16,7 @@ export class UsersService {
     private readonly roleService: RolesService,
   ) {}
 
+  // поля Profile не еспользуются - стоило бы их выпилить
   async createUser(userDto: CreateUserProfileDto) {
     try {
       const user = await this.userRepository.create({
@@ -89,6 +91,18 @@ export class UsersService {
         error: 'Ошибка при удалении пользователя',
       };
     }
+  }
+
+  async createDummyUser(dto: ParsedProfileDTO) {
+    const dummyData: CreateUserProfileDto = {
+      ...dto,
+      surname: '',
+      // phoneNumber: '',
+      password: '111111',
+      nickname: '',
+      email: uuid.v4() + '@com',
+    };
+    return this.createUser(dummyData);
   }
 
   /**

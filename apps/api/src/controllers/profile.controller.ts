@@ -1,9 +1,9 @@
 import {
+  REGISTRATION,
   DELETE_PROFILE,
   GET_PROFILES,
-  REGISTRATION,
   UPDATE_PROFILE,
-} from '@app/shared';
+} from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import {
   Body,

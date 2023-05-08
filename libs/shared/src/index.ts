@@ -1,3 +1,3 @@
-// export * from './modules/shared.module';
-export * from './shared.service';
-export * from './events';
+export * from './dto';
+export * from './entities';
+export * from './filters/http-exceptions.filter';

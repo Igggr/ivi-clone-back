@@ -15,7 +15,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'db_data', 'redis_data', 'rabbitmq'],
   rules: {
     'prettier/prettier': [
       'error',
