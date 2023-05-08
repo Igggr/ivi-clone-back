@@ -4,5 +4,5 @@ import { User } from '../entities/user.entity';
 
 export class CreateUserProfileDto extends IntersectionType(
   OmitType(User, ['id']),
-  OmitType(Profile, ['id', 'userId']),
+  OmitType(Profile, ['id', 'userId', 'createdAt']),
 ) {}

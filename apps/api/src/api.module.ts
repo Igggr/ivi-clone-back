@@ -1,11 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthController } from './controllers/auth.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
 import { FILM } from '@app/rabbit/queues';
 import { RABIT_OPTIONS } from '@app/rabbit';
 import { FilmController } from './controllers/film.controller';
+import { JwtMiddleware } from './jwt-middleware';
 
 @Module({
   imports: [
@@ -21,33 +22,21 @@ import { FilmController } from './controllers/film.controller';
     ClientsModule.register([
       {
         name: 'AUTH',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://localhost:5672'],
-          queue: 'auth_queue',
-          noAck: false,
-          queueOptions: {
-            durable: true,
-          },
-        },
+        ...RABIT_OPTIONS('auth'),
       },
     ]),
     ClientsModule.register([
       {
         name: 'PROFILES',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://localhost:5672'],
-          queue: 'profiles_queue',
-          noAck: false,
-          queueOptions: {
-            durable: true,
-          },
-        },
+        ...RABIT_OPTIONS('profiles'),
       },
     ]),
   ],
   controllers: [AuthController, ProfilesController, FilmController],
   providers: [],
 })
-export class ApiModule {}
+export class ApiModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleware).forRoutes(ProfilesController, AuthController);
+  }
+}

@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsEmail, IsString, Length } from 'class-validator';
+import { Role } from './role.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Entity()
 export class User {
@@ -18,4 +26,19 @@ export class User {
   @Length(4, 16, { message: 'Не меньше 4 и не больше 16 символов' })
   @Column({ nullable: false })
   password: string;
+
+  @ManyToMany(() => Role, (role) => role.users, { cascade: true })
+  @JoinTable()
+  roles: Role[];
+
+  addRole(role: Role) {
+    if (this.roles == null) {
+      this.roles = new Array<Role>();
+    }
+    this.roles.push(role);
+  }
+
+  async setPassword(password, hash = 5) {
+    this.password = await bcrypt.hash(password, hash);
+  }
 }

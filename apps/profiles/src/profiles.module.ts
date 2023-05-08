@@ -28,6 +28,12 @@ import { RABIT_OPTIONS } from '@app/rabbit';
         ...RABIT_OPTIONS('auth'),
       },
     ]),
+    ClientsModule.register([
+      {
+        name: 'FILES-RECORD',
+        ...RABIT_OPTIONS('files'),
+      },
+    ]),
     TypeOrmModule.forFeature([Profile]),
   ],
   controllers: [ProfilesController],

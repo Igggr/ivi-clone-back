@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv';
+import { Role } from '@app/shared/entities/role.entity';
+import { RolesService } from './roles/roles.service';
 dotenv.config();
 
 @Module({
@@ -30,9 +32,9 @@ dotenv.config();
       synchronize: true,
       autoLoadEntities: true,
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Role]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService],
+  providers: [AuthService, UsersService, RolesService],
 })
 export class AuthModule {}

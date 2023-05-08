@@ -1,4 +1,4 @@
-import { Body, Controller } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   Ctx,
@@ -8,21 +8,37 @@ import {
 } from '@nestjs/microservices';
 import { LoginDto } from '@app/shared/dto/login.dto';
 import { UsersService } from './users/users.service';
-import { CREATE_USER, GET_TOKEN, GET_USER_BY_EMAIL, LOGIN } from '@app/rabbit';
 import { ParsedProfileDTO } from '@app/shared';
+import {
+  ADD_ROLE,
+  CREATE_ROLE,
+  CREATE_USER,
+  DELETE_USER,
+  GET_ROLES,
+  GET_TOKEN,
+  GET_USERS,
+  GET_USER_BY_EMAIL,
+  LOGIN,
+  UPDATE_USER,
+  VERIFY_TOKEN,
+  CREATE_DUMMY_USER,
+} from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { User } from '@app/shared';
-import { CREATE_DUMMY_USER } from '@app/rabbit';
+import { User } from '@app/shared/entities/user.entity';
+import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
+import { RolesService } from './roles/roles.service';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 
 @Controller()
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,
+    private readonly roleService: RolesService,
   ) {}
 
   @MessagePattern({ cmd: LOGIN })
-  login(@Body() userDto: LoginDto, @Ctx() context: RmqContext) {
+  login(@Payload() userDto: LoginDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
@@ -70,5 +86,71 @@ export class AuthController {
     channel.ack(message);
 
     return this.authService.generateToken(user);
+  }
+
+  @MessagePattern({ cmd: UPDATE_USER })
+  updateUser(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.updateUser(
+      userProfileInfo.userProfileDto,
+      userProfileInfo.userId,
+    );
+  }
+
+  @MessagePattern({ cmd: DELETE_USER })
+  deleteUser(@Payload() userId, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.deleteUser(userId);
+  }
+
+  @MessagePattern({ cmd: CREATE_ROLE })
+  createRole(@Payload() roleDto: CreateRoleDto, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.roleService.createRole(roleDto);
+  }
+
+  @MessagePattern({ cmd: ADD_ROLE })
+  addRole(@Payload() roleDto: AddRoleDto, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.addRole(roleDto);
+  }
+
+  @MessagePattern({ cmd: GET_USERS })
+  getUsers(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.userService.getUsers();
+  }
+
+  @MessagePattern({ cmd: GET_ROLES })
+  getRoles(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.roleService.getRoles();
+  }
+
+  @MessagePattern({ cmd: VERIFY_TOKEN })
+  verifyToken(@Payload() token, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.authService.verifyToken(token);
   }
 }

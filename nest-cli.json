@@ -93,6 +93,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/parser-simulator/tsconfig.app.json"
       }
+    },
+    "files-record": {
+      "type": "application",
+      "root": "apps/files-record",
+      "entryFile": "main",
+      "sourceRoot": "apps/files-record/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/files-record/tsconfig.app.json"
+      }
     }
   }
 }

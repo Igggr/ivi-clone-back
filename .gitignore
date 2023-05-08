@@ -2,6 +2,8 @@
 /dist
 /node_modules
 
+/apps/files-record/src/static
+
 # Logs
 logs
 *.log

@@ -1,33 +1,115 @@
-import { REGISTRATION } from '@app/rabbit';
+import {
+  REGISTRATION,
+  DELETE_PROFILE,
+  GET_PROFILES,
+  UPDATE_PROFILE,
+} from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   HttpException,
   HttpStatus,
   Inject,
+  Param,
   Post,
+  Put,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { firstValueFrom } from 'rxjs';
+import { ProfilesGuard } from '../guards/profile-auth.guard';
+import { Roles } from '../guards/roles-auth.decorator';
+import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
+import { ADMIN } from '@app/shared/constants/role-guard.const';
 
 @Controller()
 export class ProfilesController {
   constructor(@Inject('PROFILES') private profileService: ClientProxy) {}
 
   @Post('/registration')
-  async registration(@Body() userProfileDto: CreateUserProfileDto) {
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(FileInterceptor('photo'))
+  async registration(
+    @Body() userProfileDto: CreateUserProfileDto,
+    @UploadedFile() photo: Express.Multer.File,
+  ) {
     const res = await firstValueFrom(
       this.profileService.send(
         {
           cmd: REGISTRATION,
         },
-        userProfileDto,
+        {
+          userProfileDto,
+          photo,
+        },
       ),
     );
     if (res.status === 'error') {
       throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
     }
     return res;
+  }
+
+  @Put('/profiles/:id')
+  @UseGuards(ProfilesGuard)
+  @Roles(ADMIN)
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(FileInterceptor('photo'))
+  async updateProfile(
+    @Param('id') profileId: number,
+    @Body() userProfileDto: CreateUserProfileDto,
+    @UploadedFile() photo: Express.Multer.File,
+  ) {
+    const res = await firstValueFrom(
+      this.profileService.send(
+        {
+          cmd: UPDATE_PROFILE,
+        },
+        {
+          profileId,
+          userProfileDto,
+          photo,
+        },
+      ),
+    );
+    if (res.status === 'error') {
+      throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
+    }
+    return res;
+  }
+
+  @Delete('/profiles/:id')
+  @UseGuards(ProfilesGuard)
+  @Roles(ADMIN)
+  async deleteProfile(@Param('id') profileId: number) {
+    const res = await firstValueFrom(
+      this.profileService.send(
+        {
+          cmd: DELETE_PROFILE,
+        },
+        profileId,
+      ),
+    );
+    if (res.status === 'error') {
+      throw new HttpException(res.error, HttpStatus.BAD_REQUEST);
+    }
+    return res;
+  }
+
+  @Get('/profiles')
+  async getProfiles() {
+    return this.profileService.send(
+      {
+        cmd: GET_PROFILES,
+      },
+      {},
+    );
   }
 }

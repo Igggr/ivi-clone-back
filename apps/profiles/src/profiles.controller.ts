@@ -6,15 +6,20 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { ParsedProfileDTO } from '@app/shared';
-import { REGISTRATION, CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
+import {
+  DELETE_PROFILE,
+  GET_PROFILES,
+  UPDATE_PROFILE,
+  REGISTRATION,
+  CREATE_PROFILE_WITH_DUMMY_USER,
+} from '@app/rabbit';
 
 @Controller()
 export class ProfilesController {
   constructor(private readonly profileService: ProfilesService) {}
 
-  @MessagePattern({ cmd: 'get-profiles' })
+  @MessagePattern({ cmd: GET_PROFILES })
   getProfiles(@Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
@@ -24,15 +29,40 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: REGISTRATION })
-  registration(
-    @Payload() userProfileDto: CreateUserProfileDto,
+  async registration(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.profileService.createUserProfile(
+      userProfileInfo.userProfileDto,
+      userProfileInfo.photo,
+    );
+  }
+
+  @MessagePattern({ cmd: UPDATE_PROFILE })
+  async updateProfile(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return await this.profileService.updateUserProfile(
+      userProfileInfo.profileId,
+      userProfileInfo.userProfileDto,
+      userProfileInfo.photo,
+    );
+  }
+
+  @MessagePattern({ cmd: DELETE_PROFILE })
+  async deleteProfile(
+    @Payload() profileId: number,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.profileService.createUserProfile(userProfileDto);
+    return await this.profileService.deleteUserProfile(profileId);
   }
 
   @MessagePattern({ cmd: CREATE_PROFILE_WITH_DUMMY_USER })
