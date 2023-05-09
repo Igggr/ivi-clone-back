@@ -1,16 +1,5 @@
-import { LoginDto } from '@app/shared/dto/login.dto';
-import { LoggingInterceptor } from '@app/shared/interceptors/logging.interceptor';
-import {
-  ADD_ROLE,
-  CREATE_ROLE,
-  GET_ROLES,
-  GET_USERS,
-  LOGIN,
-  GOOGLE_LOGIN,
-  GOOGLE_REDIRECT,
-} from '@app/rabbit';
-import { AddRoleDto } from '@app/shared/dto/add-role.dto';
-import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
+import { LoginDto } from '@app/shared';
+import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import {
   Body,
   Controller,
@@ -19,20 +8,31 @@ import {
   HttpStatus,
   Inject,
   Post,
-  UnauthorizedException,
-  UseInterceptors,
-  UseGuards,
-  UsePipes,
   Req,
+  UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
 import { Roles } from '../guards/roles-auth.decorator';
-import { RolesGuard } from '../guards/roles.guard';
-import { Request } from 'express';
-import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
+import { RolesGuard } from '../guards/roles.guard';
+import {
+  ADD_ROLE,
+  CREATE_ROLE,
+  GET_ROLES,
+  GET_USERS,
+  GOOGLE_LOGIN,
+  GOOGLE_REDIRECT,
+  LOGIN,
+} from '@app/rabbit';
+import { LoggingInterceptor } from '@app/shared/interceptors/logging.interceptor';
+import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { GoogleAuthGuard } from '../utils/google-auth.guard';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')

@@ -4,9 +4,9 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GoogleUser } from '@app/shared/entities/google-user.entity';
 import { Repository } from 'typeorm';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
+import { GoogleUser } from '@app/shared/entities/google-user.entity';
+import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
 
 @Injectable()
 export class AuthService {
@@ -61,18 +61,6 @@ export class AuthService {
     };
   }
 
-  async verifyToken(token) {
-    const userInfo = await this.jwtService.verify(token);
-    const user = await this.userService.getUserByEmail(userInfo.email);
-    if (user) {
-      return user;
-    }
-    return {
-      status: 'error',
-      error: 'Не удалось проверить токен',
-    };
-  }
-
   async validateGoogleUser(details: CreateGoogleUserDetailsDto) {
     console.log('Auth Service');
     console.log(details);
@@ -84,12 +72,23 @@ export class AuthService {
     }
     console.log('User not found');
     const newGoogleUser = await this.googleUserRepository.create(details);
-
     return await this.googleUserRepository.save(newGoogleUser);
   }
 
   async findGoogleUser(userId: number) {
     const user = await this.googleUserRepository.findOneBy({ id: userId });
     return user;
+  }
+
+  async verifyToken(token) {
+    const userInfo = await this.jwtService.verify(token);
+    const user = await this.userService.getUserByEmail(userInfo.email);
+    if (user) {
+      return user;
+    }
+    return {
+      status: 'error',
+      error: 'Не удалось проверить токен',
+    };
   }
 }
