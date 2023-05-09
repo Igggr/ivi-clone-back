@@ -1,4 +1,5 @@
 import {
+  AUTH,
   CREATE_DUMMY_USER,
   CREATE_USER,
   DELETE_FILE,
@@ -23,8 +24,8 @@ export class ProfilesService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-    @Inject('AUTH') private authService: ClientProxy,
-    @Inject('FILES-RECORD') private fileRecordService: ClientProxy,
+    @Inject(AUTH) private authClient: ClientProxy,
+    @Inject('FILES-RECORD') private fileRecordClient: ClientProxy,
   ) {}
 
   /**
@@ -40,7 +41,7 @@ export class ProfilesService {
     try {
       let photoName = null;
       const user = await firstValueFrom(
-        this.authService.send({ cmd: GET_USER_BY_EMAIL }, userProfileDto.email),
+        this.authClient.send({ cmd: GET_USER_BY_EMAIL }, userProfileDto.email),
       );
       if (user) {
         return {
@@ -49,7 +50,7 @@ export class ProfilesService {
         };
       }
       const newUser = await firstValueFrom(
-        this.authService.send({ cmd: CREATE_USER }, userProfileDto),
+        this.authClient.send({ cmd: CREATE_USER }, userProfileDto),
       );
       if (newUser.status === 'error') {
         return newUser;
@@ -61,7 +62,7 @@ export class ProfilesService {
       await this.profileRepository.save(profile);
       if (photo) {
         photoName = await firstValueFrom(
-          this.fileRecordService.send(
+          this.fileRecordClient.send(
             { cmd: RECORD_FILE },
             {
               essenceId: profile.id,
@@ -75,7 +76,7 @@ export class ProfilesService {
       await this.profileRepository.save(profile);
 
       return await firstValueFrom(
-        this.authService.send({ cmd: GET_TOKEN }, newUser),
+        this.authClient.send({ cmd: GET_TOKEN }, newUser),
       );
     } catch (error) {
       return {
@@ -98,7 +99,7 @@ export class ProfilesService {
       const userId = profile.userId;
       if (userProfileDto.email || userProfileDto.password) {
         const user = await firstValueFrom(
-          this.authService.send(
+          this.authClient.send(
             { cmd: UPDATE_USER },
             { userProfileDto, userId },
           ),
@@ -110,7 +111,7 @@ export class ProfilesService {
       if (photo) {
         if (profile.photo) {
           photoName = await firstValueFrom(
-            this.fileRecordService.send(
+            this.fileRecordClient.send(
               { cmd: UPDATE_FILE },
               {
                 essenceId: profileId,
@@ -121,7 +122,7 @@ export class ProfilesService {
           );
         } else {
           photoName = await firstValueFrom(
-            this.fileRecordService.send(
+            this.fileRecordClient.send(
               { cmd: RECORD_FILE },
               {
                 essenceId: profileId,
@@ -160,14 +161,14 @@ export class ProfilesService {
       }
       const userId = profile.userId;
       const user = await firstValueFrom(
-        this.authService.send({ cmd: DELETE_USER }, userId),
+        this.authClient.send({ cmd: DELETE_USER }, userId),
       );
       if (user.status === 'error') {
         return user;
       }
       if (profile.photo) {
         await firstValueFrom(
-          this.fileRecordService.send(
+          this.fileRecordClient.send(
             { cmd: DELETE_FILE },
             {
               essenceId: profile.id,
@@ -202,7 +203,7 @@ export class ProfilesService {
 
     // const phoneNumber = '+7950' + Math.floor(Math.random() * 10000000);
     const user = await firstValueFrom(
-      this.authService.send(
+      this.authClient.send(
         { cmd: CREATE_DUMMY_USER },
         { ...dto, surname: '' },
       ),

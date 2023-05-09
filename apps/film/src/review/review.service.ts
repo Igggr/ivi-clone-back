@@ -1,4 +1,4 @@
-import { CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
+import { AUTH, CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
 import { ParsedProfileDTO, ParsedReviewDTO } from '@app/shared';
 import { Review, Comment, Profile } from '@app/shared';
 import { Inject, Injectable } from '@nestjs/common';
@@ -14,7 +14,7 @@ export class ReviewService {
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
-    @Inject('AUTH') private client: ClientProxy,
+    @Inject(AUTH) private client: ClientProxy,
   ) {}
 
   async ensureProfile(saved: Map<string, Profile>, dto: ParsedProfileDTO) {

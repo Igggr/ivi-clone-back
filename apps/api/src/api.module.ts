@@ -3,10 +3,11 @@ import { AuthController } from './controllers/auth.controller';
 import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
-import { FILM } from '@app/rabbit/queues';
+import { AUTH, FILM, GENRE, PROFILES } from '@app/rabbit/queues';
 import { RABIT_OPTIONS } from '@app/rabbit';
 import { FilmController } from './controllers/film.controller';
 import { JwtMiddleware } from './jwt-middleware';
+import { GenreController } from './controllers/genre.controller';
 
 @Module({
   imports: [
@@ -21,18 +22,24 @@ import { JwtMiddleware } from './jwt-middleware';
     ]),
     ClientsModule.register([
       {
-        name: 'AUTH',
-        ...RABIT_OPTIONS('auth'),
+        name: AUTH,
+        ...RABIT_OPTIONS(AUTH),
       },
     ]),
     ClientsModule.register([
       {
-        name: 'PROFILES',
-        ...RABIT_OPTIONS('profiles'),
+        name: PROFILES,
+        ...RABIT_OPTIONS(PROFILES),
+      },
+    ]),
+    ClientsModule.register([
+      {
+        name: GENRE,
+        ...RABIT_OPTIONS(GENRE),
       },
     ]),
   ],
-  controllers: [AuthController, ProfilesController, FilmController],
+  controllers: [AuthController, ProfilesController, FilmController, GenreController],
   providers: [],
 })
 export class ApiModule implements NestModule {

@@ -5,7 +5,7 @@ import { Profile } from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { RABIT_OPTIONS } from '@app/rabbit';
+import { AUTH, RABIT_OPTIONS } from '@app/rabbit';
 
 @Module({
   imports: [
@@ -24,8 +24,8 @@ import { RABIT_OPTIONS } from '@app/rabbit';
     }),
     ClientsModule.register([
       {
-        name: 'AUTH',
-        ...RABIT_OPTIONS('auth'),
+        name: AUTH,
+        ...RABIT_OPTIONS(AUTH),
       },
     ]),
     ClientsModule.register([

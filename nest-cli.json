@@ -102,6 +102,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/files-record/tsconfig.app.json"
       }
+    },
+    "genre": {
+      "type": "application",
+      "root": "apps/genre",
+      "entryFile": "main",
+      "sourceRoot": "apps/genre/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/genre/tsconfig.app.json"
+      }
     }
   }
 }

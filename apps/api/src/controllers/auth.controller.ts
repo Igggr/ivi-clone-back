@@ -2,6 +2,7 @@ import { LoginDto } from '@app/shared/dto/login.dto';
 import { LoggingInterceptor } from '@app/shared/interceptors/logging.interceptor';
 import {
   ADD_ROLE,
+  AUTH,
   CREATE_ROLE,
   GET_ROLES,
   GET_USERS,
@@ -32,7 +33,7 @@ import { ADMIN } from '@app/shared/constants/role-guard.const';
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
 export class AuthController {
-  constructor(@Inject('AUTH') private authService: ClientProxy) {}
+  constructor(@Inject(AUTH) private authService: ClientProxy) {}
 
   @Post('/login')
   @UsePipes(ValidationPipe)
@@ -90,23 +91,25 @@ export class AuthController {
 
   @Get('/users')
   async getUsers() {
-    return await this.authService.send(
-      {
-        cmd: GET_USERS,
-      },
-      {},
-    );
+    return await firstValueFrom(
+      this.authService.send(
+        {
+          cmd: GET_USERS,
+        },
+        {},
+      ));
   }
 
   @Get('/roles')
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   async getRoles() {
-    return await this.authService.send(
-      {
-        cmd: GET_ROLES,
-      },
-      {},
-    );
+    return await firstValueFrom(
+      this.authService.send(
+        {
+          cmd: GET_ROLES,
+        },
+        {},
+      ));
   }
 }
