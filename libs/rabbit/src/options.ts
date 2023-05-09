@@ -7,7 +7,7 @@ export const RABIT_OPTIONS = (name: string) => ({
     // urls: ['amqp://rabbit:5672'],
     queue: `${name}_queue`,
     queueOptions: {
-      durable: false,
+      durable: true,
     },
     noAck: false,
   },

@@ -20,3 +20,7 @@ export const GET_ROLES = 'get_roles';
 export const UPDATE_FILE = 'update-file';
 export const DELETE_FILE = 'delete-file';
 export const VERIFY_TOKEN = 'verify-token';
+export const GOOGLE_LOGIN = 'google-login';
+export const GOOGLE_REDIRECT = 'google-redirect';
+export const VALIDATE_GOOGLE_USER = 'validate-google-user';
+export const FIND_GOOGLE_USER = 'find-google-user';

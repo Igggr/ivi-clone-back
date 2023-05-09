@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import { Role } from '@app/shared/entities/role.entity';
 import { RolesService } from './roles/roles.service';
+import { GoogleUser } from '@app/shared/entities/google-user.entity';
 dotenv.config();
 
 @Module({
@@ -32,7 +33,7 @@ dotenv.config();
       synchronize: true,
       autoLoadEntities: true,
     }),
-    TypeOrmModule.forFeature([User, Role]),
+    TypeOrmModule.forFeature([User, Role, GoogleUser]),
   ],
   controllers: [AuthController],
   providers: [AuthService, UsersService, RolesService],

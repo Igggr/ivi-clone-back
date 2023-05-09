@@ -6,6 +6,8 @@ import {
   GET_ROLES,
   GET_USERS,
   LOGIN,
+  GOOGLE_LOGIN,
+  GOOGLE_REDIRECT,
 } from '@app/rabbit';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
@@ -21,13 +23,16 @@ import {
   UseInterceptors,
   UseGuards,
   UsePipes,
+  Req,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
+import { Request } from 'express';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
+import { GoogleAuthGuard } from '../utils/google-auth.guard';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
@@ -70,6 +75,18 @@ export class AuthController {
     return res;
   }
 
+  @Get('/roles')
+  @UseGuards(RolesGuard)
+  @Roles(ADMIN)
+  async getRoles() {
+    return await this.authService.send(
+      {
+        cmd: GET_ROLES,
+      },
+      {},
+    );
+  }
+
   @Post('/users/role')
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -98,15 +115,40 @@ export class AuthController {
     );
   }
 
-  @Get('/roles')
-  @UseGuards(RolesGuard)
-  @Roles(ADMIN)
-  async getRoles() {
-    return await this.authService.send(
+  @Get('google/login')
+  @UseGuards(GoogleAuthGuard)
+  handleLogin() {
+    return this.authService.send(
       {
-        cmd: GET_ROLES,
+        cmd: GOOGLE_LOGIN,
       },
       {},
     );
+  }
+
+  @Get('google/redirect')
+  @UseGuards(GoogleAuthGuard)
+  handleRedirect() {
+    return this.authService.send(
+      {
+        cmd: GOOGLE_REDIRECT,
+      },
+      {},
+    );
+  }
+
+  @Get('status')
+  googleUser(@Req() request: Request) {
+    console.log(request.user);
+    if (request.user) {
+      return { msg: 'Authenticated' };
+    } else {
+      return { msg: 'Not Authenticated' };
+    }
+  }
+
+  @Get()
+  getHello(): string {
+    return 'Hi';
   }
 }

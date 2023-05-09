@@ -1,15 +1,11 @@
-import { VERIFY_TOKEN } from '@app/shared';
+import { VERIFY_TOKEN } from '@app/rabbit';
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-  constructor(
-    @Inject('AUTH') private authService: ClientProxy,
-    private jwtService: JwtService,
-  ) {}
+  constructor(@Inject('AUTH') private authService: ClientProxy) {}
 
   async use(req, res, next) {
     const auth = req.headers.authorization;
