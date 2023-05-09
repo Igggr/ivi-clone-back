@@ -5,7 +5,7 @@ services:
     container_name: postgres_film
     image: postgres:latest
     ports:
-      - "5435:5432"
+      - "${FILM_DB_PORT}:5432"
     volumes:
       - ./db_data/film/postgres/:/var/lib/postgresql/data
       - ./db_data/film/run/postgres.sock:/var/run/postgres/postgres.sock
@@ -18,7 +18,7 @@ services:
     container_name: postgres_genre
     image: postgres:latest
     ports:
-      - "5436:5432"
+      - "${GENRE_DB_PORT}:5432"
     volumes:
       - ./db_data/genre/postgres/:/var/lib/postgresql/data
       - ./db_data/genre/run/postgres.sock:/var/run/postgres/postgres.sock
@@ -31,7 +31,7 @@ services:
     container_name: postgres_profile
     image: postgres:latest
     ports:
-    - "5434:5432"
+    - "${PROFILE_DB_PORT}:5432"
     volumes:
     # таблицы и их содержимое
     - ./db_data/profile/postgres/:/var/lib/postgresql/data
@@ -45,7 +45,7 @@ services:
     container_name: postgres_auth
     image: postgres:latest
     ports:
-    - "5433:5432"
+    - "${AUTH_DB_PORT}:5432"
     volumes:
     # таблицы и их содержимое
     - ./db_data/auth/postgres:/var/lib/postgresql/data
@@ -59,7 +59,7 @@ services:
     container_name: postgres_file
     image: postgres:latest
     ports:
-    - "5437:5432"
+    - "${FILE_DB_PORT}:5432"
     volumes:
     # таблицы и их содержимое
     - ./db_data/file/postgres:/var/lib/postgresql/data
