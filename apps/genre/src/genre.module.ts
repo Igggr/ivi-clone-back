@@ -4,7 +4,6 @@ import { GenreService } from './genre.service';
 import { DatabaseModule, db_schema } from '@app/database';
 import { Genre } from '@app/shared';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -13,8 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       envFilePath: './apps/genre/.env',
       validationSchema: db_schema,
     }),
-    DatabaseModule.forRoot([Genre]),
-    TypeOrmModule.forFeature([Genre]),
+    ...DatabaseModule.forRoot([Genre]),
   ],
   controllers: [GenreController],
   providers: [GenreService],

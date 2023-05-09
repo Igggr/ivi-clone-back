@@ -1,38 +1,33 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@app/shared';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { ConfigModule } from '@nestjs/config';
-import * as dotenv from 'dotenv';
 import { Role } from '@app/shared/entities/role.entity';
 import { RolesService } from './roles/roles.service';
-dotenv.config();
+import { DatabaseModule, db_schema } from '@app/database';
+import * as Joi from 'joi';
+
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      isGlobal: true,
+      envFilePath: './apps/auth/.env',
+      validationSchema: Joi.object({
+        PRIVATE_KEY: Joi.string().required(),
+      }).concat(db_schema),
     }),
     JwtModule.register({
-      secret: process.env.PRIVATE_KEY ?? 'SECRET',
+      secret: process.env.PRIVATE_KEY,
       signOptions: {
         expiresIn: '24h',
       },
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5433,
-      username: 'admin',
-      password: '123456',
-      database: 'auth_microservice',
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
-    TypeOrmModule.forFeature([User, Role]),
+    ...DatabaseModule.forRoot([User, Role]),
   ],
   controllers: [AuthController],
   providers: [AuthService, UsersService, RolesService],

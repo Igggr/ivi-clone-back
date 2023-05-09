@@ -6,22 +6,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { AUTH, RABIT_OPTIONS } from '@app/rabbit';
+import { DatabaseModule, db_schema } from '@app/database';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      isGlobal: true,
+      envFilePath: './apps/profiles/.env',
+      validationSchema: db_schema,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5434,
-      username: 'admin',
-      password: '123456',
-      database: 'register_microservice',
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
+    ...DatabaseModule.forRoot([Profile]),
     ClientsModule.register([
       {
         name: AUTH,

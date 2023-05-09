@@ -12,7 +12,7 @@ export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({nullable: true}) // имеет смысл только для спаршенных с кинопоиска профилей
   url: string;
 
   @ApiProperty({ example: 'Александр', description: 'Имя пользователя' })

@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthController } from './controllers/auth.controller';
 import { ClientsModule } from '@nestjs/microservices';
-import { ConfigModule } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
 import { AUTH, FILM, GENRE, PROFILES } from '@app/rabbit/queues';
 import { RABIT_OPTIONS } from '@app/rabbit';
@@ -11,9 +10,6 @@ import { GenreController } from './controllers/genre.controller';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-    }),
     ClientsModule.register([
       {
         name: FILM,

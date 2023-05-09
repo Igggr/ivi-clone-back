@@ -10,7 +10,7 @@ services:
       - ./db_data/film/postgres/:/var/lib/postgresql/data
       - ./db_data/film/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.film_db.env
+    - ./apps/film/.env
     networks:
     - postgres_film
   
@@ -37,7 +37,7 @@ services:
     - ./db_data/profile/postgres/:/var/lib/postgresql/data
     - ./db_data/profile/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.profile_db.env
+    - ./apps/profiles/.env
     networks:
     - postgres_profile
   
@@ -51,7 +51,7 @@ services:
     - ./db_data/auth/postgres:/var/lib/postgresql/data
     - ./db_data/auth/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.auth_db.env
+    - ./apps/auth/.env
     networks:
     - postgres_auth
 
@@ -65,7 +65,7 @@ services:
     - ./db_data/file/postgres:/var/lib/postgresql/data
     - ./db_data/file/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.file_db.env
+    - ./apps/files-record/.env
     networks:
     - postgres_file
 

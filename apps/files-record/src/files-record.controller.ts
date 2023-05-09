@@ -6,7 +6,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { DELETE_FILE, RECORD_FILE, UPDATE_FILE } from '@app/shared';
+import { DELETE_FILE, RECORD_FILE, UPDATE_FILE } from '@app/rabbit';
 import { FilesService } from './files.service';
 
 @Controller()

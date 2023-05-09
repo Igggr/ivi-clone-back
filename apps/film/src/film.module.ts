@@ -19,7 +19,6 @@ import {
   Comment,
   AgeRestriction,
 } from '@app/shared';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { CountryService } from './country/country.service';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { ReviewService } from './review/review.service';
@@ -51,19 +50,7 @@ import { FilmGenre } from '@app/shared/entities/film-genre.entity';
       envFilePath: './apps/film/.env',
       validationSchema: db_schema,
     }),
-    DatabaseModule.forRoot([
-      Film,
-      Actor,
-      ActorFilm,
-      ActorRole,
-      Review,
-      Comment,
-      Country,
-      FilmViewsCountry,
-      AgeRestriction,
-      FilmGenre,
-    ]),
-    TypeOrmModule.forFeature([
+    ...DatabaseModule.forRoot([
       Film,
       Actor,
       ActorFilm,
