@@ -106,11 +106,13 @@ export class ProfilesController {
 
   @Get('/profiles')
   async getProfiles() {
-    return firstValueFrom(this.client.send(
-      {
-        cmd: GET_PROFILES,
-      },
-      {},
-    ));
+    return firstValueFrom(
+      this.client.send(
+        {
+          cmd: GET_PROFILES,
+        },
+        {},
+      ),
+    );
   }
 }

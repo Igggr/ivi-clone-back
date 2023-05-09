@@ -5,9 +5,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-  constructor(
-    @Inject(AUTH) private client: ClientProxy,
-  ) {}
+  constructor(@Inject(AUTH) private client: ClientProxy) {}
 
   async use(req, res, next) {
     const auth = req.headers.authorization;

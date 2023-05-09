@@ -97,7 +97,8 @@ export class AuthController {
           cmd: GET_USERS,
         },
         {},
-      ));
+      ),
+    );
   }
 
   @Get('/roles')
@@ -110,6 +111,7 @@ export class AuthController {
           cmd: GET_ROLES,
         },
         {},
-      ));
+      ),
+    );
   }
 }

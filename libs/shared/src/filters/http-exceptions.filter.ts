@@ -20,7 +20,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      error: exception instanceof ValidationException ? exception.messages : exception.message,
+      error:
+        exception instanceof ValidationException
+          ? exception.messages
+          : exception.message,
     });
   }
 }

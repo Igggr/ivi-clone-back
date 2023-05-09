@@ -25,7 +25,7 @@ import { FilesService } from './files.service';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5435,
+      port: 5437,
       username: 'admin',
       password: '123456',
       database: 'file_microservice',

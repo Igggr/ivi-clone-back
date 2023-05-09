@@ -22,5 +22,6 @@ export const DELETE_FILE = 'delete-file';
 export const VERIFY_TOKEN = 'verify-token';
 export const GET_GENRES = 'GET_ALL_GENRES';
 export const GET_GENRE_BY_ID = 'GET_GENRE_BY_ID';
+export const GET_GENRES_BY_NAME = ' GET_GENRES_BY_NAME';
 export const UPDATE_GENRE = 'UPDATE_GENRE';
 export const ENSURE_ALL_GENRES_EXISTS = 'ENSURE_ALL_GENRES_EXISTS';

@@ -203,10 +203,7 @@ export class ProfilesService {
 
     // const phoneNumber = '+7950' + Math.floor(Math.random() * 10000000);
     const user = await firstValueFrom(
-      this.authClient.send(
-        { cmd: CREATE_DUMMY_USER },
-        { ...dto, surname: '' },
-      ),
+      this.authClient.send({ cmd: CREATE_DUMMY_USER }, { ...dto, surname: '' }),
     );
     const newProfile = await this.profileRepository.create({
       ...dto,

@@ -1,7 +1,19 @@
 import { Controller } from '@nestjs/common';
 import { GenreService } from './genre.service';
-import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
-import { ENSURE_ALL_GENRES_EXISTS, GET_GENRES, GET_GENRE_BY_ID, ResponseDTO, UPDATE_GENRE, ack } from '@app/rabbit';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
+import {
+  ENSURE_ALL_GENRES_EXISTS,
+  GET_GENRES,
+  GET_GENRE_BY_ID,
+  ResponseDTO,
+  UPDATE_GENRE,
+  ack,
+} from '@app/rabbit';
 import { CreateGenreDTO, Genre, UpdateGenreDto } from '@app/shared';
 
 @Controller()
@@ -18,18 +30,13 @@ export class GenreController {
   }
 
   @MessagePattern({ cmd: GET_GENRES })
-  getGenres(
-    @Ctx() context: RmqContext,
-  ): Promise<Genre[]> {
+  getGenres(@Ctx() context: RmqContext): Promise<Genre[]> {
     ack(context);
     return this.genreService.getAll();
   }
 
   @MessagePattern({ cmd: GET_GENRE_BY_ID })
-  getGenreById(
-    @Payload() id: number,
-    @Ctx() context: RmqContext,
-  ) {
+  getGenreById(@Payload() id: number, @Ctx() context: RmqContext) {
     ack(context);
     return this.genreService.getById(id);
   }
@@ -43,4 +50,3 @@ export class GenreController {
     this.genreService.ensureAllGenresExists(dto);
   }
 }
-

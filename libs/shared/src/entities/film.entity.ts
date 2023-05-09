@@ -1,17 +1,15 @@
 import {
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ActorFilm } from './actor-film.entity';
-import { Genre } from './genre.entity';
 import { Country } from './country.entity';
 import { AgeRestriction } from './age-restriction';
 import { Review } from './review.entity';
+import { FilmGenre } from './film-genre.entity';
 
 @Entity()
 export class Film {
@@ -45,9 +43,8 @@ export class Film {
   @OneToMany(() => ActorFilm, (personsInFilm) => personsInFilm.film)
   personsInFilm: ActorFilm[];
 
-  @JoinTable()
-  @ManyToMany(() => Genre, (genre) => genre.films)
-  genres: Genre[];
+  @OneToMany(() => FilmGenre, (filmGenre) => filmGenre.film)
+  filmGenres: FilmGenre[];
 
   @Column({ type: 'interval' })
   duration: string; // кривоватое хранение для интервала

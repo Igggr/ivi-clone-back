@@ -39,7 +39,12 @@ import { GenreController } from './controllers/genre.controller';
       },
     ]),
   ],
-  controllers: [AuthController, ProfilesController, FilmController, GenreController],
+  controllers: [
+    AuthController,
+    ProfilesController,
+    FilmController,
+    GenreController,
+  ],
   providers: [],
 })
 export class ApiModule implements NestModule {

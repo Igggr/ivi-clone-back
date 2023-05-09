@@ -11,7 +11,7 @@ export class GenreService {
   constructor(
     @InjectRepository(Genre)
     private readonly genreRepository: Repository<Genre>,
-  ) { }
+  ) {}
 
   private async ensureGenreExist(dto: CreateGenreDTO): Promise<Genre> {
     const genre = await this.genreRepository.findOne({
@@ -41,9 +41,9 @@ export class GenreService {
   async getById(id: number): Promise<Genre> {
     return this.genreRepository.findOne({
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
   }
 
   async updateGenre(dto: UpdateGenreDto): Promise<ResponseDTO<Genre>> {
@@ -55,9 +55,7 @@ export class GenreService {
     }
     return {
       status: 'error',
-      error: 'Genre with such id doesn\'t exist',
+      error: "Genre with such id doesn't exist",
     };
-
-
   }
 }
