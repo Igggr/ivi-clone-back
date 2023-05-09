@@ -139,7 +139,6 @@ export class AuthController {
 
   @Get('status')
   googleUser(@Req() request: Request) {
-    console.log(request.user);
     if (request.user) {
       return { msg: 'Authenticated' };
     } else {
