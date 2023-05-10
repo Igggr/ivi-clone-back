@@ -14,12 +14,15 @@ import {
   GET_GENRES_BY_NAME,
 } from '@app/rabbit';
 import { firstValueFrom } from 'rxjs';
+import { FilmGenre } from '@app/shared/entities/film-genre.entity';
 
 @Injectable()
 export class FilmService {
   constructor(
     @InjectRepository(Film)
     private readonly filmRepository: Repository<Film>,
+    @InjectRepository(FilmGenre)
+    private readonly filmGenreRepository: Repository<FilmGenre>,
     private readonly actorService: ActorService,
     private readonly countryService: CountryService,
     private readonly revieWService: ReviewService,
@@ -31,7 +34,7 @@ export class FilmService {
     console.log('Creating films from parsed data');
 
     const country = await this.countryService.ensureCountry(dto.country);
-    const genres = await firstValueFrom(
+    const genres: Genre[] =await firstValueFrom(
       this.client.send({ cmd: ENSURE_ALL_GENRES_EXISTS }, dto.genres),
     );
 
@@ -52,6 +55,8 @@ export class FilmService {
     });
 
     await this.filmRepository.save(film);
+    const filmGenre = this.filmGenreRepository.create(genres.map((genre) => ({ genreId: genre.id, filmId: film.id })));
+    await this.filmGenreRepository.save(filmGenre);
 
     await this.actorService.bulkCreate(film.id, dto.persons);
 

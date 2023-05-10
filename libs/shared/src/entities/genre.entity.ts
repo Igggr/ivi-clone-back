@@ -11,7 +11,10 @@ export class Genre {
   id: number;
 
   @IsString()
-  @ApiProperty({ description: 'Ссылка на кинопоиске' })
+  @ApiProperty({
+    description: 'Ссылка на жанр кинопоиске',
+    example: 'https://www.kinopoisk.ru/lists/movies/genre--comedy/?b=films&b=top',
+  })
   @Column({ unique: true })
   url: string;
 

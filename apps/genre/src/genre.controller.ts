@@ -45,8 +45,8 @@ export class GenreController {
   enusureAllGenresExists(
     @Payload() dto: CreateGenreDTO[],
     @Ctx() context: RmqContext,
-  ) {
+  ): Promise<Genre[]> {
     ack(context);
-    this.genreService.ensureAllGenresExists(dto);
+    return this.genreService.ensureAllGenresExists(dto);
   }
 }
