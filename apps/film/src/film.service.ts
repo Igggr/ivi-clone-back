@@ -34,7 +34,7 @@ export class FilmService {
     console.log('Creating films from parsed data');
 
     const country = await this.countryService.ensureCountry(dto.country);
-    const genres: Genre[] =await firstValueFrom(
+    const genres: Genre[] = await firstValueFrom(
       this.client.send({ cmd: ENSURE_ALL_GENRES_EXISTS }, dto.genres),
     );
 
@@ -55,7 +55,9 @@ export class FilmService {
     });
 
     await this.filmRepository.save(film);
-    const filmGenre = this.filmGenreRepository.create(genres.map((genre) => ({ genreId: genre.id, filmId: film.id })));
+    const filmGenre = this.filmGenreRepository.create(
+      genres.map((genre) => ({ genreId: genre.id, filmId: film.id })),
+    );
     await this.filmGenreRepository.save(filmGenre);
 
     await this.actorService.bulkCreate(film.id, dto.persons);
