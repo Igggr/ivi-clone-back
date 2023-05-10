@@ -5,7 +5,7 @@ import { Profile } from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { AUTH, RABIT_OPTIONS } from '@app/rabbit';
+import { AUTH, FILES_RECORD, RABBIT_OPTIONS } from '@app/rabbit';
 import { DatabaseModule, db_schema } from '@app/database';
 
 @Module({
@@ -19,13 +19,13 @@ import { DatabaseModule, db_schema } from '@app/database';
     ClientsModule.register([
       {
         name: AUTH,
-        ...RABIT_OPTIONS(AUTH),
+        ...RABBIT_OPTIONS(AUTH),
       },
     ]),
     ClientsModule.register([
       {
-        name: 'FILES-RECORD',
-        ...RABIT_OPTIONS('files'),
+        name: FILES_RECORD,
+        ...RABBIT_OPTIONS(FILES_RECORD),
       },
     ]),
     TypeOrmModule.forFeature([Profile]),

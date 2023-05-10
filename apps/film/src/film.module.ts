@@ -4,8 +4,8 @@ import { FilmService } from './film.service';
 import { DatabaseModule, db_schema } from '@app/database';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule } from '@nestjs/microservices';
-import { AUTH, GENRE, PARSER } from '@app/rabbit/queues';
-import { RABIT_OPTIONS } from '@app/rabbit';
+import { GENRE, PROFILES } from '@app/rabbit/queues';
+import { RABBIT_OPTIONS } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
 import {
   Film,
@@ -26,22 +26,17 @@ import { FilmGenre } from '@app/shared/entities/film-genre.entity';
 
 @Module({
   imports: [
+    // кому отправлять собщения
     ClientsModule.register([
       {
-        name: PARSER,
-        ...RABIT_OPTIONS(PARSER),
-      },
-    ]),
-    ClientsModule.register([
-      {
-        name: AUTH,
-        ...RABIT_OPTIONS(AUTH),
+        name: PROFILES,
+        ...RABBIT_OPTIONS(PROFILES),
       },
     ]),
     ClientsModule.register([
       {
         name: GENRE,
-        ...RABIT_OPTIONS(GENRE),
+        ...RABBIT_OPTIONS(GENRE),
       },
     ]),
     ConfigModule.forRoot({

@@ -4,6 +4,7 @@ import {
   CREATE_USER,
   DELETE_FILE,
   DELETE_USER,
+  FILES_RECORD,
   GET_TOKEN,
   GET_USER_BY_EMAIL,
   RECORD_FILE,
@@ -25,7 +26,7 @@ export class ProfilesService {
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
     @Inject(AUTH) private authClient: ClientProxy,
-    @Inject('FILES-RECORD') private fileRecordClient: ClientProxy,
+    @Inject(FILES_RECORD) private fileRecordClient: ClientProxy,
   ) {}
 
   /**
@@ -192,7 +193,6 @@ export class ProfilesService {
   }
 
   async createProfileForDummyUser(dto: ParsedProfileDTO) {
-    console.log('dummy user profile');
     const profile = await this.profileRepository.findOne({
       where: { url: Equal(dto.url) },
     });

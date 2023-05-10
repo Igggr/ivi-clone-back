@@ -71,7 +71,6 @@ export class ProfilesController {
     @Ctx() context: RmqContext,
     @Payload() dto: ParsedProfileDTO,
   ) {
-    console.log('should create dummy profile');
     ack(context);
     return this.profileService.createProfileForDummyUser(dto);
   }

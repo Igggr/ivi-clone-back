@@ -1,4 +1,4 @@
-import { AUTH, CREATE_PROFILE_WITH_DUMMY_USER } from '@app/rabbit';
+import { AUTH, CREATE_PROFILE_WITH_DUMMY_USER, PROFILES } from '@app/rabbit';
 import { ParsedProfileDTO, ParsedReviewDTO } from '@app/shared';
 import { Review, Comment, Profile } from '@app/shared';
 import { Inject, Injectable } from '@nestjs/common';
@@ -14,17 +14,17 @@ export class ReviewService {
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
-    @Inject(AUTH) private client: ClientProxy,
+    @Inject(PROFILES) private client: ClientProxy,
   ) {}
 
   async ensureProfile(saved: Map<string, Profile>, dto: ParsedProfileDTO) {
     if (saved.has(dto.url)) {
       return saved.get(dto.url);
     }
-    console.log('Отправляю запрос на создание профиля');
     const profile = await firstValueFrom(
       this.client.send({ cmd: CREATE_PROFILE_WITH_DUMMY_USER }, dto),
     );
+    console.log(profile);
 
     saved.set(dto.url, profile);
     return profile;
