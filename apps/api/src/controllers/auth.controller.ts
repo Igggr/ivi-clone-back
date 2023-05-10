@@ -37,13 +37,13 @@ import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
 export class AuthController {
-  constructor(@Inject('AUTH') private authService: ClientProxy) {}
+  constructor(@Inject('AUTH') private readonly client: ClientProxy) {}
 
   @Post('/login')
   @UsePipes(ValidationPipe)
   async login(@Body() userDto: LoginDto) {
     const res = await firstValueFrom(
-      this.authService.send(
+      this.client.send(
         {
           cmd: LOGIN,
         },
@@ -62,7 +62,7 @@ export class AuthController {
   @UsePipes(ValidationPipe)
   async createRole(@Body() roleDto: CreateRoleDto) {
     const res = await firstValueFrom(
-      this.authService.send(
+      this.client.send(
         {
           cmd: CREATE_ROLE,
         },
@@ -79,11 +79,13 @@ export class AuthController {
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   async getRoles() {
-    return await this.authService.send(
-      {
-        cmd: GET_ROLES,
-      },
-      {},
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: GET_ROLES,
+        },
+        {},
+      ),
     );
   }
 
@@ -92,7 +94,7 @@ export class AuthController {
   @Roles(ADMIN)
   async addRole(@Body() roleDto: AddRoleDto) {
     const res = await firstValueFrom(
-      this.authService.send(
+      this.client.send(
         {
           cmd: ADD_ROLE,
         },
@@ -107,18 +109,20 @@ export class AuthController {
 
   @Get('/users')
   async getUsers() {
-    return await this.authService.send(
-      {
-        cmd: GET_USERS,
-      },
-      {},
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: GET_USERS,
+        },
+        {},
+      ),
     );
   }
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
   handleLogin() {
-    return this.authService.send(
+    return this.client.send(
       {
         cmd: GOOGLE_LOGIN,
       },
@@ -129,7 +133,7 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   handleRedirect() {
-    return this.authService.send(
+    return this.client.send(
       {
         cmd: GOOGLE_REDIRECT,
       },
@@ -139,15 +143,11 @@ export class AuthController {
 
   @Get('status')
   googleUser(@Req() request: Request) {
+    console.log(request.user);
     if (request.user) {
       return { msg: 'Authenticated' };
     } else {
       return { msg: 'Not Authenticated' };
     }
-  }
-
-  @Get()
-  getHello(): string {
-    return 'Hi';
   }
 }

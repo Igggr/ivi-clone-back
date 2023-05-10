@@ -1,4 +1,4 @@
-import { VALIDATE_GOOGLE_USER } from '@app/rabbit';
+import { ENSURE_GOOGLE_USER } from '@app/rabbit';
 import { Controller, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 @Controller()
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject('AUTH') private authService: ClientProxy) {
+  constructor(@Inject('AUTH') private client: ClientProxy) {
     super({
       clientID:
         '400170446302-o1sbhhvbe9utelobo8bvrp7teal2udgv.apps.googleusercontent.com',
@@ -24,9 +24,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     console.log(profile);
 
     const user = await firstValueFrom(
-      this.authService.send(
+      this.client.send(
         {
-          cmd: VALIDATE_GOOGLE_USER,
+          cmd: ENSURE_GOOGLE_USER,
         },
         {
           email: profile.emails[0].value,

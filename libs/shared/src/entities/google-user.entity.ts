@@ -7,7 +7,7 @@ export class GoogleUser {
   id: number;
 
   @ApiProperty({ example: 'user@mail.ru', description: 'Почтовый адрес' })
-  @Column()
+  @Column({ nullable: false, unique: true })
   email: string;
 
   @ApiProperty({

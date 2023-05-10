@@ -9,7 +9,7 @@ import { firstValueFrom } from 'rxjs';
 @Controller()
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-  constructor(@Inject('AUTH') private authService: ClientProxy) {
+  constructor(@Inject('AUTH') private client: ClientProxy) {
     super();
   }
 
@@ -20,7 +20,7 @@ export class SessionSerializer extends PassportSerializer {
 
   async deserializeUser(payload: any, done: Function) {
     const user = await firstValueFrom(
-      this.authService.send(
+      this.client.send(
         {
           cmd: FIND_GOOGLE_USER,
         },

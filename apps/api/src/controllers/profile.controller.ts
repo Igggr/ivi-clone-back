@@ -31,7 +31,7 @@ import { ADMIN } from '@app/shared/constants/role-guard.const';
 
 @Controller()
 export class ProfilesController {
-  constructor(@Inject('PROFILES') private profileService: ClientProxy) {}
+  constructor(@Inject('PROFILES') private readonly client: ClientProxy) {}
 
   @Post('/registration')
   @UsePipes(ValidationPipe)
@@ -41,7 +41,7 @@ export class ProfilesController {
     @UploadedFile() photo: Express.Multer.File,
   ) {
     const res = await firstValueFrom(
-      this.profileService.send(
+      this.client.send(
         {
           cmd: REGISTRATION,
         },
@@ -68,7 +68,7 @@ export class ProfilesController {
     @UploadedFile() photo: Express.Multer.File,
   ) {
     const res = await firstValueFrom(
-      this.profileService.send(
+      this.client.send(
         {
           cmd: UPDATE_PROFILE,
         },
@@ -90,7 +90,7 @@ export class ProfilesController {
   @Roles(ADMIN)
   async deleteProfile(@Param('id') profileId: number) {
     const res = await firstValueFrom(
-      this.profileService.send(
+      this.client.send(
         {
           cmd: DELETE_PROFILE,
         },
@@ -105,11 +105,13 @@ export class ProfilesController {
 
   @Get('/profiles')
   async getProfiles() {
-    return this.profileService.send(
-      {
-        cmd: GET_PROFILES,
-      },
-      {},
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: GET_PROFILES,
+        },
+        {},
+      ),
     );
   }
 }

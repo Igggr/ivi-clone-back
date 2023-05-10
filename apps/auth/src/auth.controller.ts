@@ -16,6 +16,7 @@ import {
   CREATE_ROLE,
   CREATE_USER,
   DELETE_USER,
+  ENSURE_GOOGLE_USER,
   FIND_GOOGLE_USER,
   GET_ROLES,
   GET_TOKEN,
@@ -25,7 +26,6 @@ import {
   GOOGLE_REDIRECT,
   LOGIN,
   UPDATE_USER,
-  VALIDATE_GOOGLE_USER,
   VERIFY_TOKEN,
 } from '@app/rabbit';
 import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
@@ -177,8 +177,8 @@ export class AuthController {
     return { msg: 'OK' };
   }
 
-  @MessagePattern({ cmd: VALIDATE_GOOGLE_USER })
-  validateGoogleUser(
+  @MessagePattern({ cmd: ENSURE_GOOGLE_USER })
+  ensureGoogleUser(
     @Payload() details: CreateGoogleUserDetailsDto,
     @Ctx() context: RmqContext,
   ) {
@@ -186,7 +186,7 @@ export class AuthController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return this.authService.validateGoogleUser(details);
+    return this.authService.ensureGoogleUser(details);
   }
 
   @MessagePattern({ cmd: FIND_GOOGLE_USER })

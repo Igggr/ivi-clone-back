@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-  constructor(@Inject('AUTH') private authService: ClientProxy) {}
+  constructor(@Inject('AUTH') private client: ClientProxy) {}
 
   async use(req, res, next) {
     const auth = req.headers.authorization;
@@ -17,7 +17,7 @@ export class JwtMiddleware implements NestMiddleware {
     const [bearer, token] = auth.split(' ');
     if (bearer === 'Bearer' && token) {
       const response = await firstValueFrom(
-        this.authService.send(
+        this.client.send(
           {
             cmd: VERIFY_TOKEN,
           },
