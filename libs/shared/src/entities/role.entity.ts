@@ -1,10 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
 import { User } from './user.entity';
 
 @Entity()
 export class Role {
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Первичный ключ', example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
 

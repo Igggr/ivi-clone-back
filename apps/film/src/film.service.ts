@@ -8,7 +8,11 @@ import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
 import { ClientProxy } from '@nestjs/microservices';
-import { ENSURE_ALL_GENRES_EXISTS, FILM, GENRE, GET_GENRES_BY_NAME } from '@app/rabbit';
+import {
+  ENSURE_ALL_GENRES_EXISTS,
+  GENRE,
+  GET_GENRES_BY_NAME,
+} from '@app/rabbit';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -59,9 +63,8 @@ export class FilmService {
   }
 
   async find(dto: FilmQueryDTO) {
-
     const genres: Genre[] = await firstValueFrom(
-      this.client.send({ cmd: GET_GENRES_BY_NAME }, dto.genres)
+      this.client.send({ cmd: GET_GENRES_BY_NAME }, dto.genres),
     );
     return this.filmRepository.find({
       where: {

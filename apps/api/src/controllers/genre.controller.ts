@@ -5,7 +5,7 @@ import {
   Inject,
   Param,
   ParseIntPipe,
-  Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { RolesGuard } from '../guards/roles.guard';
@@ -41,7 +41,7 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
-  @Post('')
+  @Put('')
   async updateGenre(@Body() dto: UpdateGenreDto): Promise<Genre> {
     return await firstValueFrom(
       this.client.send(

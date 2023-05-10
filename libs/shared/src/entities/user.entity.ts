@@ -6,12 +6,15 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsInt, IsPositive, IsString, Length } from 'class-validator';
 import { Role } from './role.entity';
 import * as bcrypt from 'bcryptjs';
 
 @Entity()
 export class User {
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Первичный ключ', example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
 

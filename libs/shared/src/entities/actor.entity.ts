@@ -1,21 +1,38 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ActorFilm } from './actor-film.entity';
+import { IsInt, IsPositive } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Actor {
-  // не только актер, всякий кто участвовал в создании фильма - режисеры, операторы, озвучка ...
+  // не только актер, всякий кто участвовал в создании фильма - режисеры, операторы, озвучка .
+
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Первичный ключ', example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({
+    description: 'Ссылка на актера на кинопоиске',
+    example: 'https://www.kinopoisk.ru/name/7836/',
+  })
   @Column({ unique: true })
   url: string; // ссылка на профиль на сайте кинопоиск
 
+  @ApiProperty({ description: 'Имя актера', example: 'Киану Ривз' })
   @Column()
   fullName: string;
 
+  @ApiProperty({ description: 'Actor name', example: 'Keanu Reeves' })
   @Column()
   fullNameEn: string;
 
+  @ApiProperty({
+    description: 'Ссылка на фотографию',
+    example:
+      'www.kinopoisk.ru/2L92Ne432/b7d04b8v/fqOJASjI4frRMS8965211hOo-XV0re_Ej7Lr57tFE8StVoHC9xZ4AjaNyHf_VbpUUKejq5x-XyQl3uasLNgem9pnrJB9TRVeVIR63J8YtVNDyUiwEZzuQArGKjaOkNY2XlQC4GA0G_C0jw5jy1G78eVSV6rZrutBkSqH6w8MS4lscKiQGIkhzUDTLRuojWV2ATm-x-QtypR-wc0mO_bCJQzW8iNS90qy123-0ajDrhO1gFYKqz8rcnV7xfq9aur634G4sAh78a9hYS4pG1yVdAHo3vTFnzllzNFud5pWgka9FiJTQdZ48rfM3qILcD0ixdGXqqreKwOHOvYILDpaS95QqJNbmTD8ozOsaCsdVHTwmk8kpp0qtp3zDZXLxTA3H3cSMyJEKkEEH27AONLtkTWxhAuJzrvyJ4rXq42Iu3udMLuwSFpS7pKzvkt4fUWEwusPJtbMeYYvQy40qXdjd84k4YMTBNrilc-tg7lw3AJ20eQI6Z_aEle5NxjM2Xkr3OArIvta0kzREA-LGpyERSPbLQY2HTt2XSF9t-k00pfNdzLhY7ar0xd_HvKoA5wBtdM1GRluqKFlioWK7Jnouv_SGDDoWaP9kvMtCylcxjfDqG7mlB3IR2_BTVcbV5CXH7dwcuDUSFAErfxASWKeUicxFziqPAlAp9qUy3-ZyKm9s8gyOClg_AOiTRuLn-XG4qnPhWevu-Zu0e51aufARL7FUOIQRGqwtb9eUSlCL_PFIKcZG305E8U5xslt6Ml4z5D7oHia410CwX77KV8nxUOZzNfEjYsWXHAMRclVA_V_lGJyY6SIoKavf4GJo46BdVInmvuO2OB2WTZoz5qJSz6SqnIIyYIPM2G_S6ms5naw-g10h2yLRXzTLZdY1-IG_tTCUyF2C4M1zT6wqzGNgMWw1xk7fAnitQkHKp6YKStd0Wpx-ijDzhLzfqn7jyZlcbu_heXPqQRMgM9laaaBBjy0ctNi53lTBV7MQ-swbVImotcqSl67A2RLJEitmKnoD_Cp88l5AVygsY1J2Z-XVzHJLdcmr4pGLOP_xWrEYXb_JOJiErT54KdsrSPbsh9DF0ClmWt9-EH1uMYovXorWfzyulN4CpP8UbA8G4kcBdaiy1z1Rk4INZ7TPcQpFsI3zzRyEKLWWgKWjgzx6FI90ESChtmI3sgRVbj2K747KFjMMCgj6ekgDRCib1o6bLZnUQoelyYdK2RuQf9GaIcDBu3UYNDTVdjw9_3_0liiT4EFs_frKW3Yw0TrN_vP-1jY3FAZ4tib8EwA8n9aOG6FhpCb_IVmLeknrvOMRjr1ElcfxPKi4sQakJbPvwHoUP5Bd2MlqNkdSLHm6eQofog5-Q7D23K6yXCfMsI8G6kO9KaSeW0Hh3-bRCygvRRbFvEEPqZAgKGE2hDkfo3iGMC_ABVT1NrYXAtgdarWSX3LSyisorvSyCvTvLKhHphq_7VG4vucFyV8SxQc8r9kq8XAVe7XAAJil8mBt17PEMpSnWP1YtTLiB76kedZhvp-WzjYzuHbcFnYY_8SYBxoSkzH9EKo7de1bYnUDaNMt8jEYGU9xUJyspa4ILatfDCKYN9RZfCWGcp92KA1O7Z6zdpom82xSpAJyfAOw2G8KBj9lpbRyNwX9az4B1xwrXaKtKEnPcUy0pKVuiLmPX5j6vDeAyTR5nhb_BgQBfiFuF-ba8v8kbsxGiijbQPwDwmZDeYFMslsNXTcOJed099EGobDJw6EcFPjdkoi1d9uoqqgTDPl8NcpWk1YAmeZ5BgP-9s7nePIQ1gJInyD8P55WEzml2CqH_XmnrmH37FMdEiU4HUv5wDS4sW4YXSt_tLKchxhBTGFaRnt2-JliURJnnqKu3xiaCPJSONfItAsa4gtZhdBGE3Xt-6b9i1SDRf6dXKXL1UighMlucAHjezi-gAuQaeiR9hYDdqgFMu0WkxJ2kt909ti6-tT3iEi_Sh7X_XU4ap81TYOy7asw2xH-cXB1TwmsMIipCiTBM288xuwHTI0QAYq-Z4pQia61hreanv7zaPaEXtI0f4jEFyZ6Q6V9iE7L-TGTBq1nvIPR9qUUeSsx5ADERXrcuXs7HGZYBwSV_BkaHl8yTK3-wZobal6uTzCikNqOPPvoQMfSzq99qRwa673ph8rdE0RbpRZFmBUv0eT8uJkGdME3e4yWGJ9IETSFmlr7TiDRltWCs2bG8r90ahj6piybKHAb1mJfQQWs0ku1dV_ORZtkx12OpaR1r1kYcKDhNngx7ztgthib5P1ExYpWh7JUGZrFuvcWQjoHMF7cWg7AA9CYAxLSv3FZiG7HOUGbnlF7bGNVVi0UjQNJMPyUJZYUYaO79CaQD5gF-Al6outWPAHGcU67WjJeq6SiYMqCVD8E_GOuZrvheaTeG1kFZyJx77Rb3YLZeOHnPUwMFMlS_K0fA-SaDDvU5SCBajpDUjDB9s1q6zY6ojf0mgi6jlB3zKjTRqorTfEE5jf1pY9ixWdQv3WSJWhlS6kQ2DxRGlRBh7O8hhgT5Ml48QJKkw4sGcK9Zu_aHp5blNpccnawu1T0X5pGQwHdjNbz-XHXnn3jSG9hcp34qX_ZIKD0If5kjY_fsB7YP5SZPLG26kf-vHEmXTIbEg7qU7CqVNauVO84TF_qEuc93XC2a6nBD7qRI1RTKVY9PAmv_WBoMNlisAUnxwiOKGcU2XQh5vo3EoT1OrE2NzLKNv_E8lg6DhQ3aFwzTkpTuZ244oe1VScKgWecZ90CnahBP82wAFTJvmylN6OcYhSjLNEwMeZW2_pcTRI1smeWHsrXfBKYop4scxzQXzaKJ1kpnLJHSTkzOgEDRGNZWumwhT-xzLRwGXrcNbenNKqU11ydyDXaPu_2sK2-cWKTIjq-h-wy1LoStPcw6GNS7us9rQBSE1mBr77FL3B3QQ6VTBk7-bT0nElyrBH3M8TiwFvQtUwpxr7rwnxlOr3M',
+  })
   @Column()
   photo: string;
 

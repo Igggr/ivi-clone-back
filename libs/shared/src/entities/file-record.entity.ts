@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsInt, IsPositive, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +9,9 @@ import {
 
 @Entity()
 export class FileRecord {
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Первичный ключ', example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -5,14 +5,23 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
 
 @Entity()
 export class Profile {
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Первичный ключ', example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable: true}) // имеет смысл только для спаршенных с кинопоиска профилей
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    description:
+      'Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)',
+  })
+  @Column({ nullable: true })
   url: string;
 
   @ApiProperty({ example: 'Александр', description: 'Имя пользователя' })

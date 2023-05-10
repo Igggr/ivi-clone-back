@@ -10,8 +10,6 @@ import { RolesService } from './roles/roles.service';
 import { DatabaseModule, db_schema } from '@app/database';
 import * as Joi from 'joi';
 
-
-
 @Module({
   imports: [
     ConfigModule.forRoot({

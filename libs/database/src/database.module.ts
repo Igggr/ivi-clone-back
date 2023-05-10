@@ -19,14 +19,14 @@ export class DatabaseModule {
               database: configService.get<string>('POSTGRES_DB'),
               entities,
               synchronize: configService.get('NODE_ENV') !== 'prod' || true,
-              autoLoadEntities: configService.get('NODE_ENV') !== 'prod' || true,
+              autoLoadEntities:
+                configService.get('NODE_ENV') !== 'prod' || true,
             }),
             inject: [ConfigService],
           }),
-
         ],
       },
       TypeOrmModule.forFeature(entities),
-    ]
+    ];
   }
 }

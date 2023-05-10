@@ -1,20 +1,27 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Film } from './film.entity';
 import { FilmViewsCountry } from './film-views-country';
+import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Country {
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Первичный ключ', example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
 
+  @IsString()
+  @ApiProperty({ description: 'Название страны', example: 'USA' })
   @Column({ unique: true, nullable: false })
   countryName: string;
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ description: 'Ссылка на кинопоиск' })
   @Column({ unique: true, nullable: false })
   url: string;
-
-  @Column({ nullable: true })
-  flag: string; // надо хранить UTF значок
 
   // вдруг есть любители индуского кино
   @OneToMany(() => Film, (film) => film.country)

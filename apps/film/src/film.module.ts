@@ -14,7 +14,6 @@ import {
   ActorRole,
   Country,
   FilmViewsCountry,
-  Genre,
   Review,
   Comment,
   AgeRestriction,

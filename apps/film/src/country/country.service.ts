@@ -18,17 +18,9 @@ export class CountryService {
       },
     });
     if (country) {
-      this.setFlag(country, dto);
       return country;
     }
     const newCountry = this.countryRepository.create(dto);
     return await this.countryRepository.save(newCountry);
-  }
-
-  private async setFlag(country: Country, dto: CreateCountryDTO) {
-    if (dto.flag && !country.flag) {
-      country.flag = dto.flag;
-      this.countryRepository.save(country);
-    }
   }
 }
