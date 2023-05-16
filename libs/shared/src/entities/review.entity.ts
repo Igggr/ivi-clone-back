@@ -19,22 +19,31 @@ export class Review {
   id: number;
 
   @IsString()
-  @ApiProperty({ description: 'Ссылка на ревью на кинопоиске' })
+  @ApiProperty({
+    description: 'Ссылка на ревью на кинопоиске',
+    example: 'https://www.kinopoisk.ru/user/15854772/comment/3251114/',
+  })
   @Column()
   url: string;
 
   @IsString()
-  @ApiProperty({ description: 'Название ревью' })
+  @ApiProperty({
+    description: 'Название ревью',
+    example: 'История о том, как на лжи можно заработать миллионы',
+  })
   @Column()
   title: string;
 
   @IsString()
-  @ApiProperty({ description: 'Текст ревью' })
+  @ApiProperty({
+    description:
+      'Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ...',
+  })
   @Column()
   text: string;
 
   @Column({ nullable: true })
-  isPositive: boolean; // вот из-за этого (и title) приходится выносить review и comment в рвзные таблицы
+  isPositive: boolean; // вот из-за этого (и title) приходится выносить review и comment в разные таблицы
 
   @OneToMany(() => Comment, (comment) => comment.review)
   comments: Comment[];

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
 import { Profile } from '@app/shared';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { AUTH, FILES_RECORD, RABBIT_OPTIONS } from '@app/rabbit';
@@ -28,7 +27,6 @@ import { DatabaseModule, db_schema } from '@app/database';
         ...RABBIT_OPTIONS(FILES_RECORD),
       },
     ]),
-    TypeOrmModule.forFeature([Profile]),
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],

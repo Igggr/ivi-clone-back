@@ -15,15 +15,8 @@ export class FilmController {
   constructor(private readonly filmService: FilmService) {}
 
   @EventPattern({ cmd: PARSED_DATA })
-  async saveParsedData(
-    @Payload() data: ParsedFilmDTO,
-    @Ctx() context: RmqContext,
-  ) {
+  async saveParsedData(@Payload() data: ParsedFilmDTO) {
     console.log('Recieve parsed data');
-
-    // const channel = context.getChannelRef();
-    // const message = context.getMessage();
-    // channel.ack(message);
 
     await this.filmService.createFromParsedData(data);
     console.log('Saved to DB');

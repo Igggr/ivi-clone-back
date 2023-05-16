@@ -26,7 +26,7 @@ export class FilmViewsCountry {
   @Column()
   countryId: number;
 
-  @ApiProperty({ description: 'Дата примьеры' })
+  @ApiProperty({ description: 'Дата премьеры' })
   @Column()
   premiere_date: Date;
 

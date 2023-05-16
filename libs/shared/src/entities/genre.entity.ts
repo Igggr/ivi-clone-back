@@ -12,7 +12,7 @@ export class Genre {
 
   @IsString()
   @ApiProperty({
-    description: 'Ссылка на жанр кинопоиске',
+    description: 'Ссылка на жанр на кинопоиске',
     example:
       'https://www.kinopoisk.ru/lists/movies/genre--comedy/?b=films&b=top',
   })

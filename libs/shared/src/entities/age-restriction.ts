@@ -12,12 +12,18 @@ export class AgeRestriction {
   id: number;
 
   @IsString()
-  @ApiProperty({ description: 'Ссылка на кинопоиск' })
+  @ApiProperty({
+    description: 'Ссылка на возрастное ограничение на кинопоиске',
+    example: 'https://www.kinopoisk.ru/film/462682/rn/R/',
+  })
   @Column({ unique: true })
   url: string;
 
   @IsString()
-  @ApiProperty({ description: 'Буквенная абревиатура', example: 'R' })
+  @ApiProperty({
+    description: 'Буквенная аббревиатура возрастного ограничения',
+    example: 'R',
+  })
   @Column()
   abbreviation: string;
 

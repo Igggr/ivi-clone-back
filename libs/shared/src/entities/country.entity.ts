@@ -19,7 +19,10 @@ export class Country {
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ description: 'Ссылка на кинопоиск' })
+  @ApiProperty({
+    description: 'Ссылка на страну на кинопоиске',
+    example: 'https://www.kinopoisk.ru/lists/movies/country--1/?b=films&b=top',
+  })
   @Column({ unique: true, nullable: false })
   url: string;
 

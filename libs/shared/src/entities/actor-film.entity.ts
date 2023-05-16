@@ -28,7 +28,7 @@ export class ActorFilm {
 
   @IsInt()
   @IsPositive()
-  @ApiProperty({ description: 'Первичный ключ', example: 1 })
+  @ApiProperty({ description: 'Foreign key', example: 1 })
   @Column()
   actorId: number;
 

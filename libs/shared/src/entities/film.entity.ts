@@ -36,7 +36,7 @@ export class Film {
 
   @IsInt()
   @IsPositive()
-  @ApiProperty({ description: 'Год вывуска', example: 1999 })
+  @ApiProperty({ description: 'Год выпуска', example: 1999 })
   @Column()
   year: number;
 

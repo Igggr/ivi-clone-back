@@ -10,7 +10,6 @@ import {
   ActorFilm,
   ActorRole,
   Country,
-  Genre,
   Review,
   AgeRestriction,
 } from '@app/shared';

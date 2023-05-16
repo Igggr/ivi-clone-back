@@ -1,4 +1,4 @@
-import { AUTH, CREATE_PROFILE_WITH_DUMMY_USER, PROFILES } from '@app/rabbit';
+import { CREATE_PROFILE_WITH_DUMMY_USER, PROFILES } from '@app/rabbit';
 import { ParsedProfileDTO, ParsedReviewDTO } from '@app/shared';
 import { Review, Comment, Profile } from '@app/shared';
 import { Inject, Injectable } from '@nestjs/common';
