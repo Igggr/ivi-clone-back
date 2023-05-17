@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PARSED_DATA, PARSER } from '@app/rabbit';
+import { PARSED_DATA, FILM } from '@app/rabbit';
 import { ClientProxy } from '@nestjs/microservices';
 import { Cron } from '@nestjs/schedule';
 import { data } from './data';
@@ -7,7 +7,7 @@ import { data } from './data';
 @Injectable()
 export class ParserSimulatorService {
   constructor(
-    @Inject(PARSER)
+    @Inject(FILM)
     private readonly client: ClientProxy,
   ) {}
 

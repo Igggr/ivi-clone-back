@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { FilmController } from './film.controller';
 import { FilmService } from './film.service';
-import { DatabaseModule } from '@app/database';
+import { DatabaseModule, db_schema } from '@app/database';
 import { ConfigModule } from '@nestjs/config';
-import * as Joi from 'joi';
 import { ClientsModule } from '@nestjs/microservices';
-import { PARSER } from '@app/rabbit/queues';
-import { RABIT_OPTIONS } from '@app/rabbit';
+import { GENRE, PROFILES } from '@app/rabbit/queues';
+import { RABBIT_OPTIONS } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
 import {
   Film,
@@ -15,44 +14,37 @@ import {
   ActorRole,
   Country,
   FilmViewsCountry,
-  Genre,
   Review,
   Comment,
   AgeRestriction,
 } from '@app/shared';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { CountryService } from './country/country.service';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { ReviewService } from './review/review.service';
-import { GenreService } from './genre/genre.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
+import { FilmGenre } from '@app/shared/entities/film-genre.entity';
 
 @Module({
   imports: [
+    // кому отправлять собщения
     ClientsModule.register([
       {
-        name: PARSER,
-        ...RABIT_OPTIONS(PARSER),
+        name: PROFILES,
+        ...RABBIT_OPTIONS(PROFILES),
       },
     ]),
     ClientsModule.register([
       {
-        name: 'AUTH',
-        ...RABIT_OPTIONS('auth'),
+        name: GENRE,
+        ...RABBIT_OPTIONS(GENRE),
       },
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: './apps/film/.env',
-      validationSchema: Joi.object({
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.number().required(),
-        DB_USER: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-      }),
+      validationSchema: db_schema,
     }),
-    DatabaseModule.forRoot([
+    ...DatabaseModule.forRoot([
       Film,
       Actor,
       ActorFilm,
@@ -61,20 +53,8 @@ import { AgeRestrictionService } from './age.restriction/age.restriction.service
       Comment,
       Country,
       FilmViewsCountry,
-      Genre,
       AgeRestriction,
-    ]),
-    TypeOrmModule.forFeature([
-      Film,
-      Actor,
-      ActorFilm,
-      ActorRole,
-      Review,
-      Comment,
-      Country,
-      FilmViewsCountry,
-      Genre,
-      AgeRestriction,
+      FilmGenre,
     ]),
   ],
   controllers: [FilmController],
@@ -84,7 +64,6 @@ import { AgeRestrictionService } from './age.restriction/age.restriction.service
     CountryService,
     ActorRoleService,
     ReviewService,
-    GenreService,
     AgeRestrictionService,
   ],
 })

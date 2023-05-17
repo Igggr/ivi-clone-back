@@ -5,26 +5,39 @@ services:
     container_name: postgres_film
     image: postgres:latest
     ports:
-      - "5435:5432"
+      - "${FILM_DB_PORT}:5432"
     volumes:
       - ./db_data/film/postgres/:/var/lib/postgresql/data
       - ./db_data/film/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.film_db.env
+    - ./apps/film/.env
     networks:
     - postgres_film
+  
+  postgres_genre:
+    container_name: postgres_genre
+    image: postgres:latest
+    ports:
+      - "${GENRE_DB_PORT}:5432"
+    volumes:
+      - ./db_data/genre/postgres/:/var/lib/postgresql/data
+      - ./db_data/genre/run/postgres.sock:/var/run/postgres/postgres.sock
+    env_file:
+    - ./apps/genre/.env
+    networks:
+    - postgres_genre
   
   postgres_profile:
     container_name: postgres_profile
     image: postgres:latest
     ports:
-    - "5434:5432"
+    - "${PROFILE_DB_PORT}:5432"
     volumes:
     # таблицы и их содержимое
     - ./db_data/profile/postgres/:/var/lib/postgresql/data
     - ./db_data/profile/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.profile_db.env
+    - ./apps/profiles/.env
     networks:
     - postgres_profile
   
@@ -32,13 +45,13 @@ services:
     container_name: postgres_auth
     image: postgres:latest
     ports:
-    - "5433:5432"
+    - "${AUTH_DB_PORT}:5432"
     volumes:
     # таблицы и их содержимое
     - ./db_data/auth/postgres:/var/lib/postgresql/data
     - ./db_data/auth/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.auth_db.env
+    - ./apps/auth/.env
     networks:
     - postgres_auth
 
@@ -46,13 +59,13 @@ services:
     container_name: postgres_file
     image: postgres:latest
     ports:
-    - "5435:5432"
+    - "${FILE_DB_PORT}:5432"
     volumes:
     # таблицы и их содержимое
     - ./db_data/file/postgres:/var/lib/postgresql/data
     - ./db_data/file/run/postgres.sock:/var/run/postgres/postgres.sock
     env_file:
-    - docker.file_db.env
+    - ./apps/files-record/.env
     networks:
     - postgres_file
 
@@ -67,6 +80,7 @@ services:
     - docker.pgadmin.env
     networks:
     - postgres_film
+    - postgres_genre
     - postgres_auth
     - postgres_profile
     - postgres_file
@@ -128,6 +142,8 @@ services:
 
 networks:
   postgres_film:
+    driver: bridge
+  postgres_genre:
     driver: bridge
   postgres_auth:
     driver: bridge

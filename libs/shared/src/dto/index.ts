@@ -12,3 +12,4 @@ export * from './parser.dto/parsed-profile.dto';
 export * from './parser.dto/roles';
 export * from './create-review.dto';
 export * from './create-age-restriction.dto';
+export * from './update-genre.dto';

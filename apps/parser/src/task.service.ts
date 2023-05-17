@@ -4,7 +4,7 @@ import { Cache } from 'cache-manager';
 import { Cron } from '@nestjs/schedule';
 import { ParserService } from './parser.service';
 import { ClientProxy } from '@nestjs/microservices';
-import { PARSER } from '@app/rabbit/queues';
+import { FILM } from '@app/rabbit/queues';
 import { PARSED_DATA } from '@app/rabbit/events';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class TasksService {
 
   constructor(
     private readonly parserService: ParserService,
-    @Inject(PARSER)
+    @Inject(FILM)
     private readonly client: ClientProxy,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}

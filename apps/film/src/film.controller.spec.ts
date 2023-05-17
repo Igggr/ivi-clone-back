@@ -10,14 +10,12 @@ import {
   ActorFilm,
   ActorRole,
   Country,
-  Genre,
   Review,
   AgeRestriction,
 } from '@app/shared';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
-import { GenreService } from './genre/genre.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
 
 describe('FilmController', () => {
@@ -31,7 +29,6 @@ describe('FilmController', () => {
         ActorRoleService,
         CountryService,
         ReviewService,
-        GenreService,
         AgeRestrictionService,
         {
           provide: 'ActorService',
@@ -60,10 +57,6 @@ describe('FilmController', () => {
         },
         {
           provide: getRepositoryToken(Review),
-          useValue: {},
-        },
-        {
-          provide: getRepositoryToken(Genre),
           useValue: {},
         },
         {

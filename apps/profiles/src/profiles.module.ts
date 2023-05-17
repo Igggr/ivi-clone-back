@@ -2,39 +2,31 @@ import { Module } from '@nestjs/common';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
 import { Profile } from '@app/shared';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { RABIT_OPTIONS } from '@app/rabbit';
+import { AUTH, FILES_RECORD, RABBIT_OPTIONS } from '@app/rabbit';
+import { DatabaseModule, db_schema } from '@app/database';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      isGlobal: true,
+      envFilePath: './apps/profiles/.env',
+      validationSchema: db_schema,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5434,
-      username: 'admin',
-      password: '123456',
-      database: 'register_microservice',
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
+    ...DatabaseModule.forRoot([Profile]),
     ClientsModule.register([
       {
-        name: 'AUTH',
-        ...RABIT_OPTIONS('auth'),
+        name: AUTH,
+        ...RABBIT_OPTIONS(AUTH),
       },
     ]),
     ClientsModule.register([
       {
-        name: 'FILES-RECORD',
-        ...RABIT_OPTIONS('files'),
+        name: FILES_RECORD,
+        ...RABBIT_OPTIONS(FILES_RECORD),
       },
     ]),
-    TypeOrmModule.forFeature([Profile]),
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],

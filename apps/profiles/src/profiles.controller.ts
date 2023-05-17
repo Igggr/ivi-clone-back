@@ -13,6 +13,7 @@ import {
   UPDATE_PROFILE,
   REGISTRATION,
   CREATE_PROFILE_WITH_DUMMY_USER,
+  ack,
 } from '@app/rabbit';
 
 @Controller()
@@ -70,11 +71,7 @@ export class ProfilesController {
     @Ctx() context: RmqContext,
     @Payload() dto: ParsedProfileDTO,
   ) {
-    console.log('should create dummy profile');
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    this.profileService.createProfileForDummyUser(dto);
+    ack(context);
+    return this.profileService.createProfileForDummyUser(dto);
   }
 }

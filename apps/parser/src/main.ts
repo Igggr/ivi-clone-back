@@ -1,14 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ParserModule } from './parser.module';
-import { PARSER } from '@app/rabbit/queues';
-import { RABIT_OPTIONS } from '@app/rabbit';
 import { RmqOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<RmqOptions>(
-    ParserModule,
-    RABIT_OPTIONS(PARSER),
-  );
+  const app = await NestFactory.createMicroservice<RmqOptions>(ParserModule);
   app.listen();
 }
 bootstrap();
