@@ -3,6 +3,7 @@ import {
   DELETE_PROFILE,
   GET_PROFILES,
   UPDATE_PROFILE,
+  PROFILES,
 } from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import {
@@ -31,7 +32,7 @@ import { ADMIN } from '@app/shared/constants/role-guard.const';
 
 @Controller()
 export class ProfilesController {
-  constructor(@Inject('PROFILES') private readonly client: ClientProxy) {}
+  constructor(@Inject(PROFILES) private readonly client: ClientProxy) {}
 
   @Post('/registration')
   @UsePipes(ValidationPipe)

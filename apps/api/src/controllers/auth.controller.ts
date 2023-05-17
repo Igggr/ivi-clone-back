@@ -22,6 +22,7 @@ import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { RolesGuard } from '../guards/roles.guard';
 import {
   ADD_ROLE,
+  AUTH,
   CREATE_ROLE,
   GET_ROLES,
   GET_USERS,
@@ -31,13 +32,13 @@ import {
 } from '@app/rabbit';
 import { LoggingInterceptor } from '@app/shared/interceptors/logging.interceptor';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
-import { GoogleAuthGuard } from '../utils/google-auth.guard';
+import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
 export class AuthController {
-  constructor(@Inject('AUTH') private readonly client: ClientProxy) {}
+  constructor(@Inject(AUTH) private readonly client: ClientProxy) {}
 
   @Post('/login')
   @UsePipes(ValidationPipe)
@@ -121,33 +122,36 @@ export class AuthController {
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
-  handleLogin() {
-    return this.client.send(
-      {
-        cmd: GOOGLE_LOGIN,
-      },
-      {},
+  async handleLogin() {
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: GOOGLE_LOGIN,
+        },
+        {},
+      ),
     );
   }
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  handleRedirect() {
-    return this.client.send(
-      {
-        cmd: GOOGLE_REDIRECT,
-      },
-      {},
+  async handleRedirect() {
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: GOOGLE_REDIRECT,
+        },
+        {},
+      ),
     );
   }
 
-  @Get('status')
-  googleUser(@Req() request: Request) {
-    console.log(request.user);
-    if (request.user) {
-      return { msg: 'Authenticated' };
-    } else {
-      return { msg: 'Not Authenticated' };
-    }
-  }
+  // @Get('status')
+  // googleUser(@Req() request: Request) {
+  //   if (request.user) {
+  //     return { msg: 'Authenticated' };
+  //   } else {
+  //     return { msg: 'Not Authenticated' };
+  //   }
+  // }
 }

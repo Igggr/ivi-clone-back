@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { FILM } from '@app/rabbit/queues';
+import { AUTH, FILM, PROFILES } from '@app/rabbit/queues';
 import { RABIT_OPTIONS } from '@app/rabbit';
 import { FilmController } from './controllers/film.controller';
 import { JwtMiddleware } from './utils/jwt-middleware';
@@ -24,14 +24,14 @@ import { SessionSerializer } from './utils/serializer';
     ]),
     ClientsModule.register([
       {
-        name: 'AUTH',
-        ...RABIT_OPTIONS('auth'),
+        name: AUTH,
+        ...RABIT_OPTIONS(AUTH),
       },
     ]),
     ClientsModule.register([
       {
-        name: 'PROFILES',
-        ...RABIT_OPTIONS('profiles'),
+        name: PROFILES,
+        ...RABIT_OPTIONS(PROFILES),
       },
     ]),
     PassportModule.register({ session: true }),

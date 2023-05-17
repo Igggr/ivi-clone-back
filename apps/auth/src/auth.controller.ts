@@ -28,11 +28,11 @@ import {
   UPDATE_USER,
   VERIFY_TOKEN,
 } from '@app/rabbit';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { RolesService } from './roles/roles.service';
 import { ParsedProfileDTO } from '@app/shared';
+import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
 
 @Controller()
 export class AuthController {
@@ -174,7 +174,7 @@ export class AuthController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return { msg: 'OK' };
+    return { msg: 'Пользователь успешно авторизован' };
   }
 
   @MessagePattern({ cmd: ENSURE_GOOGLE_USER })

@@ -29,7 +29,7 @@ export class Profile {
 
   @ApiProperty({ example: 'stas9n', description: 'Никнейм пользователя' })
   @IsString({ message: 'Должно быть строкой' })
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   nickname: string;
 
   // @ApiProperty({

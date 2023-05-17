@@ -6,7 +6,7 @@ import { UsersService } from './users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GoogleUser } from '@app/shared/entities/google-user.entity';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
+import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
 
 @Injectable()
 export class AuthService {
