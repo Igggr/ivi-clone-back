@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { AUTH, FIND_GOOGLE_USER } from '@app/rabbit';
-import { GoogleUser } from '@app/shared/entities/google-user.entity';
+import { User } from '@app/shared';
 import { Controller, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportSerializer } from '@nestjs/passport';
@@ -13,7 +13,7 @@ export class SessionSerializer extends PassportSerializer {
     super();
   }
 
-  async serializeUser(user: GoogleUser, done: Function) {
+  async serializeUser(user: User, done: Function) {
     console.log('Serialize');
     done(null, user);
   }

@@ -8,7 +8,6 @@ import * as uuid from 'uuid';
 import { RolesService } from '../roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { USER } from '@app/shared/constants/role.const';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
 
 @Injectable()
 export class UsersService {

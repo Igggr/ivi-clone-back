@@ -26,13 +26,13 @@ import {
   LOGIN,
   UPDATE_USER,
   VERIFY_TOKEN,
+  ack,
 } from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { RolesService } from './roles/roles.service';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
 
 @Controller()
 export class AuthController {
@@ -44,9 +44,7 @@ export class AuthController {
 
   @MessagePattern({ cmd: LOGIN })
   login(@Payload() userDto: LoginDto, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.authService.login(userDto);
   }
@@ -56,9 +54,7 @@ export class AuthController {
     @Payload() userDto: CreateUserProfileDto,
     @Ctx() context: RmqContext,
   ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.userService.createUser(userDto);
   }
@@ -68,36 +64,28 @@ export class AuthController {
     @Ctx() context: RmqContext,
     @Payload() dto: ParsedProfileDTO,
   ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.userService.createDummyUser(dto);
   }
 
   @MessagePattern({ cmd: GET_USER_BY_EMAIL })
   getUserByEmail(@Payload() email: string, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.userService.getUserByEmail(email);
   }
 
   @MessagePattern({ cmd: GET_TOKEN })
   getToken(@Payload() user: User, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.authService.generateToken(user);
   }
 
   @MessagePattern({ cmd: UPDATE_USER })
   updateUser(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.userService.updateUser(
       userProfileInfo.userProfileDto,
@@ -107,95 +95,73 @@ export class AuthController {
 
   @MessagePattern({ cmd: DELETE_USER })
   deleteUser(@Payload() userId, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.userService.deleteUser(userId);
   }
 
   @MessagePattern({ cmd: CREATE_ROLE })
   createRole(@Payload() roleDto: CreateRoleDto, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.roleService.createRole(roleDto);
   }
 
   @MessagePattern({ cmd: ADD_ROLE })
   addRole(@Payload() roleDto: AddRoleDto, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.userService.addRole(roleDto);
   }
 
   @MessagePattern({ cmd: GET_USERS })
   getUsers(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.userService.getUsers();
   }
 
   @MessagePattern({ cmd: GET_ROLES })
   getRoles(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.roleService.getRoles();
   }
 
   @MessagePattern({ cmd: VERIFY_TOKEN })
   verifyToken(@Payload() token, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.authService.verifyToken(token);
   }
 
   @MessagePattern({ cmd: GOOGLE_LOGIN })
   handleLogin(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return { msg: 'Google Authentication' };
   }
 
   @MessagePattern({ cmd: GOOGLE_REDIRECT })
-  handleRedirect(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+  handleRedirect(@Payload() user: User, @Ctx() context: RmqContext) {
+    ack(context);
 
-    return { msg: 'Пользователь успешно авторизован' };
+    return this.authService.googleRedirect(user);
   }
 
   @MessagePattern({ cmd: ENSURE_GOOGLE_USER })
   ensureGoogleUser(
-    @Payload() details: CreateGoogleUserDetailsDto,
+    @Payload() userDto: LoginDto,
     @Ctx() context: RmqContext,
   ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-    console.log('validate');
+    ack(context);
 
-    return this.authService.ensureGoogleUser(details);
+    return this.authService.ensureGoogleUser(userDto);
   }
 
   @MessagePattern({ cmd: FIND_GOOGLE_USER })
   findGoogleUser(userId: number, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-    console.log('findGoogle');
+    ack(context);
 
     return this.authService.findGoogleUser(userId);
   }

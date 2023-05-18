@@ -10,9 +10,8 @@ import { firstValueFrom } from 'rxjs';
 export class GoogleStrategy extends PassportStrategy(Strategy) {
   constructor(@Inject(AUTH) private client: ClientProxy) {
     super({
-      clientID:
-        '400170446302-o1sbhhvbe9utelobo8bvrp7teal2udgv.apps.googleusercontent.com',
-      clientSecret: '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',
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
       callbackURL: 'http://localhost:3000/auth/google/redirect',
       scope: ['profile', 'email'],
     });
@@ -30,7 +29,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         },
         {
           email: profile.emails[0].value,
-          displayName: profile.displayName,
+          password: '123456',
         },
       ),
     );

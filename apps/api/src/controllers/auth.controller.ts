@@ -135,13 +135,13 @@ export class AuthController {
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  async handleRedirect() {
+  async handleRedirect(@Req() request: Request) {
     return await firstValueFrom(
       this.client.send(
         {
           cmd: GOOGLE_REDIRECT,
         },
-        {},
+        request.user,
       ),
     );
   }

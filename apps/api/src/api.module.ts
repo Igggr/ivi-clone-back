@@ -11,9 +11,18 @@ import { ClientsModule } from '@nestjs/microservices';
 import { AuthController } from './controllers/auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
 import { SessionSerializer } from './utils/serializer';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: './apps/api/.env',
+      validationSchema: Joi.object({
+        CLIENT_ID: Joi.string().required(),
+        CLIENT_SECRET: Joi.string().required(),
+      }),
+    }),
     ClientsModule.register([
       {
         name: FILM,

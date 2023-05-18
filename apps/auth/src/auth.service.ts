@@ -4,17 +4,18 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GoogleUser } from '@app/shared/entities/google-user.entity';
 import { Repository } from 'typeorm';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
+import { RolesService } from './roles/roles.service';
+import { USER } from '@app/shared/constants/role.const';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userService: UsersService,
-    @InjectRepository(GoogleUser)
-    private readonly googleUserRepository: Repository<GoogleUser>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly roleService: RolesService,
   ) {}
 
   async login(userDto: LoginDto) {
@@ -73,23 +74,34 @@ export class AuthService {
     };
   }
 
-  async ensureGoogleUser(details: CreateGoogleUserDetailsDto) {
+  async ensureGoogleUser(userDto: LoginDto) {
     console.log('Auth Service');
-    console.log(details);
-    const user = await this.googleUserRepository.findOneBy({
-      email: details.email,
+    console.log(userDto);
+    const user = await this.userRepository.findOneBy({
+      email: userDto.email,
     });
     if (user) {
       return user;
     }
     console.log('User not found');
-    const newGoogleUser = await this.googleUserRepository.create(details);
+    const newGoogleUser = await this.userRepository.create(userDto);
+    await newGoogleUser.setPassword(userDto.password);
+    let role = await this.roleService.getRoleByValue('User');
+    if (!role) {
+      await this.roleService.createRole(USER);
+    }
+    role = await this.roleService.getRoleByValue('User');
+    newGoogleUser.addRole(role);
 
-    return await this.googleUserRepository.save(newGoogleUser);
+    return await this.userRepository.save(newGoogleUser);
   }
 
   async findGoogleUser(userId: number) {
-    const user = await this.googleUserRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findOneBy({ id: userId });
     return user;
+  }
+
+  async googleRedirect(user: User) {
+    return await this.generateToken(user);
   }
 }
