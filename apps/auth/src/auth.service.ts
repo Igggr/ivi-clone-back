@@ -61,7 +61,7 @@ export class AuthService {
       error: 'Неккоректный емэйл или пароль',
     };
   }
-
+  
   async verifyToken(token) {
     const userInfo = await this.jwtService.verify(token);
     const user = await this.userService.getUserByEmail(userInfo.email);

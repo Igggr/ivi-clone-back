@@ -1,11 +1,11 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AUTH, FILES_RECORD, FILM, GENRE, PROFILES } from '@app/rabbit/queues';
 import { FilmController } from './controllers/film.controller';
+import { JwtMiddleware } from './utils/jwt-middleware';
+import { AUTH, FILES_RECORD, FILM, GENRE, PROFILES } from '@app/rabbit/queues';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
 import { PassportModule } from '@nestjs/passport';
 import { GenreController } from './controllers/genre.controller';
-import { JwtMiddleware } from './utils/jwt-middleware';
 import { RABBIT_OPTIONS } from '@app/rabbit';
 import { ClientsModule } from '@nestjs/microservices';
 import { AuthController } from './controllers/auth.controller';

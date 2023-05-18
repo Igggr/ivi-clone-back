@@ -20,17 +20,17 @@ import {
   HttpStatus,
   Inject,
   Post,
-  UnauthorizedException,
-  UseInterceptors,
-  UseGuards,
-  UsePipes,
   Req,
+  UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
 import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
-import { Request } from 'express';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
@@ -38,7 +38,7 @@ import { GoogleAuthGuard } from '../guards/google-auth.guard';
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
 export class AuthController {
-  constructor(@Inject(AUTH) private client: ClientProxy) {}
+  constructor(@Inject(AUTH) private readonly client: ClientProxy) {}
 
   @Post('/login')
   @UsePipes(ValidationPipe)

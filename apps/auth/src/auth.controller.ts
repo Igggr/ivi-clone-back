@@ -8,19 +8,20 @@ import {
 } from '@nestjs/microservices';
 import { LoginDto } from '@app/shared/dto/login.dto';
 import { UsersService } from './users/users.service';
-import { ParsedProfileDTO } from '@app/shared';
+import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
+import { User } from '@app/shared/entities/user.entity';
 import {
   ADD_ROLE,
+  CREATE_DUMMY_USER,
   CREATE_ROLE,
   CREATE_USER,
   DELETE_USER,
-  GET_ROLES,
   ENSURE_GOOGLE_USER,
   FIND_GOOGLE_USER,
+  GET_ROLES,
   GET_TOKEN,
   GET_USERS,
   GET_USER_BY_EMAIL,
-  CREATE_DUMMY_USER,
   GOOGLE_LOGIN,
   GOOGLE_REDIRECT,
   LOGIN,
@@ -28,11 +29,10 @@ import {
   VERIFY_TOKEN,
   ack,
 } from '@app/rabbit';
-import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { User } from '@app/shared/entities/user.entity';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { RolesService } from './roles/roles.service';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
-import { AddRoleDto } from '@app/shared/dto/add-role.dto';
+import { ParsedProfileDTO } from '@app/shared';
 
 @Controller()
 export class AuthController {
