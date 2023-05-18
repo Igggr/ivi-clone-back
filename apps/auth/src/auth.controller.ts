@@ -30,9 +30,9 @@ import {
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { RolesService } from './roles/roles.service';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
+import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
 
 @Controller()
 export class AuthController {
@@ -174,7 +174,7 @@ export class AuthController {
     const message = context.getMessage();
     channel.ack(message);
 
-    return { msg: 'OK' };
+    return { msg: 'Пользователь успешно авторизован' };
   }
 
   @MessagePattern({ cmd: ENSURE_GOOGLE_USER })

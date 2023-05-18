@@ -1,4 +1,3 @@
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
 import { AUTH, ENSURE_GOOGLE_USER } from '@app/rabbit';
 import { Controller, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
