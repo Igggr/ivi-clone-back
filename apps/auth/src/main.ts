@@ -6,7 +6,9 @@ import { AUTH, RABBIT_OPTIONS } from '@app/rabbit';
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AuthModule,
-    RABBIT_OPTIONS(AUTH),
+    {
+      ...RABBIT_OPTIONS(AUTH),
+    },
   );
   await app.listen();
 }

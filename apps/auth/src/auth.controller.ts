@@ -22,12 +22,17 @@ import {
   UPDATE_USER,
   VERIFY_TOKEN,
   CREATE_DUMMY_USER,
+  GOOGLE_LOGIN,
+  GOOGLE_REDIRECT,
+  VALIDATE_GOOGLE_USER,
+  FIND_GOOGLE_USER,
 } from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { RolesService } from './roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
+import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
 
 @Controller()
 export class AuthController {
@@ -152,5 +157,44 @@ export class AuthController {
     channel.ack(message);
 
     return this.authService.verifyToken(token);
+  }
+
+  @MessagePattern({ cmd: GOOGLE_LOGIN })
+  handleLogin(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return { msg: 'Google Authentication' };
+  }
+
+  @MessagePattern({ cmd: GOOGLE_REDIRECT })
+  handleRedirect(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return { msg: 'OK' };
+  }
+
+  @MessagePattern({ cmd: VALIDATE_GOOGLE_USER })
+  validateGoogleUser(
+    @Payload() details: CreateGoogleUserDetailsDto,
+    @Ctx() context: RmqContext,
+  ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.authService.validateGoogleUser(details);
+  }
+
+  @MessagePattern({ cmd: FIND_GOOGLE_USER })
+  findGoogleUser(userId: number, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return this.authService.findGoogleUser(userId);
   }
 }

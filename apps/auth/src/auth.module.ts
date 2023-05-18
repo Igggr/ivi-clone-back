@@ -7,6 +7,7 @@ import { UsersService } from './users/users.service';
 import { ConfigModule } from '@nestjs/config';
 import { Role } from '@app/shared/entities/role.entity';
 import { RolesService } from './roles/roles.service';
+import { GoogleUser } from '@app/shared/entities/google-user.entity';
 import { DatabaseModule, db_schema } from '@app/database';
 import * as Joi from 'joi';
 
