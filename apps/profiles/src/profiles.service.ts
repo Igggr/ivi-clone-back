@@ -59,6 +59,7 @@ export class ProfilesService {
       const profile = await this.profileRepository.create({
         ...userProfileDto,
         userId: newUser.id,
+        url: '',
       });
       await this.profileRepository.save(profile);
       if (photo) {
@@ -74,7 +75,6 @@ export class ProfilesService {
         );
       }
       profile.photo = photoName;
-      await this.profileRepository.save(profile);
 
       return await firstValueFrom(
         this.authClient.send({ cmd: GET_TOKEN }, newUser),

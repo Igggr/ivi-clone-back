@@ -15,6 +15,7 @@ import {
   CREATE_USER,
   DELETE_USER,
   GET_ROLES,
+  FIND_GOOGLE_USER,
   GET_TOKEN,
   GET_USERS,
   GET_USER_BY_EMAIL,
@@ -25,14 +26,13 @@ import {
   GOOGLE_LOGIN,
   GOOGLE_REDIRECT,
   VALIDATE_GOOGLE_USER,
-  FIND_GOOGLE_USER,
 } from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { RolesService } from './roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
-import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user.details.dto';
+import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
 
 @Controller()
 export class AuthController {

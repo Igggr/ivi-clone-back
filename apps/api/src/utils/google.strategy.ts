@@ -1,10 +1,11 @@
 import { AUTH, VALIDATE_GOOGLE_USER } from '@app/rabbit';
-import { Inject, Injectable } from '@nestjs/common';
+import { Controller, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { firstValueFrom } from 'rxjs';
 
+@Controller()
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
   constructor(@Inject(AUTH) private client: ClientProxy) {
