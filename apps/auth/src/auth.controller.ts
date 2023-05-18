@@ -159,24 +159,6 @@ export class AuthController {
     return this.authService.verifyToken(token);
   }
 
-  @MessagePattern({ cmd: GOOGLE_LOGIN })
-  handleLogin(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return { msg: 'Google Authentication' };
-  }
-
-  @MessagePattern({ cmd: GOOGLE_REDIRECT })
-  handleRedirect(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return { msg: 'OK' };
-  }
-
   @MessagePattern({ cmd: VALIDATE_GOOGLE_USER })
   validateGoogleUser(
     @Payload() details: CreateGoogleUserDetailsDto,
@@ -196,5 +178,23 @@ export class AuthController {
     channel.ack(message);
 
     return this.authService.findGoogleUser(userId);
+  }
+
+  @MessagePattern({ cmd: GOOGLE_LOGIN })
+  handleLogin(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return { msg: 'Google Authentication' };
+  }
+
+  @MessagePattern({ cmd: GOOGLE_LOGIN })
+  handleRedirect(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+
+    return { msg: 'OK' };
   }
 }
