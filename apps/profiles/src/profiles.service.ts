@@ -75,6 +75,7 @@ export class ProfilesService {
         );
       }
       profile.photo = photoName;
+      await this.profileRepository.save(profile);
 
       return await firstValueFrom(
         this.authClient.send({ cmd: GET_TOKEN }, newUser),

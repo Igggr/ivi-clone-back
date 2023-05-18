@@ -15,17 +15,17 @@ import {
   CREATE_USER,
   DELETE_USER,
   GET_ROLES,
+  ENSURE_GOOGLE_USER,
   FIND_GOOGLE_USER,
   GET_TOKEN,
   GET_USERS,
   GET_USER_BY_EMAIL,
-  LOGIN,
-  UPDATE_USER,
-  VERIFY_TOKEN,
   CREATE_DUMMY_USER,
   GOOGLE_LOGIN,
   GOOGLE_REDIRECT,
-  VALIDATE_GOOGLE_USER,
+  LOGIN,
+  UPDATE_USER,
+  VERIFY_TOKEN,
 } from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
@@ -177,9 +177,9 @@ export class AuthController {
     return { msg: 'OK' };
   }
 
-  @MessagePattern({ cmd: VALIDATE_GOOGLE_USER })
-  validateGoogleUser(
-    @Body() details: CreateGoogleUserDetailsDto,
+  @MessagePattern({ cmd: ENSURE_GOOGLE_USER })
+  ensureGoogleUser(
+    @Payload() details: CreateGoogleUserDetailsDto,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
@@ -187,7 +187,7 @@ export class AuthController {
     channel.ack(message);
     console.log('validate');
 
-    return this.authService.validateGoogleUser(details);
+    return this.authService.ensureGoogleUser(details);
   }
 
   @MessagePattern({ cmd: FIND_GOOGLE_USER })

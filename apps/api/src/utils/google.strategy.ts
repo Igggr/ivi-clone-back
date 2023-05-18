@@ -1,5 +1,5 @@
 import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
-import { AUTH, VALIDATE_GOOGLE_USER } from '@app/rabbit';
+import { AUTH, ENSURE_GOOGLE_USER } from '@app/rabbit';
 import { Controller, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
@@ -27,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     const user = await firstValueFrom(
       this.client.send(
         {
-          cmd: VALIDATE_GOOGLE_USER,
+          cmd: ENSURE_GOOGLE_USER,
         },
         {
           email: profile.emails[0].value,

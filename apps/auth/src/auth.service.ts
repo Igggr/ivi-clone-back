@@ -73,7 +73,7 @@ export class AuthService {
     };
   }
 
-  async validateGoogleUser(details: CreateGoogleUserDetailsDto) {
+  async ensureGoogleUser(details: CreateGoogleUserDetailsDto) {
     console.log('Auth Service');
     console.log(details);
     const user = await this.googleUserRepository.findOneBy({
