@@ -1,1 +1,1243 @@
-{"openapi":"3.0.0","paths":{"/auth/login":{"post":{"operationId":"AuthController_login","parameters":[],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/LoginDto"}}}},"responses":{"201":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/auth/roles":{"post":{"operationId":"AuthController_createRole","parameters":[],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CreateRoleDto"}}}},"responses":{"201":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}},"get":{"operationId":"AuthController_getRoles","parameters":[],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/auth/users/role":{"post":{"operationId":"AuthController_addRole","parameters":[],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AddRoleDto"}}}},"responses":{"201":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/auth/users":{"get":{"operationId":"AuthController_getUsers","parameters":[],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/auth/google/login":{"get":{"operationId":"AuthController_handleLogin","parameters":[],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/auth/google/redirect":{"get":{"operationId":"AuthController_handleRedirect","parameters":[],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/registration":{"post":{"operationId":"ProfilesController_registration","parameters":[],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CreateUserProfileDto"}}}},"responses":{"201":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/profiles/{id}":{"put":{"operationId":"ProfilesController_updateProfile","parameters":[{"name":"id","required":true,"in":"path","schema":{"type":"number"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CreateUserProfileDto"}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}},"delete":{"operationId":"ProfilesController_deleteProfile","parameters":[{"name":"id","required":true,"in":"path","schema":{"type":"number"}}],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/profiles":{"get":{"operationId":"ProfilesController_getProfiles","parameters":[],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/film/movies":{"get":{"operationId":"FilmController_getAllMovies","summary":"Получение информации о фильмах","parameters":[{"name":"genres","required":true,"in":"query","schema":{"type":"array","items":{"type":"string"}}},{"name":"limit","required":true,"in":"query","schema":{"type":"number"}},{"name":"ofset","required":true,"in":"query","schema":{"type":"number"}}],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}},"202":{"description":"","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Film"}}}}}},"tags":["film"]}},"/film/serials":{"get":{"operationId":"FilmController_getAllSerials","summary":"Получение информации о сериалах","parameters":[{"name":"genres","required":true,"in":"query","schema":{"type":"array","items":{"type":"string"}}},{"name":"limit","required":true,"in":"query","schema":{"type":"number"}},{"name":"ofset","required":true,"in":"query","schema":{"type":"number"}}],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}},"202":{"description":"","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Film"}}}}}},"tags":["film"]}},"/film/cartoons":{"get":{"operationId":"FilmController_getAllCartoons","summary":"Получение информации о мультфльмах","parameters":[{"name":"genres","required":true,"in":"query","schema":{"type":"array","items":{"type":"string"}}},{"name":"limit","required":true,"in":"query","schema":{"type":"number"}},{"name":"ofset","required":true,"in":"query","schema":{"type":"number"}}],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}},"202":{"description":"","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Film"}}}}}},"tags":["film"]}},"/genre":{"get":{"operationId":"GenreController_getAllGenres","parameters":[],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Genre"}}}}}},"tags":["genre"]},"put":{"operationId":"GenreController_updateGenre","parameters":[],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UpdateGenreDto"}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Genre"}}}}},"tags":["genre"]}},"/genre/{id}":{"get":{"operationId":"GenreController_getOneGenre","parameters":[{"name":"id","required":true,"in":"path","schema":{"type":"number"}}],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object"}}}}},"tags":["genre"]}}},"info":{"title":"Учебный проект","description":"Клон kinopoisk-a","version":"0.0.0","contact":{}},"tags":[],"servers":[],"components":{"securitySchemes":{"defaultBearerAuth":{"scheme":"bearer","bearerFormat":"jwt","type":"http"}},"schemas":{"LoginDto":{"type":"object","properties":{"email":{"type":"string","example":"user@mail.ru","description":"Почтовый адрес"},"password":{"type":"string","minLength":4,"maxLength":16,"example":"12345678","description":"Пароль пользователя"}},"required":["email","password"]},"CreateRoleDto":{"type":"object","properties":{"value":{"type":"string","example":"Администратор","description":"Роль пользователя"},"description":{"type":"string"}},"required":["value","description"]},"AddRoleDto":{"type":"object","properties":{"value":{"type":"string","example":"Администратор","description":"Роль пользователя"},"userId":{"type":"number","minimum":1}},"required":["value","userId"]},"User":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"email":{"type":"string","example":"user@mail.ru","description":"Почтовый адрес"},"password":{"type":"string","minLength":4,"maxLength":16,"example":"12345678","description":"Пароль пользователя"},"roles":{"type":"array","items":{"$ref":"#/components/schemas/Role"}}},"required":["id","email","password","roles"]},"Role":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"value":{"type":"string","example":"Администратор","description":"Роль пользователя"},"description":{"type":"string"},"users":{"type":"array","items":{"$ref":"#/components/schemas/User"}}},"required":["id","value","description","users"]},"CreateUserProfileDto":{"type":"object","properties":{"email":{"type":"string","example":"user@mail.ru","description":"Почтовый адрес"},"password":{"type":"string","minLength":4,"maxLength":16,"example":"12345678","description":"Пароль пользователя"},"url":{"type":"string","description":"Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"},"name":{"type":"string","example":"Александр","description":"Имя пользователя"},"surname":{"type":"string","example":"Иванов","description":"Фамилия пользователя"},"nickname":{"type":"string","example":"stas9n","description":"Никнейм пользователя"},"country":{"type":"string","example":"Россия","description":"Страна проживания пользователя"},"city":{"type":"string","example":"Москва","description":"Город проживания пользователя"},"roles":{"type":"array","items":{"$ref":"#/components/schemas/Role"}},"photo":{"type":"string"}},"required":["email","password","url","name","surname","nickname","country","city","roles","photo"]},"Actor":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"url":{"type":"string","description":"Ссылка на актера на кинопоиске","example":"https://www.kinopoisk.ru/name/7836/"},"fullName":{"type":"string","description":"Имя актера","example":"Киану Ривз"},"fullNameEn":{"type":"string","description":"Actor name","example":"Keanu Reeves"},"photo":{"type":"string","description":"Ссылка на фотографию","example":"www.kinopoisk.ru/2L92Ne432/b7d04b8v/fqOJASjI4frRMS8965211hOo-XV0re_Ej7Lr57tFE8StVoHC9xZ4AjaNyHf_VbpUUKejq5x-XyQl3uasLNgem9pnrJB9TRVeVIR63J8YtVNDyUiwEZzuQArGKjaOkNY2XlQC4GA0G_C0jw5jy1G78eVSV6rZrutBkSqH6w8MS4lscKiQGIkhzUDTLRuojWV2ATm-x-QtypR-wc0mO_bCJQzW8iNS90qy123-0ajDrhO1gFYKqz8rcnV7xfq9aur634G4sAh78a9hYS4pG1yVdAHo3vTFnzllzNFud5pWgka9FiJTQdZ48rfM3qILcD0ixdGXqqreKwOHOvYILDpaS95QqJNbmTD8ozOsaCsdVHTwmk8kpp0qtp3zDZXLxTA3H3cSMyJEKkEEH27AONLtkTWxhAuJzrvyJ4rXq42Iu3udMLuwSFpS7pKzvkt4fUWEwusPJtbMeYYvQy40qXdjd84k4YMTBNrilc-tg7lw3AJ20eQI6Z_aEle5NxjM2Xkr3OArIvta0kzREA-LGpyERSPbLQY2HTt2XSF9t-k00pfNdzLhY7ar0xd_HvKoA5wBtdM1GRluqKFlioWK7Jnouv_SGDDoWaP9kvMtCylcxjfDqG7mlB3IR2_BTVcbV5CXH7dwcuDUSFAErfxASWKeUicxFziqPAlAp9qUy3-ZyKm9s8gyOClg_AOiTRuLn-XG4qnPhWevu-Zu0e51aufARL7FUOIQRGqwtb9eUSlCL_PFIKcZG305E8U5xslt6Ml4z5D7oHia410CwX77KV8nxUOZzNfEjYsWXHAMRclVA_V_lGJyY6SIoKavf4GJo46BdVInmvuO2OB2WTZoz5qJSz6SqnIIyYIPM2G_S6ms5naw-g10h2yLRXzTLZdY1-IG_tTCUyF2C4M1zT6wqzGNgMWw1xk7fAnitQkHKp6YKStd0Wpx-ijDzhLzfqn7jyZlcbu_heXPqQRMgM9laaaBBjy0ctNi53lTBV7MQ-swbVImotcqSl67A2RLJEitmKnoD_Cp88l5AVygsY1J2Z-XVzHJLdcmr4pGLOP_xWrEYXb_JOJiErT54KdsrSPbsh9DF0ClmWt9-EH1uMYovXorWfzyulN4CpP8UbA8G4kcBdaiy1z1Rk4INZ7TPcQpFsI3zzRyEKLWWgKWjgzx6FI90ESChtmI3sgRVbj2K747KFjMMCgj6ekgDRCib1o6bLZnUQoelyYdK2RuQf9GaIcDBu3UYNDTVdjw9_3_0liiT4EFs_frKW3Yw0TrN_vP-1jY3FAZ4tib8EwA8n9aOG6FhpCb_IVmLeknrvOMRjr1ElcfxPKi4sQakJbPvwHoUP5Bd2MlqNkdSLHm6eQofog5-Q7D23K6yXCfMsI8G6kO9KaSeW0Hh3-bRCygvRRbFvEEPqZAgKGE2hDkfo3iGMC_ABVT1NrYXAtgdarWSX3LSyisorvSyCvTvLKhHphq_7VG4vucFyV8SxQc8r9kq8XAVe7XAAJil8mBt17PEMpSnWP1YtTLiB76kedZhvp-WzjYzuHbcFnYY_8SYBxoSkzH9EKo7de1bYnUDaNMt8jEYGU9xUJyspa4ILatfDCKYN9RZfCWGcp92KA1O7Z6zdpom82xSpAJyfAOw2G8KBj9lpbRyNwX9az4B1xwrXaKtKEnPcUy0pKVuiLmPX5j6vDeAyTR5nhb_BgQBfiFuF-ba8v8kbsxGiijbQPwDwmZDeYFMslsNXTcOJed099EGobDJw6EcFPjdkoi1d9uoqqgTDPl8NcpWk1YAmeZ5BgP-9s7nePIQ1gJInyD8P55WEzml2CqH_XmnrmH37FMdEiU4HUv5wDS4sW4YXSt_tLKchxhBTGFaRnt2-JliURJnnqKu3xiaCPJSONfItAsa4gtZhdBGE3Xt-6b9i1SDRf6dXKXL1UighMlucAHjezi-gAuQaeiR9hYDdqgFMu0WkxJ2kt909ti6-tT3iEi_Sh7X_XU4ap81TYOy7asw2xH-cXB1TwmsMIipCiTBM288xuwHTI0QAYq-Z4pQia61hreanv7zaPaEXtI0f4jEFyZ6Q6V9iE7L-TGTBq1nvIPR9qUUeSsx5ADERXrcuXs7HGZYBwSV_BkaHl8yTK3-wZobal6uTzCikNqOPPvoQMfSzq99qRwa673ph8rdE0RbpRZFmBUv0eT8uJkGdME3e4yWGJ9IETSFmlr7TiDRltWCs2bG8r90ahj6piybKHAb1mJfQQWs0ku1dV_ORZtkx12OpaR1r1kYcKDhNngx7ztgthib5P1ExYpWh7JUGZrFuvcWQjoHMF7cWg7AA9CYAxLSv3FZiG7HOUGbnlF7bGNVVi0UjQNJMPyUJZYUYaO79CaQD5gF-Al6outWPAHGcU67WjJeq6SiYMqCVD8E_GOuZrvheaTeG1kFZyJx77Rb3YLZeOHnPUwMFMlS_K0fA-SaDDvU5SCBajpDUjDB9s1q6zY6ojf0mgi6jlB3zKjTRqorTfEE5jf1pY9ixWdQv3WSJWhlS6kQ2DxRGlRBh7O8hhgT5Ml48QJKkw4sGcK9Zu_aHp5blNpccnawu1T0X5pGQwHdjNbz-XHXnn3jSG9hcp34qX_ZIKD0If5kjY_fsB7YP5SZPLG26kf-vHEmXTIbEg7qU7CqVNauVO84TF_qEuc93XC2a6nBD7qRI1RTKVY9PAmv_WBoMNlisAUnxwiOKGcU2XQh5vo3EoT1OrE2NzLKNv_E8lg6DhQ3aFwzTkpTuZ244oe1VScKgWecZ90CnahBP82wAFTJvmylN6OcYhSjLNEwMeZW2_pcTRI1smeWHsrXfBKYop4scxzQXzaKJ1kpnLJHSTkzOgEDRGNZWumwhT-xzLRwGXrcNbenNKqU11ydyDXaPu_2sK2-cWKTIjq-h-wy1LoStPcw6GNS7us9rQBSE1mBr77FL3B3QQ6VTBk7-bT0nElyrBH3M8TiwFvQtUwpxr7rwnxlOr3M"},"personInFilm":{"type":"array","items":{"$ref":"#/components/schemas/ActorFilm"}}},"required":["id","url","fullName","fullNameEn","photo","personInFilm"]},"ActorRole":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"roleName":{"type":"string","description":"Какова его роль в фильме","examples":["actor","operator"]},"personsInFilm":{"type":"array","items":{"$ref":"#/components/schemas/ActorFilm"}}},"required":["id","roleName","personsInFilm"]},"ActorFilm":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"filmId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"actorId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"roleId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"roleNotes":{"type":"string","description":"Примечание по роли","examples":["... дворецкий","... по костюмам"]},"film":{"$ref":"#/components/schemas/Film"},"actor":{"$ref":"#/components/schemas/Actor"},"role":{"$ref":"#/components/schemas/ActorRole"}},"required":["id","filmId","actorId","roleId","roleNotes","film","actor","role"]},"FilmGenre":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"genreId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"filmId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"film":{"$ref":"#/components/schemas/Film"}},"required":["id","genreId","filmId","film"]},"AgeRestriction":{"type":"object","properties":{"id":{"type":"number","description":"Первичный ключ","example":1},"url":{"type":"string","description":"Ссылка на возрастное ограничение на кинопоиске","example":"https://www.kinopoisk.ru/film/462682/rn/R/"},"abbreviation":{"type":"string","description":"Буквенная аббревиатура возрастного ограничения","example":"R"},"minAge":{"type":"string","description":"Минимальный возраст зрителя","example":"16+"},"description":{"type":"string","description":"Описание ограничения по возрасту","example":"Детям до 17 лет обязательно присутствие родителей"}},"required":["id","url","abbreviation","minAge","description"]},"Comment":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"reviewId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"parentCommentId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"profileId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"text":{"type":"string","description":"Текст комментария под чьим-то ревью","example":"Ты просто не понял фильм, иначе б такое ревью не написал"},"review":{"$ref":"#/components/schemas/Review"},"parentComment":{"$ref":"#/components/schemas/Comment"},"childrens":{"type":"array","items":{"$ref":"#/components/schemas/Comment"}}},"required":["id","reviewId","profileId","text","review"]},"Review":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"url":{"type":"string","description":"Ссылка на ревью на кинопоиске","example":"https://www.kinopoisk.ru/user/15854772/comment/3251114/"},"title":{"type":"string","description":"Название ревью","example":"История о том, как на лжи можно заработать миллионы"},"text":{"type":"string","description":"Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."},"filmId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"profileId":{"type":"number","minimum":1,"description":"Foreign key","example":1},"isPositive":{"type":"boolean"},"comments":{"type":"array","items":{"$ref":"#/components/schemas/Comment"}},"film":{"$ref":"#/components/schemas/Film"}},"required":["id","url","title","text","filmId","profileId","isPositive","comments","film"]},"Film":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"url":{"type":"string","description":"Ссылка фильм на кинопоиске","example":"https://www.kinopoisk.ru/film/301/"},"preview":{"type":"string","description":"Ссылка на preview"},"year":{"type":"number","minimum":1,"description":"Год выпуска","example":1999},"title":{"type":"string","description":"Название фильма","example":"Матрица"},"originalTitle":{"type":"string","description":"Оригинальное название","example":"Matrix"},"slogan":{"type":"string","description":"Слоган","example":"«Добро пожаловать в реальный мир»"},"countryId":{"type":"number","minimum":1,"description":"Foreign Key","example":1},"ageRestrictionId":{"type":"number","minimum":1,"description":"Foreign Key","example":1},"country":{"$ref":"#/components/schemas/Country"},"personsInFilm":{"type":"array","items":{"$ref":"#/components/schemas/ActorFilm"}},"filmGenres":{"type":"array","items":{"$ref":"#/components/schemas/FilmGenre"}},"duration":{"type":"string"},"ageRestriction":{"$ref":"#/components/schemas/AgeRestriction"},"reviews":{"type":"array","items":{"$ref":"#/components/schemas/Review"}}},"required":["id","url","year","title","originalTitle","slogan","countryId","ageRestrictionId","country","personsInFilm","filmGenres","duration","ageRestriction","reviews"]},"FilmViewsCountry":{"type":"object","properties":{"id":{"type":"number","description":"Первичный ключ","example":1},"countryId":{"type":"number","description":"Foreign key","example":1},"premiere_date":{"format":"date-time","type":"string","description":"Дата премьеры"},"premiere_place":{"type":"string","description":"Где состоялась премьера"},"viewersCount":{"type":"number","description":"Число просмотров"}},"required":["id","countryId","premiere_date","premiere_place","viewersCount"]},"Country":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"countryName":{"type":"string","description":"Название страны","example":"USA"},"url":{"type":"string","description":"Ссылка на страну на кинопоиске","example":"https://www.kinopoisk.ru/lists/movies/country--1/?b=films&b=top"},"filmsCreated":{"type":"array","items":{"$ref":"#/components/schemas/Film"}},"filmViews":{"type":"array","items":{"$ref":"#/components/schemas/FilmViewsCountry"}}},"required":["id","countryName","url","filmsCreated","filmViews"]},"Genre":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"url":{"type":"string","description":"Ссылка на жанр на кинопоиске","example":"https://www.kinopoisk.ru/lists/movies/genre--comedy/?b=films&b=top"},"genreName":{"type":"string","description":"Название жанра","example":"Комедия"},"genreNameEn":{"type":"string","description":"Genre title","example":"Comedy "}},"required":["id","url","genreName","genreNameEn"]},"UpdateGenreDto":{"type":"object","properties":{"id":{"type":"number","minimum":1,"description":"Первичный ключ","example":1},"genreNameEn":{"type":"string","description":"Genre title","example":"Comedy "}},"required":["id","genreNameEn"]}}}}
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "operationId": "AuthController_login",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/roles": {
+            "post": {
+                "operationId": "AuthController_createRole",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateRoleDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "operationId": "AuthController_getRoles",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/users/role": {
+            "post": {
+                "operationId": "AuthController_addRole",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddRoleDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/users": {
+            "get": {
+                "operationId": "AuthController_getUsers",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/registration": {
+            "post": {
+                "operationId": "ProfilesController_registration",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateUserProfileDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/profiles/{id}": {
+            "put": {
+                "operationId": "ProfilesController_updateProfile",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateUserProfileDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "ProfilesController_deleteProfile",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/profiles": {
+            "get": {
+                "operationId": "ProfilesController_getProfiles",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/film/movies": {
+            "get": {
+                "operationId": "FilmController_getAllMovies",
+                "summary": "Получение информации о фильмах",
+                "parameters": [
+                    {
+                        "name": "genres",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "ofset",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Film"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            }
+        },
+        "/film/serials": {
+            "get": {
+                "operationId": "FilmController_getAllSerials",
+                "summary": "Получение информации о сериалах",
+                "parameters": [
+                    {
+                        "name": "genres",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "ofset",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Film"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            }
+        },
+        "/film/cartoons": {
+            "get": {
+                "operationId": "FilmController_getAllCartoons",
+                "summary": "Получение информации о мультфльмах",
+                "parameters": [
+                    {
+                        "name": "genres",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "ofset",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Film"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            }
+        },
+        "/genre": {
+            "get": {
+                "operationId": "GenreController_getAllGenres",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Genre"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "genre"
+                ]
+            },
+            "put": {
+                "operationId": "GenreController_updateGenre",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateGenreDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Genre"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "genre"
+                ]
+            }
+        },
+        "/genre/{id}": {
+            "get": {
+                "operationId": "GenreController_getOneGenre",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "genre"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "Учебный проект",
+        "description": "Клон kinopoisk-a",
+        "version": "0.0.0",
+        "contact": {}
+    },
+    "tags": [],
+    "servers": [],
+    "components": {
+        "securitySchemes": {
+            "defaultBearerAuth": {
+                "scheme": "bearer",
+                "bearerFormat": "jwt",
+                "type": "http"
+            }
+        },
+        "schemas": {
+            "LoginDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "user@mail.ru",
+                        "description": "Почтовый адрес"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
+                        "example": "12345678",
+                        "description": "Пароль пользователя"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "CreateRoleDto": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string",
+                        "example": "Администратор",
+                        "description": "Роль пользователя"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "value",
+                    "description"
+                ]
+            },
+            "AddRoleDto": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string",
+                        "example": "Администратор",
+                        "description": "Роль пользователя"
+                    },
+                    "userId": {
+                        "type": "number",
+                        "minimum": 1
+                    }
+                },
+                "required": [
+                    "value",
+                    "userId"
+                ]
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "user@mail.ru",
+                        "description": "Почтовый адрес"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
+                        "example": "12345678",
+                        "description": "Пароль пользователя"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "email",
+                    "password",
+                    "roles"
+                ]
+            },
+            "Role": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "value": {
+                        "type": "string",
+                        "example": "Администратор",
+                        "description": "Роль пользователя"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "value",
+                    "description",
+                    "users"
+                ]
+            },
+            "CreateUserProfileDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "user@mail.ru",
+                        "description": "Почтовый адрес"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 16,
+                        "example": "12345678",
+                        "description": "Пароль пользователя"
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Александр",
+                        "description": "Имя пользователя"
+                    },
+                    "surname": {
+                        "type": "string",
+                        "example": "Иванов",
+                        "description": "Фамилия пользователя"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "stas9n",
+                        "description": "Никнейм пользователя"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Россия",
+                        "description": "Страна проживания пользователя"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Москва",
+                        "description": "Город проживания пользователя"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    },
+                    "photo": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password",
+                    "url",
+                    "name",
+                    "surname",
+                    "nickname",
+                    "country",
+                    "city",
+                    "roles",
+                    "photo"
+                ]
+            },
+            "Actor": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на актера на кинопоиске",
+                        "example": "https://www.kinopoisk.ru/name/7836/"
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "description": "Имя актера",
+                        "example": "Киану Ривз"
+                    },
+                    "fullNameEn": {
+                        "type": "string",
+                        "description": "Actor name",
+                        "example": "Keanu Reeves"
+                    },
+                    "photo": {
+                        "type": "string",
+                        "description": "Ссылка на фотографию",
+                        "example": "www.kinopoisk.ru/2L92Ne432/b7d04b8v/fqOJASjI4frRMS8965211hOo-XV0re_Ej7Lr57tFE8StVoHC9xZ4AjaNyHf_VbpUUKejq5x-XyQl3uasLNgem9pnrJB9TRVeVIR63J8YtVNDyUiwEZzuQArGKjaOkNY2XlQC4GA0G_C0jw5jy1G78eVSV6rZrutBkSqH6w8MS4lscKiQGIkhzUDTLRuojWV2ATm-x-QtypR-wc0mO_bCJQzW8iNS90qy123-0ajDrhO1gFYKqz8rcnV7xfq9aur634G4sAh78a9hYS4pG1yVdAHo3vTFnzllzNFud5pWgka9FiJTQdZ48rfM3qILcD0ixdGXqqreKwOHOvYILDpaS95QqJNbmTD8ozOsaCsdVHTwmk8kpp0qtp3zDZXLxTA3H3cSMyJEKkEEH27AONLtkTWxhAuJzrvyJ4rXq42Iu3udMLuwSFpS7pKzvkt4fUWEwusPJtbMeYYvQy40qXdjd84k4YMTBNrilc-tg7lw3AJ20eQI6Z_aEle5NxjM2Xkr3OArIvta0kzREA-LGpyERSPbLQY2HTt2XSF9t-k00pfNdzLhY7ar0xd_HvKoA5wBtdM1GRluqKFlioWK7Jnouv_SGDDoWaP9kvMtCylcxjfDqG7mlB3IR2_BTVcbV5CXH7dwcuDUSFAErfxASWKeUicxFziqPAlAp9qUy3-ZyKm9s8gyOClg_AOiTRuLn-XG4qnPhWevu-Zu0e51aufARL7FUOIQRGqwtb9eUSlCL_PFIKcZG305E8U5xslt6Ml4z5D7oHia410CwX77KV8nxUOZzNfEjYsWXHAMRclVA_V_lGJyY6SIoKavf4GJo46BdVInmvuO2OB2WTZoz5qJSz6SqnIIyYIPM2G_S6ms5naw-g10h2yLRXzTLZdY1-IG_tTCUyF2C4M1zT6wqzGNgMWw1xk7fAnitQkHKp6YKStd0Wpx-ijDzhLzfqn7jyZlcbu_heXPqQRMgM9laaaBBjy0ctNi53lTBV7MQ-swbVImotcqSl67A2RLJEitmKnoD_Cp88l5AVygsY1J2Z-XVzHJLdcmr4pGLOP_xWrEYXb_JOJiErT54KdsrSPbsh9DF0ClmWt9-EH1uMYovXorWfzyulN4CpP8UbA8G4kcBdaiy1z1Rk4INZ7TPcQpFsI3zzRyEKLWWgKWjgzx6FI90ESChtmI3sgRVbj2K747KFjMMCgj6ekgDRCib1o6bLZnUQoelyYdK2RuQf9GaIcDBu3UYNDTVdjw9_3_0liiT4EFs_frKW3Yw0TrN_vP-1jY3FAZ4tib8EwA8n9aOG6FhpCb_IVmLeknrvOMRjr1ElcfxPKi4sQakJbPvwHoUP5Bd2MlqNkdSLHm6eQofog5-Q7D23K6yXCfMsI8G6kO9KaSeW0Hh3-bRCygvRRbFvEEPqZAgKGE2hDkfo3iGMC_ABVT1NrYXAtgdarWSX3LSyisorvSyCvTvLKhHphq_7VG4vucFyV8SxQc8r9kq8XAVe7XAAJil8mBt17PEMpSnWP1YtTLiB76kedZhvp-WzjYzuHbcFnYY_8SYBxoSkzH9EKo7de1bYnUDaNMt8jEYGU9xUJyspa4ILatfDCKYN9RZfCWGcp92KA1O7Z6zdpom82xSpAJyfAOw2G8KBj9lpbRyNwX9az4B1xwrXaKtKEnPcUy0pKVuiLmPX5j6vDeAyTR5nhb_BgQBfiFuF-ba8v8kbsxGiijbQPwDwmZDeYFMslsNXTcOJed099EGobDJw6EcFPjdkoi1d9uoqqgTDPl8NcpWk1YAmeZ5BgP-9s7nePIQ1gJInyD8P55WEzml2CqH_XmnrmH37FMdEiU4HUv5wDS4sW4YXSt_tLKchxhBTGFaRnt2-JliURJnnqKu3xiaCPJSONfItAsa4gtZhdBGE3Xt-6b9i1SDRf6dXKXL1UighMlucAHjezi-gAuQaeiR9hYDdqgFMu0WkxJ2kt909ti6-tT3iEi_Sh7X_XU4ap81TYOy7asw2xH-cXB1TwmsMIipCiTBM288xuwHTI0QAYq-Z4pQia61hreanv7zaPaEXtI0f4jEFyZ6Q6V9iE7L-TGTBq1nvIPR9qUUeSsx5ADERXrcuXs7HGZYBwSV_BkaHl8yTK3-wZobal6uTzCikNqOPPvoQMfSzq99qRwa673ph8rdE0RbpRZFmBUv0eT8uJkGdME3e4yWGJ9IETSFmlr7TiDRltWCs2bG8r90ahj6piybKHAb1mJfQQWs0ku1dV_ORZtkx12OpaR1r1kYcKDhNngx7ztgthib5P1ExYpWh7JUGZrFuvcWQjoHMF7cWg7AA9CYAxLSv3FZiG7HOUGbnlF7bGNVVi0UjQNJMPyUJZYUYaO79CaQD5gF-Al6outWPAHGcU67WjJeq6SiYMqCVD8E_GOuZrvheaTeG1kFZyJx77Rb3YLZeOHnPUwMFMlS_K0fA-SaDDvU5SCBajpDUjDB9s1q6zY6ojf0mgi6jlB3zKjTRqorTfEE5jf1pY9ixWdQv3WSJWhlS6kQ2DxRGlRBh7O8hhgT5Ml48QJKkw4sGcK9Zu_aHp5blNpccnawu1T0X5pGQwHdjNbz-XHXnn3jSG9hcp34qX_ZIKD0If5kjY_fsB7YP5SZPLG26kf-vHEmXTIbEg7qU7CqVNauVO84TF_qEuc93XC2a6nBD7qRI1RTKVY9PAmv_WBoMNlisAUnxwiOKGcU2XQh5vo3EoT1OrE2NzLKNv_E8lg6DhQ3aFwzTkpTuZ244oe1VScKgWecZ90CnahBP82wAFTJvmylN6OcYhSjLNEwMeZW2_pcTRI1smeWHsrXfBKYop4scxzQXzaKJ1kpnLJHSTkzOgEDRGNZWumwhT-xzLRwGXrcNbenNKqU11ydyDXaPu_2sK2-cWKTIjq-h-wy1LoStPcw6GNS7us9rQBSE1mBr77FL3B3QQ6VTBk7-bT0nElyrBH3M8TiwFvQtUwpxr7rwnxlOr3M"
+                    },
+                    "personInFilm": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ActorFilm"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "url",
+                    "fullName",
+                    "fullNameEn",
+                    "photo",
+                    "personInFilm"
+                ]
+            },
+            "ActorRole": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "roleName": {
+                        "type": "string",
+                        "description": "Какова его роль в фильме",
+                        "examples": [
+                            "actor",
+                            "operator"
+                        ]
+                    },
+                    "personsInFilm": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ActorFilm"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "roleName",
+                    "personsInFilm"
+                ]
+            },
+            "ActorFilm": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "filmId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "actorId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "roleId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "roleNotes": {
+                        "type": "string",
+                        "description": "Примечание по роли",
+                        "examples": [
+                            "... дворецкий",
+                            "... по костюмам"
+                        ]
+                    },
+                    "film": {
+                        "$ref": "#/components/schemas/Film"
+                    },
+                    "actor": {
+                        "$ref": "#/components/schemas/Actor"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/ActorRole"
+                    }
+                },
+                "required": [
+                    "id",
+                    "filmId",
+                    "actorId",
+                    "roleId",
+                    "roleNotes",
+                    "film",
+                    "actor",
+                    "role"
+                ]
+            },
+            "FilmGenre": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "genreId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "filmId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "film": {
+                        "$ref": "#/components/schemas/Film"
+                    }
+                },
+                "required": [
+                    "id",
+                    "genreId",
+                    "filmId",
+                    "film"
+                ]
+            },
+            "AgeRestriction": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на кинопоиск"
+                    },
+                    "abbreviation": {
+                        "type": "string",
+                        "description": "Буквенная абревиатура",
+                        "example": "R"
+                    },
+                    "minAge": {
+                        "type": "string",
+                        "description": "Минимальный возраст зрителя",
+                        "example": "16+"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Описание ограничения по возрасту",
+                        "example": "Детям до 17 лет обязательно присутствие родителей"
+                    }
+                },
+                "required": [
+                    "id",
+                    "url",
+                    "abbreviation",
+                    "minAge",
+                    "description"
+                ]
+            },
+            "Comment": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "reviewId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "parentCommentId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "profileId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Текст комментария под чьим-то ревью",
+                        "example": "Ты просто не понял фильм, иначе б такое ревью не написал"
+                    },
+                    "review": {
+                        "$ref": "#/components/schemas/Review"
+                    },
+                    "parentComment": {
+                        "$ref": "#/components/schemas/Comment"
+                    },
+                    "childrens": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Comment"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "reviewId",
+                    "profileId",
+                    "text",
+                    "review"
+                ]
+            },
+            "Review": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на ревью на кинопоиске"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Название ревью"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Текст ревью"
+                    },
+                    "filmId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "profileId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "isPositive": {
+                        "type": "boolean"
+                    },
+                    "comments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Comment"
+                        }
+                    },
+                    "film": {
+                        "$ref": "#/components/schemas/Film"
+                    }
+                },
+                "required": [
+                    "id",
+                    "url",
+                    "title",
+                    "text",
+                    "filmId",
+                    "profileId",
+                    "isPositive",
+                    "comments",
+                    "film"
+                ]
+            },
+            "Film": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка фильм на кинопоиске",
+                        "example": "https://www.kinopoisk.ru/film/301/"
+                    },
+                    "preview": {
+                        "type": "string",
+                        "description": "Ссылка на preview"
+                    },
+                    "year": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Год вывуска",
+                        "example": 1999
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Название фильма",
+                        "example": "Матрица"
+                    },
+                    "originalTitle": {
+                        "type": "string",
+                        "description": "Оригинальное название",
+                        "example": "Matrix"
+                    },
+                    "slogan": {
+                        "type": "string",
+                        "description": "Слоган",
+                        "example": "«Добро пожаловать в реальный мир»"
+                    },
+                    "countryId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign Key",
+                        "example": 1
+                    },
+                    "ageRestrictionId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign Key",
+                        "example": 1
+                    },
+                    "country": {
+                        "$ref": "#/components/schemas/Country"
+                    },
+                    "personsInFilm": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ActorFilm"
+                        }
+                    },
+                    "filmGenres": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FilmGenre"
+                        }
+                    },
+                    "duration": {
+                        "type": "string"
+                    },
+                    "ageRestriction": {
+                        "$ref": "#/components/schemas/AgeRestriction"
+                    },
+                    "reviews": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Review"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "url",
+                    "year",
+                    "title",
+                    "originalTitle",
+                    "slogan",
+                    "countryId",
+                    "ageRestrictionId",
+                    "country",
+                    "personsInFilm",
+                    "filmGenres",
+                    "duration",
+                    "ageRestriction",
+                    "reviews"
+                ]
+            },
+            "FilmViewsCountry": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "countryId": {
+                        "type": "number",
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "premiere_date": {
+                        "format": "date-time",
+                        "type": "string",
+                        "description": "Дата примьеры"
+                    },
+                    "premiere_place": {
+                        "type": "string",
+                        "description": "Где состоялась премьера"
+                    },
+                    "viewersCount": {
+                        "type": "number",
+                        "description": "Число просмотров"
+                    }
+                },
+                "required": [
+                    "id",
+                    "countryId",
+                    "premiere_date",
+                    "premiere_place",
+                    "viewersCount"
+                ]
+            },
+            "Country": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "countryName": {
+                        "type": "string",
+                        "description": "Название страны",
+                        "example": "USA"
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на кинопоиск"
+                    },
+                    "filmsCreated": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Film"
+                        }
+                    },
+                    "filmViews": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FilmViewsCountry"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "countryName",
+                    "url",
+                    "filmsCreated",
+                    "filmViews"
+                ]
+            },
+            "Genre": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на жанр кинопоиске",
+                        "example": "https://www.kinopoisk.ru/lists/movies/genre--comedy/?b=films&b=top"
+                    },
+                    "genreName": {
+                        "type": "string",
+                        "description": "Название жанра",
+                        "example": "Комедия"
+                    },
+                    "genreNameEn": {
+                        "type": "string",
+                        "description": "Genre title",
+                        "example": "Comedy "
+                    }
+                },
+                "required": [
+                    "id",
+                    "url",
+                    "genreName",
+                    "genreNameEn"
+                ]
+            },
+            "UpdateGenreDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "genreNameEn": {
+                        "type": "string",
+                        "description": "Genre title",
+                        "example": "Comedy "
+                    }
+                },
+                "required": [
+                    "id",
+                    "genreNameEn"
+                ]
+            }
+        }
+    }
+}
