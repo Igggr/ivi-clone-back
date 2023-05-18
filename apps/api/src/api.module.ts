@@ -1,16 +1,16 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AUTH, FILES_RECORD, FILM, GENRE, PROFILES } from '@app/rabbit/queues';
 import { FilmController } from './controllers/film.controller';
-import { AuthController } from './controllers/auth.controller';
-import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
 import { PassportModule } from '@nestjs/passport';
 import { GenreController } from './controllers/genre.controller';
-import { SessionSerializer } from './utils/serializer';
 import { JwtMiddleware } from './utils/jwt-middleware';
 import { RABBIT_OPTIONS } from '@app/rabbit';
+import { ClientsModule } from '@nestjs/microservices';
+import { AuthController } from './controllers/auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
+import { SessionSerializer } from './utils/serializer';
 
 @Module({
   imports: [

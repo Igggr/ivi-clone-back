@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   Ctx,
@@ -29,10 +29,10 @@ import {
 } from '@app/rabbit';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
-import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { RolesService } from './roles/roles.service';
-import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { CreateGoogleUserDetailsDto } from '@app/shared/dto/create-google-user-details.dto';
+import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
+import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 
 @Controller()
 export class AuthController {
@@ -159,27 +159,6 @@ export class AuthController {
     return this.authService.verifyToken(token);
   }
 
-  @MessagePattern({ cmd: VALIDATE_GOOGLE_USER })
-  validateGoogleUser(
-    @Payload() details: CreateGoogleUserDetailsDto,
-    @Ctx() context: RmqContext,
-  ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return this.authService.validateGoogleUser(details);
-  }
-
-  @MessagePattern({ cmd: FIND_GOOGLE_USER })
-  findGoogleUser(userId: number, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return this.authService.findGoogleUser(userId);
-  }
-
   @MessagePattern({ cmd: GOOGLE_LOGIN })
   handleLogin(@Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
@@ -189,12 +168,35 @@ export class AuthController {
     return { msg: 'Google Authentication' };
   }
 
-  @MessagePattern({ cmd: GOOGLE_LOGIN })
+  @MessagePattern({ cmd: GOOGLE_REDIRECT })
   handleRedirect(@Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
 
     return { msg: 'OK' };
+  }
+
+  @MessagePattern({ cmd: VALIDATE_GOOGLE_USER })
+  validateGoogleUser(
+    @Body() details: CreateGoogleUserDetailsDto,
+    @Ctx() context: RmqContext,
+  ) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+    console.log('validate');
+
+    return this.authService.validateGoogleUser(details);
+  }
+
+  @MessagePattern({ cmd: FIND_GOOGLE_USER })
+  findGoogleUser(userId: number, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+    console.log('findGoogle');
+
+    return this.authService.findGoogleUser(userId);
   }
 }
