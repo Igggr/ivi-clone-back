@@ -11,7 +11,6 @@ describe('ActorParserService', () => {
   let browser: Browser;
   let page: Page;
   const film = 326;
-  const url = `${DOMEN}/film/${film}/cast`;
   let mock;
 
   beforeEach(async () => {
@@ -28,7 +27,8 @@ describe('ActorParserService', () => {
 
     mock = mockPuppeteerGoto(page, {
       paths: {
-        [url]: 'apps/parser/src/main-page.parser/main-page.html',
+        [`${DOMEN}/film/${film}`]: 'apps/parser/src/main-page.parser/main-page.html',
+        [`${DOMEN}/film/${film}/cast`]: 'apps/parser/src/actro.parser/actor.html',
       },
     });
   });
