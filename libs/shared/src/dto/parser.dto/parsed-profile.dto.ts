@@ -1,5 +1,5 @@
-import { IntersectionType, PickType } from '@nestjs/swagger';
-import { Profile, User } from '../../entities';
+import { PickType } from '@nestjs/swagger';
+import { Profile } from '../../entities';
 
 export class ParsedProfileDTO extends PickType(Profile, [
   'nickname',
