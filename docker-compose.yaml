@@ -123,10 +123,75 @@ services:
     command: npm run start:dev api
     depends_on:
       - rabbit
+      - auth
+      - profiles
+      - file
+      - film
+      - genre
     ports:
       - '3000:3000'
     networks:
       - rabbit
+  
+  film:
+    build:
+      context: .
+      dockerfile: ./apps/film/Dockerfile
+    command: npm run start:dev:docker film
+    depends_on:
+      - rabbit
+      - postgres_film
+    networks:
+      - rabbit
+      - postgres_film
+
+  genre:
+    build:
+      context: .
+      dockerfile: ./apps/genre/Dockerfile
+    command: npm run start:dev:docker genre
+    depends_on:
+      - rabbit
+      - postgres_genre
+    networks:
+      - rabbit
+      - postgres_genre
+
+  profiles:
+    build:
+      context: .
+      dockerfile: ./apps/profiles/Dockerfile
+    command: npm run start:dev:docker profiles
+    depends_on:
+      - rabbit
+      - postgres_profile
+    networks:
+      - rabbit
+      - postgres_profile
+  
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/film/Dockerfile
+    command: npm run start:dev:docker auth
+    depends_on:
+      - rabbit
+      - postgres_auth
+    networks:
+      - rabbit
+      - postgres_auth
+
+  file:
+    build:
+      context: .
+      dockerfile: ./apps/film/Dockerfile
+    command: npm run start:dev:docker files-record
+    depends_on:
+      - rabbit
+      - postgres_file
+    networks:
+      - rabbit
+      - postgres_file
 
   swagger-ui:
     image: swaggerapi/swagger-ui
