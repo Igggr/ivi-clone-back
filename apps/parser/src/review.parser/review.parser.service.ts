@@ -90,7 +90,7 @@ export class ReviewParserService {
       title,
       text,
       profile: {
-        name,
+        nickname: name,
         url: fullUrl(userUrl),
         photo: fullUrl(photo),
       },
@@ -168,7 +168,7 @@ export class ReviewParserService {
     return {
       photo: fullUrl(photo),
       url: fullUrl(url),
-      name,
+      nickname: name,
     };
   }
 }

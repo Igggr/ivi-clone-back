@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FilmController } from './film.controller';
 import { FilmService } from './film.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { FILM } from '@app/rabbit';
+import { FILM, GENRE, PROFILES } from '@app/rabbit';
 import { ActorService } from './actor/actor.service';
 import {
   Film,
@@ -12,11 +12,13 @@ import {
   Country,
   Review,
   AgeRestriction,
+  Comment,
 } from '@app/shared';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
+import { FilmGenre } from '@app/shared/entities/film-genre.entity';
 
 describe('FilmController', () => {
   let filmController: FilmController;
@@ -37,6 +39,10 @@ describe('FilmController', () => {
         FilmService,
         {
           provide: getRepositoryToken(Film),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(FilmGenre),
           useValue: {},
         },
         {
@@ -64,6 +70,10 @@ describe('FilmController', () => {
           useValue: {},
         },
         {
+          provide: getRepositoryToken(Comment),
+          useValue: {},
+        },
+        {
           provide: 'CountryService',
           useValue: {},
         },
@@ -71,6 +81,14 @@ describe('FilmController', () => {
           provide: FILM,
           useValue: {},
         },
+        {
+          provide: PROFILES,
+          useValue: {} // mock rabbit client
+        },
+        {
+          provide: GENRE,
+          useValue: {} // mock rabbit client
+        }
       ],
     })
       .overrideProvider('ActorService')
