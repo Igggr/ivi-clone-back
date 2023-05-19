@@ -83,12 +83,12 @@ describe('FilmController', () => {
         },
         {
           provide: PROFILES,
-          useValue: {} // mock rabbit client
+          useValue: {}, // mock rabbit client
         },
         {
           provide: GENRE,
-          useValue: {} // mock rabbit client
-        }
+          useValue: {}, // mock rabbit client
+        },
       ],
     })
       .overrideProvider('ActorService')

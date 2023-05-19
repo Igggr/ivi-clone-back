@@ -6,7 +6,7 @@ import { DOMEN } from '../constants';
 // eslint-disable-next-line
 const mockPuppeteerGoto = require('mock-puppeteer-goto');
 
-describe('ActorParserService', () => {
+describe('Main page parser', () => {
   let service: MainPageParserService;
   let browser: Browser;
   let page: Page;
@@ -27,13 +27,16 @@ describe('ActorParserService', () => {
 
     mock = mockPuppeteerGoto(page, {
       paths: {
-        [`${DOMEN}/film/${film}`]: 'apps/parser/src/main-page.parser/main-page.html',
-        [`${DOMEN}/film/${film}/cast`]: 'apps/parser/src/actro.parser/actor.html',
+        [`${DOMEN}/film/${film}/`]:
+          'apps/parser/src/main-page.parser/main-page.html',
+        [`${DOMEN}/film/${film}/cast`]:
+          'apps/parser/src/actro.parser/actor.html',
       },
     });
   });
 
   it('should be defined', () => {
+    console.log(`'${DOMEN}/film/${film}'`);
     expect(service).toBeDefined();
   });
 

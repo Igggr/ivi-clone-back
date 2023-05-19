@@ -17,11 +17,11 @@ describe('ReviewService', () => {
         },
         {
           provide: getRepositoryToken(Comment),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: PROFILES,
-          useValue: {} // mock rabbit client
+          useValue: {}, // mock rabbit client
         },
       ],
     }).compile();
