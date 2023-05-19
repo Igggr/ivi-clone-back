@@ -799,7 +799,7 @@
                     "actorId": {
                         "type": "number",
                         "minimum": 1,
-                        "description": "Первичный ключ",
+                        "description": "Foreign key",
                         "example": 1
                     },
                     "roleId": {
@@ -879,11 +879,12 @@
                     },
                     "url": {
                         "type": "string",
-                        "description": "Ссылка на кинопоиск"
+                        "description": "Ссылка на возрастное ограничение на кинопоиске",
+                        "example": "https://www.kinopoisk.ru/film/462682/rn/R/"
                     },
                     "abbreviation": {
                         "type": "string",
-                        "description": "Буквенная абревиатура",
+                        "description": "Буквенная аббревиатура возрастного ограничения",
                         "example": "R"
                     },
                     "minAge": {
@@ -969,15 +970,17 @@
                     },
                     "url": {
                         "type": "string",
-                        "description": "Ссылка на ревью на кинопоиске"
+                        "description": "Ссылка на ревью на кинопоиске",
+                        "example": "https://www.kinopoisk.ru/user/15854772/comment/3251114/"
                     },
                     "title": {
                         "type": "string",
-                        "description": "Название ревью"
+                        "description": "Название ревью",
+                        "example": "История о том, как на лжи можно заработать миллионы"
                     },
                     "text": {
                         "type": "string",
-                        "description": "Текст ревью"
+                        "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
                     },
                     "filmId": {
                         "type": "number",
@@ -1037,7 +1040,7 @@
                     "year": {
                         "type": "number",
                         "minimum": 1,
-                        "description": "Год вывуска",
+                        "description": "Год выпуска",
                         "example": 1999
                     },
                     "title": {
@@ -1128,7 +1131,7 @@
                     "premiere_date": {
                         "format": "date-time",
                         "type": "string",
-                        "description": "Дата примьеры"
+                        "description": "Дата премьеры"
                     },
                     "premiere_place": {
                         "type": "string",
@@ -1163,7 +1166,8 @@
                     },
                     "url": {
                         "type": "string",
-                        "description": "Ссылка на кинопоиск"
+                        "description": "Ссылка на страну на кинопоиске",
+                        "example": "https://www.kinopoisk.ru/lists/movies/country--1/?b=films&b=top"
                     },
                     "filmsCreated": {
                         "type": "array",
@@ -1197,7 +1201,7 @@
                     },
                     "url": {
                         "type": "string",
-                        "description": "Ссылка на жанр кинопоиске",
+                        "description": "Ссылка на жанр на кинопоиске",
                         "example": "https://www.kinopoisk.ru/lists/movies/genre--comedy/?b=films&b=top"
                     },
                     "genreName": {

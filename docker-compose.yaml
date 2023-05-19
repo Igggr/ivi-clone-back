@@ -87,11 +87,13 @@ services:
 
   rabbit:
     image: rabbitmq:3.10.7-management
-    container_name: rabbitmq
+    container_name: rabbit
     restart: always
     ports:
-      - 15672:15672
-      - 5672:5672 # AMQP порт
+      - 15672:15672   # смотреть что происходит в браузере 
+      - 5672:5672     # AMQP порт
+    expose:
+      - 5672
     environment:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
     volumes:
@@ -132,6 +134,9 @@ services:
       - '3000:3000'
     networks:
       - rabbit
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
   
   film:
     build:
@@ -144,6 +149,9 @@ services:
     networks:
       - rabbit
       - postgres_film
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
   genre:
     build:
@@ -156,6 +164,9 @@ services:
     networks:
       - rabbit
       - postgres_genre
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
   profiles:
     build:
@@ -168,7 +179,10 @@ services:
     networks:
       - rabbit
       - postgres_profile
-  
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
   auth:
     build:
       context: .
@@ -180,6 +194,9 @@ services:
     networks:
       - rabbit
       - postgres_auth
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
   file:
     build:
@@ -192,7 +209,10 @@ services:
     networks:
       - rabbit
       - postgres_file
-
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+  
   swagger-ui:
     image: swaggerapi/swagger-ui
     container_name: "swagger-ui"
