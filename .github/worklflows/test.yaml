@@ -1,0 +1,35 @@
+name: test
+
+# когда запускать action (события, ветки)
+on:
+  pull_request:
+    branches: [ master ]
+
+env:
+  nodeVersion: 18.x
+
+# workflow состоит из 1 и более jobs
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    # последовательность задач, которые будут выполнены
+    steps:
+      - uses: actions/checkout@v3
+        
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 12
+      
+      - name: Install
+        run: npm ci
+      
+      - name: Build
+        run: npm run build
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
