@@ -96,11 +96,14 @@ export class UsersService {
   async createDummyUser(dto: ParsedProfileDTO) {
     const dummyData: CreateUserProfileDto = {
       ...dto,
-      name: dto.name ?? '',
-      surname: dto.surname ?? '',
       password: '111111',
       nickname: dto.nickname,
+      name: '',
+      surname: '',
+      country: '',
+      city: '',
       email: uuid.v4() + '@com',
+      roles: []
     };
     return this.createUser(dummyData);
   }
