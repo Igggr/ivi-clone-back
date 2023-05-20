@@ -16,7 +16,7 @@ import {
   restrictionShortDescriptionXpath,
 } from '../xpath/age-restriction';
 import { CreateCountryDTO } from '@app/shared/dto/create-country.dto';
-import { CreateAgeRestrictionDTO, CreateGenreDTO } from '@app/shared';
+import { CreateAgeRestrictionDTO, ParsedGenreDTO } from '@app/shared';
 
 @Injectable()
 export class MainPageParserService {
@@ -75,7 +75,7 @@ export class MainPageParserService {
     return res;
   }
 
-  private async getGenres(page: Page): Promise<CreateGenreDTO[]> {
+  private async getGenres(page: Page): Promise<ParsedGenreDTO[]> {
     const regexp = /\/lists\/movies\/genre--(?<genreNameEn>[A-Za-z]+)\//;
     const genres = await Promise.all(
       await page.$x(genreXpath).then((handles) =>

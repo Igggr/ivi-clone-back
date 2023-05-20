@@ -3,7 +3,7 @@ import { ParsedActorDTO } from './parsed-actor.dto';
 import { Film } from '../../entities';
 import { RoleType } from './roles';
 import { CreateCountryDTO } from '../create-country.dto';
-import { CreateGenreDTO } from '../create-genre.dto';
+import { ParsedGenreDTO } from './parsed-genre.dto';
 import { CreateAgeRestrictionDTO } from '../create-age-restriction.dto';
 import { ParsedReviewDTO } from './parsed-review.dto';
 
@@ -16,7 +16,7 @@ export class ParsedFilmDTO extends PickType(Film, [
   'duration',
   'preview',
 ]) {
-  genres: CreateGenreDTO[];
+  genres: ParsedGenreDTO[];
   country: CreateCountryDTO;
   persons: Record<RoleType, ParsedActorDTO[]>;
   ageRestriction: CreateAgeRestrictionDTO;

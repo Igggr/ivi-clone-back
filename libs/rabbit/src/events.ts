@@ -20,8 +20,11 @@ export const GET_ROLES = 'get_roles';
 export const UPDATE_FILE = 'update-file';
 export const DELETE_FILE = 'delete-file';
 export const VERIFY_TOKEN = 'verify-token';
+
+export const CREATE_GENRE = 'create_genre';
 export const GET_GENRES = 'GET_ALL_GENRES';
 export const GET_GENRE_BY_ID = 'GET_GENRE_BY_ID';
 export const GET_GENRES_BY_NAME = ' GET_GENRES_BY_NAME';
 export const UPDATE_GENRE = 'UPDATE_GENRE';
+export const DELETE_GENRE = 'delete_genre';
 export const ENSURE_ALL_GENRES_EXISTS = 'ENSURE_ALL_GENRES_EXISTS';
