@@ -1,15 +1,47 @@
-import { GET_FILMS } from '@app/rabbit/events';
+import { ResponseDTO } from '@app/rabbit';
+import {
+  CET_ONE_FILM,
+  CREATE_FILM,
+  DELETE_FILM,
+  GET_FILMS,
+  UPDATE_FILM,
+} from '@app/rabbit/events';
 import { FILM } from '@app/rabbit/queues';
 import { Film } from '@app/shared';
-import { Controller, Get, HttpStatus, Inject, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
+import { DeleteResult } from 'typeorm';
 
 @ApiTags('film')
 @Controller('film')
 export class FilmController {
   constructor(@Inject(FILM) private readonly client: ClientProxy) {}
+
+  @Post()
+  async createFilm(@Body() dto): Promise<ResponseDTO<Film>> {
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: CREATE_FILM,
+        },
+        dto,
+      ),
+    );
+  }
 
   @ApiOperation({ summary: 'Получение информации о фильмах' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
@@ -77,5 +109,32 @@ export class FilmController {
       ),
     );
     return res;
+  }
+
+  @Get('/:id')
+  async getFilm(@Param('id', ParseIntPipe) id: number) {
+    return await firstValueFrom(this.client.send({ cmd: CET_ONE_FILM }, id));
+  }
+
+  @Patch('/:id')
+  async updateFilm(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto,
+  ): Promise<ResponseDTO<Film>> {
+    return await firstValueFrom(this.client.send({ cmd: UPDATE_FILM }, dto));
+  }
+
+  @Delete('/:id')
+  async deleteFilm(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<DeleteResult> {
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: DELETE_FILM,
+        },
+        id,
+      ),
+    );
   }
 }

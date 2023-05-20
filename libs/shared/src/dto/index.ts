@@ -14,3 +14,5 @@ export * from './parser.dto/roles';
 export * from './create-review.dto';
 export * from './create-age-restriction.dto';
 export * from './update-genre.dto';
+export * from './create_film.dto';
+export * from './update-film.dto';

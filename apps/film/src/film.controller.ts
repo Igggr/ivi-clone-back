@@ -7,8 +7,20 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { GET_FILMS, PARSED_DATA } from '@app/rabbit/events';
-import { FilmQueryDTO, ParsedFilmDTO } from '@app/shared';
+import {
+  CREATE_FILM,
+  DELETE_FILM,
+  GET_FILMS,
+  PARSED_DATA,
+  UPDATE_FILM,
+} from '@app/rabbit/events';
+import {
+  FilmQueryDTO,
+  ParsedFilmDTO,
+  CreateFilmDTO,
+  UpdateFilmDTO,
+} from '@app/shared';
+import { ack } from '@app/rabbit';
 
 @Controller()
 export class FilmController {
@@ -24,10 +36,28 @@ export class FilmController {
 
   @MessagePattern({ cmd: GET_FILMS })
   getFilms(@Payload() dto: FilmQueryDTO, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
+    ack(context);
     return this.filmService.find(dto);
+  }
+
+  @MessagePattern({ cmd: DELETE_FILM })
+  deleteFilm(@Payload() id: number, @Ctx() context: RmqContext) {
+    ack(context);
+
+    return this.filmService.delete(id);
+  }
+
+  @MessagePattern({ cmd: CREATE_FILM })
+  create(@Payload() dto: CreateFilmDTO, @Ctx() context: RmqContext) {
+    ack(context);
+
+    return this.filmService.create(dto);
+  }
+
+  @MessagePattern({ cmd: UPDATE_FILM })
+  update(@Payload() dto: UpdateFilmDTO, @Ctx() context: RmqContext) {
+    ack(context);
+
+    return this.filmService.update(dto);
   }
 }
