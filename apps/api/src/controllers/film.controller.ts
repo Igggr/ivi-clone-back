@@ -20,17 +20,25 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 import { DeleteResult } from 'typeorm';
+import { RolesGuard } from '../guards/roles.guard';
+import { ADMIN } from '@app/shared/constants/role-guard.const';
+import { Roles } from '../guards/roles-auth.decorator';
 
 @ApiTags('film')
 @Controller('film')
 export class FilmController {
   constructor(@Inject(FILM) private readonly client: ClientProxy) {}
 
+  @UseGuards(RolesGuard)
+  @Roles(ADMIN)
+  @ApiOperation({ summary: 'Создание фильма' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: Promise<ResponseDTO<Film>> })
   @Post()
   async createFilm(@Body() dto): Promise<ResponseDTO<Film>> {
     return await firstValueFrom(
@@ -111,11 +119,20 @@ export class FilmController {
     return res;
   }
 
+  @ApiOperation({ summary: 'Получение информации о конкретном фильме' })
+  @ApiResponse({ status: HttpStatus.ACCEPTED, type: Film })
   @Get('/:id')
   async getFilm(@Param('id', ParseIntPipe) id: number) {
     return await firstValueFrom(this.client.send({ cmd: CET_ONE_FILM }, id));
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(ADMIN)
+  @ApiOperation({ summary: 'Обновление информации о фильме' })
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    type: Promise<ResponseDTO<Film>>,
+  })
   @Patch('/:id')
   async updateFilm(
     @Param('id', ParseIntPipe) id: number,
@@ -124,6 +141,10 @@ export class FilmController {
     return await firstValueFrom(this.client.send({ cmd: UPDATE_FILM }, dto));
   }
 
+  @UseGuards(RolesGuard)
+  @Roles(ADMIN)
+  @ApiOperation({ summary: 'Удаление фильма' })
+  @ApiResponse({ status: HttpStatus.ACCEPTED, type: DeleteResult })
   @Delete('/:id')
   async deleteFilm(
     @Param('id', ParseIntPipe) id: number,
