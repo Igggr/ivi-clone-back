@@ -17,7 +17,6 @@ import {
   CREATE_USER,
   DELETE_USER,
   ENSURE_GOOGLE_USER,
-  FIND_GOOGLE_USER,
   GET_ROLES,
   GET_TOKEN,
   GET_USERS,
@@ -33,6 +32,7 @@ import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { RolesService } from './roles/roles.service';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { ParsedProfileDTO } from '@app/shared';
+import { FIND_USER_BY_ID } from '@app/shared/events';
 
 @Controller()
 export class AuthController {
@@ -159,10 +159,10 @@ export class AuthController {
     return this.authService.ensureGoogleUser(userDto);
   }
 
-  @MessagePattern({ cmd: FIND_GOOGLE_USER })
-  findGoogleUser(userId: number, @Ctx() context: RmqContext) {
+  @MessagePattern({ cmd: FIND_USER_BY_ID })
+  findUserById(userId: number, @Ctx() context: RmqContext) {
     ack(context);
 
-    return this.authService.findGoogleUser(userId);
+    return this.authService.findUserById(userId);
   }
 }

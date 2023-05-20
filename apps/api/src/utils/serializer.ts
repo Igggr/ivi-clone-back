@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { AUTH, FIND_GOOGLE_USER } from '@app/rabbit';
 import { User } from '@app/shared';
+import { FIND_USER_BY_ID } from '@app/shared/events';
 import { Controller, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportSerializer } from '@nestjs/passport';
 import { firstValueFrom } from 'rxjs';
 
-@Controller()
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
   constructor(@Inject(AUTH) private client: ClientProxy) {
@@ -19,10 +19,11 @@ export class SessionSerializer extends PassportSerializer {
   }
 
   async deserializeUser(payload: any, done: Function) {
+    console.log(payload)
     const user = await firstValueFrom(
       this.client.send(
         {
-          cmd: FIND_GOOGLE_USER,
+          cmd: FIND_USER_BY_ID,
         },
         payload.id,
       ),

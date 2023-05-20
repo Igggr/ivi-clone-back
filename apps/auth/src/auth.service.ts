@@ -96,7 +96,7 @@ export class AuthService {
     return await this.userRepository.save(newGoogleUser);
   }
 
-  async findGoogleUser(userId: number) {
+  async findUserById(userId: number) {
     const user = await this.userRepository.findOneBy({ id: userId });
     return user;
   }

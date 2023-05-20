@@ -146,12 +146,12 @@ export class AuthController {
     );
   }
 
-  // @Get('status')
-  // googleUser(@Req() request: Request) {
-  //   if (request.user) {
-  //     return { msg: 'Authenticated' };
-  //   } else {
-  //     return { msg: 'Not Authenticated' };
-  //   }
-  // }
+  @Get('status')
+  googleUser(@Req() request: Request) {
+    if (request.user) {
+      return { msg: 'Authenticated' };
+    } else {
+      return { msg: 'Not Authenticated' };
+    }
+  }
 }
