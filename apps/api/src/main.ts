@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { HttpExceptionFilter } from '@app/shared';
 import * as fs from 'fs';
+import { BearerAuth } from './guards/bearer';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiModule);
@@ -14,7 +15,7 @@ async function bootstrap() {
     .setVersion('0.0.0')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'jwt' },
-      'defaultBearerAuth',
+      BearerAuth,
     )
     .build();
 

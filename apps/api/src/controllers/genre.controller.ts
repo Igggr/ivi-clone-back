@@ -15,7 +15,8 @@ import { GENRE, GET_GENRES, GET_GENRE_BY_ID, UPDATE_GENRE } from '@app/rabbit';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { Genre, UpdateGenreDto } from '@app/shared';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { BearerAuth } from '../guards/bearer';
 
 @ApiTags('genre')
 @Controller('genre')
@@ -39,6 +40,7 @@ export class GenreController {
     return await firstValueFrom(this.client.send({ cmd: GET_GENRE_BY_ID }, id));
   }
 
+  @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   @Put('')
