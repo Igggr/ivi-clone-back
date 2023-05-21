@@ -8,7 +8,7 @@ import {
 } from '@nestjs/microservices';
 import { LoginDto } from '@app/shared/dto/login.dto';
 import { UsersService } from './users/users.service';
-import { ParsedProfileDTO } from '@app/shared';
+import { CreateUserDTO, ParsedProfileDTO } from '@app/shared';
 import {
   ADD_ROLE,
   CREATE_ROLE,
@@ -23,7 +23,6 @@ import {
   VERIFY_TOKEN,
   CREATE_DUMMY_USER,
 } from '@app/rabbit';
-import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { User } from '@app/shared/entities/user.entity';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 import { RolesService } from './roles/roles.service';
@@ -48,7 +47,7 @@ export class AuthController {
 
   @MessagePattern({ cmd: CREATE_USER })
   createUser(
-    @Payload() userDto: CreateUserProfileDto,
+    @Payload() userDto: CreateUserDTO,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();

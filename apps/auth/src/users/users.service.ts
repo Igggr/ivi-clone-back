@@ -1,5 +1,4 @@
-import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { User, ParsedProfileDTO } from '@app/shared';
+import { User, ParsedProfileDTO, CreateUserDTO } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,7 +16,7 @@ export class UsersService {
   ) {}
 
   // поля Profile не еспользуются - стоило бы их выпилить
-  async createUser(userDto: CreateUserProfileDto) {
+  async createUser(userDto: CreateUserDTO) {
     try {
       const user = await this.userRepository.create({
         ...userDto,
@@ -40,7 +39,7 @@ export class UsersService {
     }
   }
 
-  async updateUser(userDto: CreateUserProfileDto, userId: number) {
+  async updateUser(userDto: CreateUserDTO, userId: number) {
     try {
       const foundUser = await this.userRepository.findOneBy({
         email: userDto.email,
@@ -94,12 +93,8 @@ export class UsersService {
   }
 
   async createDummyUser(dto: ParsedProfileDTO) {
-    const dummyData: CreateUserProfileDto = {
-      ...dto,
-      name: dto.name ?? '',
-      surname: dto.surname ?? '',
+    const dummyData: CreateUserDTO = {
       password: '111111',
-      nickname: dto.nickname,
       email: uuid.v4() + '@com',
     };
     return this.createUser(dummyData);

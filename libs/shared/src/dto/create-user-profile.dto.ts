@@ -1,8 +1,9 @@
-import { IntersectionType, OmitType } from '@nestjs/swagger';
+import { IntersectionType, OmitType, PickType, PartialType } from '@nestjs/swagger';
 import { Profile } from '../entities/profile.entity';
-import { User } from '../entities/user.entity';
+import { CreateUserDTO } from './create-user.dto';
 
 export class CreateUserProfileDto extends IntersectionType(
-  OmitType(User, ['id']),
-  OmitType(Profile, ['id', 'userId', 'createdAt']),
+  CreateUserDTO,
+  OmitType(Profile, ['nickname', 'name', 'surname', 'city',]),
+  PartialType(PickType(Profile, ['photo', 'url',]))
 ) {}
