@@ -67,7 +67,7 @@ export class MainPageParserService {
       year: parseInt(year),
       genres,
       country,
-      slogan,
+      slogan: slogan.trim(),
       duration: this.extractTime(duration),
       ageRestriction,
     };

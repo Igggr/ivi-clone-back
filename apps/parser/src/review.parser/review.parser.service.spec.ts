@@ -76,7 +76,7 @@ describe('ReviewParserService', () => {
       url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/',
       profile: {
         url: 'https://www.kinopoisk.ru/user/1928945/',
-        name: 'Дмитрий Кожин',
+        nickname: 'Дмитрий Кожин',
         photo:
           'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/57335/1928945-10.jpg/46x73',
       },
@@ -99,7 +99,7 @@ describe('ReviewParserService', () => {
         text: 'для меня малоубедительно.',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1155555/#comm1155555',
         profile: {
-          name: 'cyberlaw',
+          nickname: 'cyberlaw',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/33806/2026005-59-477839.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/2026005/',
@@ -112,7 +112,7 @@ describe('ReviewParserService', () => {
         text: 'не хватает мозгов понять, что это',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1446367/#comm1446367',
         profile: {
-          name: 'Sheemoozeeck',
+          nickname: 'Sheemoozeeck',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/34118/954629-04-229914.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/954629/',
@@ -125,7 +125,7 @@ describe('ReviewParserService', () => {
         text: '@Sheemoozeeck смешной комментарий, очень',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1452794/#comm1452794',
         profile: {
-          name: 'cyberlaw',
+          nickname: 'cyberlaw',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/33806/2026005-59-477839.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/2026005/',
@@ -138,7 +138,7 @@ describe('ReviewParserService', () => {
         text: 'Хм фильм на реальных событиях,',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1227419/#comm1227419',
         profile: {
-          name: '-EcLiPsE-',
+          nickname: '-EcLiPsE-',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/27708/946161-44-400456.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/946161/',
@@ -151,7 +151,7 @@ describe('ReviewParserService', () => {
         text: 'О деньгах??',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1287097/#comm1287097',
         profile: {
-          name: 'DinamiTT',
+          nickname: 'DinamiTT',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/69337/2137198-07-491933.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/2137198/',
@@ -164,7 +164,7 @@ describe('ReviewParserService', () => {
         text: 'Главный герой рассказывает о несчастной',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1312811/#comm1312811',
         profile: {
-          name: 'dbz',
+          nickname: 'dbz',
           photo: null,
           url: 'https://www.kinopoisk.ru/user/2371585/',
         },
@@ -176,7 +176,7 @@ describe('ReviewParserService', () => {
         text: 'Да причем тут зависть? Я делаю',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1312875/#comm1312875',
         profile: {
-          name: 'Дмитрий Кожин',
+          nickname: 'Дмитрий Кожин',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/57335/1928945-10.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/1928945/',
@@ -189,7 +189,7 @@ describe('ReviewParserService', () => {
         text: 'Все по теме абсолютно. Взывают',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1534041/#comm1534041',
         profile: {
-          name: 'lowkick89',
+          nickname: 'lowkick89',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/33806/2844182-37-301425.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/2844182/',
@@ -202,7 +202,7 @@ describe('ReviewParserService', () => {
         text: 'Рецензия прямо транслирует мои мысли',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1584291/#comm1584291',
         profile: {
-          name: 'MaryJames',
+          nickname: 'MaryJames',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/69337/617531-44-388736.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/617531/',
@@ -215,7 +215,7 @@ describe('ReviewParserService', () => {
         text: 'Черт, рецензия убедила, но и фильм',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/1605204/#comm1605204',
         profile: {
-          name: 'GenneArt',
+          nickname: 'GenneArt',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/27708/1477606-24-682768.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/1477606/',
@@ -228,7 +228,7 @@ describe('ReviewParserService', () => {
         text: 'Вообще не об этом…',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2439644/#comm2439644',
         profile: {
-          name: 'Nadispb',
+          nickname: 'Nadispb',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/28790/1009469-56-565657.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/1009469/',
@@ -241,7 +241,7 @@ describe('ReviewParserService', () => {
         text: 'Ваша точка зрения имеет место быть, но,',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2462169/#comm2462169',
         profile: {
-          name: 'Эльдар Горов',
+          nickname: 'Эльдар Горов',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/27708/75502679-21-974867.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/75502679/',
@@ -254,7 +254,7 @@ describe('ReviewParserService', () => {
         text: 'Автор, чвно, не читал и не слышал',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2479510/#comm2479510',
         profile: {
-          name: 'Иван Плотников - 5289',
+          nickname: 'Иван Плотников - 5289',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/28790/56750570-49-623079.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/56750570/',
@@ -267,7 +267,7 @@ describe('ReviewParserService', () => {
         text: 'Вау! А что не сравнить',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2488953/#comm2488953',
         profile: {
-          name: 'Nadispb',
+          nickname: 'Nadispb',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/28790/1009469-56-565657.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/1009469/',
@@ -280,7 +280,7 @@ describe('ReviewParserService', () => {
         text: 'бред высказал, человек. абсолютный бред.',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2495973/#comm2495973',
         profile: {
-          name: 'convall',
+          nickname: 'convall',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/1659927/2a0000016f388480b978cbbfbfe5dc114b5f/46x73',
           url: 'https://www.kinopoisk.ru/user/41829731/',
@@ -293,7 +293,7 @@ describe('ReviewParserService', () => {
         text: 'Чтобы понять о чем фильм, достаточно',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2496730/#comm2496730',
         profile: {
-          name: 'maxsmola',
+          nickname: 'maxsmola',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/34118/2a000001668b9748f2c2e179f7df705e7751/46x73',
           url: 'https://www.kinopoisk.ru/user/15483429/',
@@ -306,7 +306,7 @@ describe('ReviewParserService', () => {
         text: 'Вы смотрели с какой-то обидной',
         url: 'https://www.kinopoisk.ru/user/1928945/comment/1496976/comm/2502575/#comm2502575',
         profile: {
-          name: 'kapitan.ekler',
+          nickname: 'kapitan.ekler',
           photo:
             'https://avatars.mds.yandex.net/get-kino-vod-users-avatar/69337/63778975-6-588178.jpg/46x73',
           url: 'https://www.kinopoisk.ru/user/63778975/',
