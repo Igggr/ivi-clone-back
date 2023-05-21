@@ -36,7 +36,6 @@ describe('Main page parser', () => {
   });
 
   it('should be defined', () => {
-    console.log(`'${DOMEN}/film/${film}'`);
     expect(service).toBeDefined();
   });
 

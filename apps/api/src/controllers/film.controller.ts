@@ -1,6 +1,6 @@
 import { ResponseDTO } from '@app/rabbit';
 import {
-  CET_ONE_FILM,
+  GET_ONE_FILM,
   CREATE_FILM,
   DELETE_FILM,
   GET_FILMS,
@@ -123,7 +123,7 @@ export class FilmController {
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: Film })
   @Get('/:id')
   async getFilm(@Param('id', ParseIntPipe) id: number) {
-    return await firstValueFrom(this.client.send({ cmd: CET_ONE_FILM }, id));
+    return await firstValueFrom(this.client.send({ cmd: GET_ONE_FILM }, id));
   }
 
   @UseGuards(RolesGuard)

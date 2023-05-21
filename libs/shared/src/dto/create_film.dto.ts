@@ -8,6 +8,6 @@ export class CreateFilmDTO extends PickType(Film, [
   'year',
   'duration',
 ]) {
-  @ApiProperty({ description: 'Назавние страны', example: 'USA' })
+  @ApiProperty({ description: 'Назвaние страны', example: 'USA' })
   countryName: string;
 }

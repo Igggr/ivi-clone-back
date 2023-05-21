@@ -95,23 +95,22 @@ export class FilmService {
   async create(dto: CreateFilmDTO): Promise<ResponseDTO<Film>> {
     const film = this.filmRepository.create(dto);
     if (dto.countryName) {
-      if (dto.countryName) {
-        const country = await this.countryService.findByName(dto.countryName);
-        if (country) {
-          film.country = country;
-        } else {
-          return {
-            status: 'error',
-            error: 'Страны с таким countryName не существует',
-          };
-        }
+      const country = await this.countryService.findByName(dto.countryName);
+      if (country) {
+        film.country = country;
+      } else {
+        return {
+          status: 'error',
+          error: 'Страны с таким countryName не существует',
+        };
       }
-      await this.filmRepository.save(film);
-      return {
-        status: 'ok',
-        value: film,
-      };
     }
+    
+    await this.filmRepository.save(film);
+    return {
+      status: 'ok',
+      value: film,
+    };
   }
 
   async update(dto: UpdateFilmDTO): Promise<ResponseDTO<Film>> {
