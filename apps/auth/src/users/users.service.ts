@@ -93,6 +93,20 @@ export class UsersService {
     }
   }
 
+  // async ensureGoogleUser(details: CreateGoogleUserDetailsDto) {
+  //   console.log('Auth Service');
+  //   console.log(details);
+  //   const user = await this.userRepository.findOneBy({
+  //     email: details.email,
+  //   });
+  //   if (user) {
+  //     return user;
+  //   }
+  //   console.log('User not found');
+  //   const newGoogleUser = await this.googleUserRepository.create(details);
+  //   return await this.googleUserRepository.save(newGoogleUser);
+  // }
+
   async createDummyUser(dto: ParsedProfileDTO) {
     const dummyData: CreateUserProfileDto = {
       ...dto,
