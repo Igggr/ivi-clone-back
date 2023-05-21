@@ -1,7 +1,7 @@
 import { GET_FILMS } from '@app/rabbit/events';
 import { FILM } from '@app/rabbit/queues';
-import { Film } from '@app/shared';
-import { Controller, Get, HttpStatus, Inject, Query } from '@nestjs/common';
+import { Film, PaginationDTO } from '@app/shared';
+import { Controller, Get, HttpStatus, Inject, ParseArrayPipe, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
@@ -11,18 +11,21 @@ import { firstValueFrom } from 'rxjs';
 export class FilmController {
   constructor(@Inject(FILM) private readonly client: ClientProxy) {}
 
-  @ApiOperation({ summary: 'Получение информации о фильмах' })
+  @ApiOperation({ summary: 'Получение информации о всей кинопродукции' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
-  @Get('/movies')
+  @Get()
   async getAll(
-    @Query('genres') genres: string[],
-    @Query('limit') limit: number,
-    @Query('ofset') ofset: number,
+    @Query('genres', ParseArrayPipe) genres?: any,
+    @Query('limit') limit?: number,
+    @Query('ofset') ofset?: number,
   ) {
     const res = await firstValueFrom(
       this.client.send(
         { cmd: GET_FILMS },
-        { genres, pagination: { limit, ofset } },
+        { 
+          genres: genres,
+          pagination: { limit, ofset }
+         },
       ),
     );
     return res;
@@ -32,48 +35,45 @@ export class FilmController {
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
   @Get('/movies')
   async getAllMovies(
-    @Query('genres') genres: string[],
-    @Query('limit') limit: number,
-    @Query('ofset') ofset: number,
+    @Query('genres', ParseArrayPipe) genres?: string[],
+    @Query('limit') limit?: number,
+    @Query('ofset') ofset?: number,
   ) {
-    const res = await firstValueFrom(
-      this.client.send(
-        { cmd: GET_FILMS },
-        { genres: [...genres, 'movie'], pagination: { limit, ofset } },
-      ),
-    );
-    return res;
+    return this.dispatch('movie', genres, { limit, ofset });
   }
 
   @ApiOperation({ summary: 'Получение информации о сериалах' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
   @Get('/serials')
   async getAllSerials(
-    @Query('genres') genres: string[],
-    @Query('limit') limit: number,
-    @Query('ofset') ofset: number,
+    @Query('genres', ParseArrayPipe) genres?: any,
+    @Query('limit') limit?: number,
+    @Query('ofset') ofset?: number,
   ) {
-    const res = await firstValueFrom(
-      this.client.send(
-        { cmd: GET_FILMS },
-        { genres: [...genres, 'serial'], pagination: { limit, ofset } },
-      ),
-    );
-    return res;
+    return this.dispatch('serial', genres, { limit, ofset });
   }
 
   @ApiOperation({ summary: 'Получение информации о мультфльмах' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
   @Get('/cartoons')
   async getAllCartoons(
-    @Query('genres') genres: string[],
+    @Query('genres', ParseArrayPipe) genres: any,
     @Query('limit') limit: number,
     @Query('ofset') ofset: number,
   ) {
+    return this.dispatch('cartoon', genres, { limit, ofset });
+  }
+
+  async dispatch(genre: string, genres: string[], pagination: PaginationDTO) {
     const res = await firstValueFrom(
       this.client.send(
         { cmd: GET_FILMS },
-        { genres: [...genres, 'serial'], pagination: { limit, ofset } },
+        {
+          genres: genres
+            ? genres.concat(genre)
+            : [genre],
+          pagination
+        },
       ),
     );
     return res;

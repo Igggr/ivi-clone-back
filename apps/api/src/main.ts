@@ -22,7 +22,8 @@ async function bootstrap() {
   fs.writeFileSync('swagger.json', JSON.stringify(document));
   SwaggerModule.setup('docs', app, document);
 
-  app.useGlobalPipes(new ValidationPipe());
+  // почему-то падает, когда query-параметр массив
+  // app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(3000);

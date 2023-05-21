@@ -227,6 +227,58 @@
                 }
             }
         },
+        "/film": {
+            "get": {
+                "operationId": "FilmController_getAll",
+                "summary": "Получение информации о всей кинопродукции",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "ofset",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Film"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            }
+        },
         "/film/movies": {
             "get": {
                 "operationId": "FilmController_getAllMovies",
@@ -296,17 +348,6 @@
                 "summary": "Получение информации о сериалах",
                 "parameters": [
                     {
-                        "name": "genres",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    {
                         "name": "limit",
                         "required": true,
                         "in": "query",
@@ -358,17 +399,6 @@
                 "operationId": "FilmController_getAllCartoons",
                 "summary": "Получение информации о мультфльмах",
                 "parameters": [
-                    {
-                        "name": "genres",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
                     {
                         "name": "limit",
                         "required": true,

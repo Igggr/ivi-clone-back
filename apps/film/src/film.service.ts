@@ -11,7 +11,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import {
   ENSURE_ALL_GENRES_EXISTS,
   GENRE,
-  GET_GENRES_BY_NAME,
+  GET_GENRES_BY_NAMES,
 } from '@app/rabbit';
 import { firstValueFrom } from 'rxjs';
 import { FilmGenre } from '@app/shared/entities/film-genre.entity';
@@ -71,12 +71,15 @@ export class FilmService {
 
   async find(dto: FilmQueryDTO) {
     const genres: Genre[] = await firstValueFrom(
-      this.client.send({ cmd: GET_GENRES_BY_NAME }, dto.genres),
+      this.client.send({
+        cmd: GET_GENRES_BY_NAMES
+      }, dto.genres
+      ),
     );
     return this.filmRepository.find({
       where: {
         filmGenres: {
-          genreId: In(genres),
+          genreId: In(genres.map((genre) => genre.id)),
         },
       },
       relations: ['filmGenres'],

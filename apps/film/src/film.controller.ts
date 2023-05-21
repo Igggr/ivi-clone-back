@@ -9,6 +9,7 @@ import {
 } from '@nestjs/microservices';
 import { GET_FILMS, PARSED_DATA } from '@app/rabbit/events';
 import { FilmQueryDTO, ParsedFilmDTO } from '@app/shared';
+import { ack } from '@app/rabbit';
 
 @Controller()
 export class FilmController {
@@ -23,11 +24,8 @@ export class FilmController {
   }
 
   @MessagePattern({ cmd: GET_FILMS })
-  getFilms(@Payload() dto: FilmQueryDTO, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return this.filmService.find(dto);
+  async getFilms(@Payload() dto: FilmQueryDTO, @Ctx() context: RmqContext) {
+    ack(context);
+    return (await this.filmService.find(dto)) ?? [];
   }
 }
