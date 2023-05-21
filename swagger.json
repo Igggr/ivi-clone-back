@@ -233,19 +233,14 @@
                 "summary": "Получение информации о всей кинопродукции",
                 "parameters": [
                     {
-                        "name": "limit",
+                        "name": "genres",
                         "required": true,
                         "in": "query",
                         "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "ofset",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 ],
@@ -294,22 +289,6 @@
                                 "type": "string"
                             }
                         }
-                    },
-                    {
-                        "name": "limit",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "ofset",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
-                        }
                     }
                 ],
                 "responses": {
@@ -348,19 +327,14 @@
                 "summary": "Получение информации о сериалах",
                 "parameters": [
                     {
-                        "name": "limit",
+                        "name": "genres",
                         "required": true,
                         "in": "query",
                         "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "ofset",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 ],
@@ -400,19 +374,14 @@
                 "summary": "Получение информации о мультфльмах",
                 "parameters": [
                     {
-                        "name": "limit",
+                        "name": "genres",
                         "required": true,
                         "in": "query",
                         "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "ofset",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 ],

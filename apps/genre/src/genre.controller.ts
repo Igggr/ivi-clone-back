@@ -37,11 +37,9 @@ export class GenreController {
   }
 
   @MessagePattern({ cmd: GET_GENRES_BY_NAMES })
-  getGenresByName(@Payload() genreNames: any,
-    @Ctx() context: RmqContext,) {
-    console.log('will search genres by names' + genreNames + ';');
+  getGenresByName(@Payload() genreNames: any, @Ctx() context: RmqContext) {
     ack(context);
-    return this.genreService.getGenresByNames([])//genreNames);
+    return this.genreService.getGenresByNames(genreNames);
   }
 
   @MessagePattern({ cmd: GET_GENRE_BY_ID })

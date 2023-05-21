@@ -71,9 +71,11 @@ export class FilmService {
 
   async find(dto: FilmQueryDTO) {
     const genres: Genre[] = await firstValueFrom(
-      this.client.send({
-        cmd: GET_GENRES_BY_NAMES
-      }, dto.genres
+      this.client.send(
+        {
+          cmd: GET_GENRES_BY_NAMES,
+        },
+        dto.genres,
       ),
     );
     return this.filmRepository.find({
