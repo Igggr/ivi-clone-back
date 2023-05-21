@@ -1,6 +1,5 @@
 import {
   AUTH,
-  CREATE_DUMMY_USER,
   CREATE_USER,
   DELETE_FILE,
   DELETE_USER,
@@ -11,7 +10,7 @@ import {
   UPDATE_FILE,
   UPDATE_USER,
 } from '@app/rabbit';
-import { ParsedProfileDTO } from '@app/shared';
+import { CreateUserDTO, ParsedProfileDTO } from '@app/shared';
 import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
 import { Profile } from '@app/shared';
 import { Inject, Injectable } from '@nestjs/common';
@@ -19,6 +18,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom } from 'rxjs';
 import { Equal, Repository } from 'typeorm';
+import * as uuid from 'uuid';
 
 @Injectable()
 export class ProfilesService {
@@ -201,16 +201,17 @@ export class ProfilesService {
       return profile;
     }
 
-    // const phoneNumber = '+7950' + Math.floor(Math.random() * 10000000);
-    const user = await firstValueFrom(
-      this.authClient.send({ cmd: CREATE_DUMMY_USER }, { ...dto, surname: '' }),
-    );
-    const newProfile = await this.profileRepository.create({
-      ...dto,
-      surname: '', // на кинопоиске в профиле 1 только ник
-      // phoneNumber,
-      userId: user.id,
-    });
+    const fakeUserPayload: CreateUserDTO = {
+      password: '1111',
+      email: uuid.v4() + '@com',
+    }
+    const fakeProfileData = {
+      name: dto.nickname,
+      surname: 'Doe',
+      city: ''
+    }
+    const userProfileDto: CreateUserProfileDto = { ...dto, ...fakeProfileData, ...fakeUserPayload };
+    const newProfile = await this.createUserProfile(userProfileDto, null)
     return newProfile;
   }
 }

@@ -92,14 +92,6 @@ export class UsersService {
     }
   }
 
-  async createDummyUser(dto: ParsedProfileDTO) {
-    const dummyData: CreateUserDTO = {
-      password: '111111',
-      email: uuid.v4() + '@com',
-    };
-    return this.createUser(dummyData);
-  }
-
   /**
    *  Получает пользователя по емэйлу
    *

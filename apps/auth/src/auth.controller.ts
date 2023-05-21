@@ -21,7 +21,6 @@ import {
   LOGIN,
   UPDATE_USER,
   VERIFY_TOKEN,
-  CREATE_DUMMY_USER,
 } from '@app/rabbit';
 import { User } from '@app/shared/entities/user.entity';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
@@ -55,18 +54,6 @@ export class AuthController {
     channel.ack(message);
 
     return this.userService.createUser(userDto);
-  }
-
-  @MessagePattern({ cmd: CREATE_DUMMY_USER })
-  createDummyUser(
-    @Ctx() context: RmqContext,
-    @Payload() dto: ParsedProfileDTO,
-  ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-
-    return this.userService.createDummyUser(dto);
   }
 
   @MessagePattern({ cmd: GET_USER_BY_EMAIL })
