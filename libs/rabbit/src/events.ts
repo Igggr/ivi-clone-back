@@ -20,8 +20,14 @@ export const GET_ROLES = 'get_roles';
 export const UPDATE_FILE = 'update-file';
 export const DELETE_FILE = 'delete-file';
 export const VERIFY_TOKEN = 'verify-token';
+
 export const GET_GENRES = 'get_all_genres';
 export const GET_GENRE_BY_ID = 'get_genre_by_id';
 export const GET_GENRES_BY_NAMES = 'get_genres_by_names';
 export const UPDATE_GENRE = 'update_genre';
 export const ENSURE_ALL_GENRES_EXISTS = 'ensure_all_genres_exists';
+
+export const GOOGLE_LOGIN = 'google-login';
+export const GOOGLE_REDIRECT = 'google-redirect';
+export const ENSURE_GOOGLE_USER = 'ensure-google-user';
+export const FIND_GOOGLE_USER = 'find-google-user';
