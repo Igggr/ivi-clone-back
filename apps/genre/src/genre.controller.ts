@@ -9,6 +9,7 @@ import {
 import {
   ENSURE_ALL_GENRES_EXISTS,
   GET_GENRES,
+  GET_GENRES_BY_NAMES,
   GET_GENRE_BY_ID,
   ResponseDTO,
   UPDATE_GENRE,
@@ -33,6 +34,12 @@ export class GenreController {
   getGenres(@Ctx() context: RmqContext): Promise<Genre[]> {
     ack(context);
     return this.genreService.getAll();
+  }
+
+  @MessagePattern({ cmd: GET_GENRES_BY_NAMES })
+  getGenresByName(@Payload() genreNames: any, @Ctx() context: RmqContext) {
+    ack(context);
+    return this.genreService.getGenresByNames(genreNames);
   }
 
   @MessagePattern({ cmd: GET_GENRE_BY_ID })

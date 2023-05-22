@@ -150,10 +150,7 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: ENSURE_GOOGLE_USER })
-  ensureGoogleUser(
-    @Payload() userDto: LoginDto,
-    @Ctx() context: RmqContext,
-  ) {
+  ensureGoogleUser(@Payload() userDto: LoginDto, @Ctx() context: RmqContext) {
     ack(context);
 
     return this.authService.ensureGoogleUser(userDto);
