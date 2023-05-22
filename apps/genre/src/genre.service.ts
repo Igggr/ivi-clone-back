@@ -1,10 +1,10 @@
 import { ResponseDTO } from '@app/rabbit';
-import { CreateGenreDTO } from '@app/shared';
+import { CreateGenreDTO, ParsedGenreDTO } from '@app/shared';
 import { Genre } from '@app/shared';
 import { UpdateGenreDto } from '@app/shared/dto/update-genre.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, Repository } from 'typeorm';
+import { DeleteResult, Equal, In, Repository } from 'typeorm';
 
 @Injectable()
 export class GenreService {
@@ -13,7 +13,29 @@ export class GenreService {
     private readonly genreRepository: Repository<Genre>,
   ) {}
 
-  private async ensureGenreExist(dto: CreateGenreDTO): Promise<Genre> {
+  private async findByName(genreName: string) {
+    const genre = await this.genreRepository.findOneBy({ genreName });
+    return genre;
+  }
+
+  async create(dto: CreateGenreDTO): Promise<ResponseDTO<Genre>> {
+    const genre = this.findByName(dto.genreName);
+    if (genre) {
+      return {
+        status: 'error',
+        error: 'Genre with such name already exist',
+      };
+    }
+
+    const newGenre = await this.genreRepository.create(dto);
+    await this.genreRepository.save(newGenre);
+    return {
+      status: 'ok',
+      value: newGenre,
+    };
+  }
+
+  private async ensureGenreExist(dto: ParsedGenreDTO): Promise<Genre> {
     const genre = await this.genreRepository.findOne({
       where: {
         genreName: Equal(dto.genreName),
@@ -27,7 +49,7 @@ export class GenreService {
     return await this.genreRepository.save(newGenre);
   }
 
-  async ensureAllGenresExists(genresDTO: CreateGenreDTO[]): Promise<Genre[]> {
+  async ensureAllGenresExists(genresDTO: ParsedGenreDTO[]): Promise<Genre[]> {
     const genres = genresDTO.map(
       async (dto) => await this.ensureGenreExist(dto),
     );
@@ -65,5 +87,9 @@ export class GenreService {
       status: 'error',
       error: "Genre with such id doesn't exist",
     };
+  }
+
+  async delete(id: number): Promise<DeleteResult> {
+    return await this.genreRepository.delete(id);
   }
 }

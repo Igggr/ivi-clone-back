@@ -275,6 +275,26 @@
             }
         },
         "/film": {
+            "post": {
+                "operationId": "FilmController_createFilm",
+                "summary": "Создание фильма",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Promise"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            },
             "get": {
                 "operationId": "FilmController_getAll",
                 "summary": "Получение информации о всей кинопродукции",
@@ -462,7 +482,158 @@
                 ]
             }
         },
+        "/film/{id}": {
+            "get": {
+                "operationId": "FilmController_getFilm",
+                "summary": "Получение информации о конкретном фильме",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Film"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            },
+            "patch": {
+                "operationId": "FilmController_updateFilm",
+                "summary": "Обновление информации о фильме",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFilmDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Promise"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            },
+            "delete": {
+                "operationId": "FilmController_deleteFilm",
+                "summary": "Удаление фильма",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteResult"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            }
+        },
         "/genre": {
+            "post": {
+                "operationId": "GenreController_createGenre",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateGenreDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "genre"
+                ]
+            },
             "get": {
                 "operationId": "GenreController_getAllGenres",
                 "parameters": [],
@@ -538,6 +709,27 @@
                                 }
                             }
                         }
+                    }
+                },
+                "tags": [
+                    "genre"
+                ]
+            },
+            "delete": {
+                "operationId": "GenreController_deleteGenre",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
                     }
                 },
                 "tags": [
@@ -678,6 +870,10 @@
                     "city",
                     "photo"
                 ]
+            },
+            "Promise": {
+                "type": "object",
+                "properties": {}
             },
             "Actor": {
                 "type": "object",
@@ -1161,6 +1357,70 @@
                     "url",
                     "filmsCreated",
                     "filmViews"
+                ]
+            },
+            "CreateFilmDTO": {
+                "type": "object",
+                "properties": {
+                    "year": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Год выпуска",
+                        "example": 1999
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Название фильма",
+                        "example": "Матрица"
+                    },
+                    "originalTitle": {
+                        "type": "string",
+                        "description": "Оригинальное название",
+                        "example": "Matrix"
+                    },
+                    "slogan": {
+                        "type": "string",
+                        "description": "Слоган",
+                        "example": "«Добро пожаловать в реальный мир»"
+                    },
+                    "countryName": {
+                        "type": "string",
+                        "description": "Назвaние страны",
+                        "example": "USA"
+                    },
+                    "duration": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "year",
+                    "title",
+                    "originalTitle",
+                    "slogan",
+                    "countryName",
+                    "duration"
+                ]
+            },
+            "DeleteResult": {
+                "type": "object",
+                "properties": {}
+            },
+            "CreateGenreDTO": {
+                "type": "object",
+                "properties": {
+                    "genreName": {
+                        "type": "string",
+                        "description": "Название жанра",
+                        "example": "Комедия"
+                    },
+                    "genreNameEn": {
+                        "type": "string",
+                        "description": "Genre title",
+                        "example": "Comedy "
+                    }
+                },
+                "required": [
+                    "genreName"
                 ]
             },
             "Genre": {

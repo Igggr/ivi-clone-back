@@ -1,7 +1,4 @@
-import { Genre } from '../entities';
-import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
+import { OmitType } from '@nestjs/swagger';
+import { ParsedGenreDTO } from './parser.dto/parsed-genre.dto';
 
-export class CreateGenreDTO extends IntersectionType(
-  PickType(Genre, ['genreName', 'url']),
-  PartialType(PickType(Genre, ['genreNameEn'])),
-) {}
+export class CreateGenreDTO extends OmitType(ParsedGenreDTO, ['url']) {}
