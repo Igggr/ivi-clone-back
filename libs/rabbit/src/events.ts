@@ -28,9 +28,14 @@ export const DELETE_FILE = 'delete-file';
 export const VERIFY_TOKEN = 'verify-token';
 
 export const CREATE_GENRE = 'create_genre';
-export const GET_GENRES = 'GET_ALL_GENRES';
-export const GET_GENRE_BY_ID = 'GET_GENRE_BY_ID';
-export const GET_GENRES_BY_NAME = ' GET_GENRES_BY_NAME';
-export const UPDATE_GENRE = 'UPDATE_GENRE';
+export const GET_GENRES = 'get_all_genres';
+export const GET_GENRE_BY_ID = 'get_genre_by_id';
+export const GET_GENRES_BY_NAMES = 'get_genres_by_names';
+export const UPDATE_GENRE = 'update_genre';
 export const DELETE_GENRE = 'delete_genre';
-export const ENSURE_ALL_GENRES_EXISTS = 'ENSURE_ALL_GENRES_EXISTS';
+export const ENSURE_ALL_GENRES_EXISTS = 'ensure_all_genre_exists';
+
+export const GOOGLE_LOGIN = 'google-login';
+export const GOOGLE_REDIRECT = 'google-redirect';
+export const ENSURE_GOOGLE_USER = 'ensure-google-user';
+export const FIND_GOOGLE_USER = 'find-google-user';

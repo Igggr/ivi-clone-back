@@ -19,7 +19,7 @@ import {
   ParsedFilmDTO,
   CreateFilmDTO,
   UpdateFilmDTO,
-} from '@app/shared';
+} from '@app/shared';;
 import { ack } from '@app/rabbit';
 
 @Controller()
@@ -35,9 +35,9 @@ export class FilmController {
   }
 
   @MessagePattern({ cmd: GET_FILMS })
-  getFilms(@Payload() dto: FilmQueryDTO, @Ctx() context: RmqContext) {
+  async getFilms(@Payload() dto: FilmQueryDTO, @Ctx() context: RmqContext) {
     ack(context);
-    return this.filmService.find(dto);
+    return (await this.filmService.find(dto)) ?? [];
   }
 
   @MessagePattern({ cmd: DELETE_FILM })

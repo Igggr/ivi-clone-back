@@ -6,7 +6,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { DELETE_FILE, RECORD_FILE, UPDATE_FILE } from '@app/rabbit';
+import { DELETE_FILE, RECORD_FILE, UPDATE_FILE, ack } from '@app/rabbit';
 import { FilesService } from './files.service';
 
 @Controller()
@@ -18,9 +18,7 @@ export class FilesRecordController {
 
   @MessagePattern({ cmd: RECORD_FILE })
   recordFile(@Payload() recordInfo, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.filesRecordService.recordFile(
       recordInfo.essenceId,
@@ -31,9 +29,7 @@ export class FilesRecordController {
 
   @MessagePattern({ cmd: UPDATE_FILE })
   updateFile(@Payload() recordInfo, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.filesRecordService.updateFile(
       recordInfo.essenceId,
@@ -44,9 +40,7 @@ export class FilesRecordController {
 
   @MessagePattern({ cmd: DELETE_FILE })
   deleteFile(@Payload() recordInfo, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.filesRecordService.deleteFile(
       recordInfo.essenceId,

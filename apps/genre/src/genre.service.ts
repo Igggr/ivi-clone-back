@@ -4,7 +4,7 @@ import { Genre } from '@app/shared';
 import { UpdateGenreDto } from '@app/shared/dto/update-genre.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Equal, Repository } from 'typeorm';
+import { DeleteResult, Equal, In, Repository } from 'typeorm';
 
 @Injectable()
 export class GenreService {
@@ -64,6 +64,14 @@ export class GenreService {
     return this.genreRepository.findOne({
       where: {
         id: id,
+      },
+    });
+  }
+
+  async getGenresByNames(genreNames: string[]): Promise<Genre[]> {
+    return this.genreRepository.find({
+      where: {
+        genreName: In(genreNames),
       },
     });
   }

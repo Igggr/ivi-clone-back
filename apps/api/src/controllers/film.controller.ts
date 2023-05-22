@@ -7,7 +7,6 @@ import {
   UPDATE_FILM,
 } from '@app/rabbit/events';
 import { FILM } from '@app/rabbit/queues';
-import { Film } from '@app/shared';
 import {
   Body,
   Controller,
@@ -21,6 +20,7 @@ import {
   Post,
   Query,
   UseGuards,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -29,6 +29,8 @@ import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
+import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
+
 
 @ApiTags('film')
 @Controller('film')
@@ -51,18 +53,22 @@ export class FilmController {
     );
   }
 
-  @ApiOperation({ summary: 'Получение информации о фильмах' })
+  @ApiOperation({ summary: 'Получение информации о всей кинопродукции' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
-  @Get('/movies')
+  @Get()
   async getAll(
-    @Query('genres') genres: string[],
-    @Query('limit') limit: number,
-    @Query('ofset') ofset: number,
+    @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
+    genres: string[] = [],
+    @Query('limit') limit = 0,
+    @Query('ofset') ofset = 10,
   ) {
     const res = await firstValueFrom(
       this.client.send(
         { cmd: GET_FILMS },
-        { genres, pagination: { limit, ofset } },
+        {
+          genres: genres,
+          pagination: { limit, ofset },
+        },
       ),
     );
     return res;
@@ -72,48 +78,46 @@ export class FilmController {
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
   @Get('/movies')
   async getAllMovies(
-    @Query('genres') genres: string[],
-    @Query('limit') limit: number,
-    @Query('ofset') ofset: number,
+    @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
+    genres: string[] = [],
+    @Query('limit') limit = 0,
+    @Query('ofset') ofset = 10,
   ) {
-    const res = await firstValueFrom(
-      this.client.send(
-        { cmd: GET_FILMS },
-        { genres: [...genres, 'movie'], pagination: { limit, ofset } },
-      ),
-    );
-    return res;
+    return this.dispatch('movie', genres, { limit, ofset });
   }
 
   @ApiOperation({ summary: 'Получение информации о сериалах' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
   @Get('/serials')
   async getAllSerials(
-    @Query('genres') genres: string[],
-    @Query('limit') limit: number,
-    @Query('ofset') ofset: number,
+    @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
+    genres: string[] = [],
+    @Query('limit') limit = 0,
+    @Query('ofset') ofset = 10,
   ) {
-    const res = await firstValueFrom(
-      this.client.send(
-        { cmd: GET_FILMS },
-        { genres: [...genres, 'serial'], pagination: { limit, ofset } },
-      ),
-    );
-    return res;
+    return this.dispatch('serial', genres, { limit, ofset });
   }
 
   @ApiOperation({ summary: 'Получение информации о мультфльмах' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: [Film] })
   @Get('/cartoons')
   async getAllCartoons(
-    @Query('genres') genres: string[],
-    @Query('limit') limit: number,
-    @Query('ofset') ofset: number,
+    @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
+    genres: string[] = [],
+    @Query('limit') limit = 0,
+    @Query('ofset') ofset = 10,
   ) {
+    return this.dispatch('cartoon', genres, { limit, ofset });
+  }
+
+  async dispatch(genre: string, genres: string[], pagination: PaginationDTO) {
     const res = await firstValueFrom(
       this.client.send(
         { cmd: GET_FILMS },
-        { genres: [...genres, 'serial'], pagination: { limit, ofset } },
+        {
+          genres: genres.concat(genre),
+          pagination,
+        },
       ),
     );
     return res;
@@ -136,9 +140,10 @@ export class FilmController {
   @Patch('/:id')
   async updateFilm(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto,
+    @Body() dto: CreateFilmDTO,
   ): Promise<ResponseDTO<Film>> {
-    return await firstValueFrom(this.client.send({ cmd: UPDATE_FILM }, dto));
+    const payload: UpdateFilmDTO = { ...dto, id };
+    return await firstValueFrom(this.client.send({ cmd: UPDATE_FILM }, payload));
   }
 
   @UseGuards(RolesGuard)
