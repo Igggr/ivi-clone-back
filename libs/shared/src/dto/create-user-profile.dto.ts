@@ -1,4 +1,4 @@
-import { IntersectionType, OmitType, PickType, PartialType } from '@nestjs/swagger';
+import { IntersectionType, PickType, PartialType } from '@nestjs/swagger';
 import { Profile } from '../entities/profile.entity';
 import { CreateUserDTO } from './create-user.dto';
 

@@ -23,4 +23,8 @@ export class CountryService {
     const newCountry = this.countryRepository.create(dto);
     return await this.countryRepository.save(newCountry);
   }
+
+  async findByName(countryName: string) {
+    return await this.countryRepository.findOneBy({ countryName });
+  }
 }

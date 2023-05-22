@@ -5,6 +5,8 @@ import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { HttpExceptionFilter } from '@app/shared';
 import * as fs from 'fs';
 import { BearerAuth } from './guards/bearer';
+import * as session from 'express-session';
+import * as passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiModule);
@@ -23,9 +25,24 @@ async function bootstrap() {
   fs.writeFileSync('swagger.json', JSON.stringify(document));
   SwaggerModule.setup('docs', app, document);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.use(
+    session({
+      secret: 'SECRET',
+      saveUninitialized: false,
+      resave: false,
+      cookie: {
+        maxAge: 60000,
+      },
+    }),
+  );
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  // почему-то падает, когда query-параметр массив
+  // app.useGlobalPipes(new ValidationPipe());
+
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();

@@ -54,7 +54,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
             },
             "get": {
                 "operationId": "AuthController_getRoles",
@@ -70,7 +75,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
             }
         },
         "/auth/users/role": {
@@ -98,7 +108,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
             }
         },
         "/auth/users": {
@@ -115,6 +130,53 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/auth/google/login": {
+            "get": {
+                "operationId": "AuthController_handleLogin",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/google/redirect": {
+            "get": {
+                "operationId": "AuthController_handleRedirect",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/status": {
+            "get": {
+                "operationId": "AuthController_googleUser",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
                     }
                 }
             }
@@ -181,7 +243,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
             },
             "delete": {
                 "operationId": "ProfilesController_deleteProfile",
@@ -206,7 +273,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
             }
         },
         "/profiles": {
@@ -227,6 +299,73 @@
                 }
             }
         },
+        "/film": {
+            "post": {
+                "operationId": "FilmController_createFilm",
+                "summary": "Создание фильма",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Promise"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            },
+            "get": {
+                "operationId": "FilmController_getAll",
+                "summary": "Получение информации о всей кинопродукции",
+                "parameters": [
+                    {
+                        "name": "genres",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Film"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            }
+        },
         "/film/movies": {
             "get": {
                 "operationId": "FilmController_getAllMovies",
@@ -241,22 +380,6 @@
                             "items": {
                                 "type": "string"
                             }
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "ofset",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
                         }
                     }
                 ],
@@ -305,22 +428,6 @@
                                 "type": "string"
                             }
                         }
-                    },
-                    {
-                        "name": "limit",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "ofset",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
-                        }
                     }
                 ],
                 "responses": {
@@ -368,22 +475,6 @@
                                 "type": "string"
                             }
                         }
-                    },
-                    {
-                        "name": "limit",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "ofset",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "number"
-                        }
                     }
                 ],
                 "responses": {
@@ -416,7 +507,158 @@
                 ]
             }
         },
+        "/film/{id}": {
+            "get": {
+                "operationId": "FilmController_getFilm",
+                "summary": "Получение информации о конкретном фильме",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Film"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            },
+            "patch": {
+                "operationId": "FilmController_updateFilm",
+                "summary": "Обновление информации о фильме",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFilmDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Promise"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            },
+            "delete": {
+                "operationId": "FilmController_deleteFilm",
+                "summary": "Удаление фильма",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteResult"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ]
+            }
+        },
         "/genre": {
+            "post": {
+                "operationId": "GenreController_createGenre",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateGenreDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "genre"
+                ]
+            },
             "get": {
                 "operationId": "GenreController_getAllGenres",
                 "parameters": [],
@@ -466,6 +708,11 @@
                 },
                 "tags": [
                     "genre"
+                ],
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
                 ]
             }
         },
@@ -492,6 +739,27 @@
                                 }
                             }
                         }
+                    }
+                },
+                "tags": [
+                    "genre"
+                ]
+            },
+            "delete": {
+                "operationId": "GenreController_deleteGenre",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
                     }
                 },
                 "tags": [
@@ -573,72 +841,6 @@
                     "userId"
                 ]
             },
-            "User": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "email": {
-                        "type": "string",
-                        "example": "user@mail.ru",
-                        "description": "Почтовый адрес"
-                    },
-                    "password": {
-                        "type": "string",
-                        "minLength": 4,
-                        "maxLength": 16,
-                        "example": "12345678",
-                        "description": "Пароль пользователя"
-                    },
-                    "roles": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Role"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "email",
-                    "password",
-                    "roles"
-                ]
-            },
-            "Role": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "value": {
-                        "type": "string",
-                        "example": "Администратор",
-                        "description": "Роль пользователя"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "users": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/User"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "value",
-                    "description",
-                    "users"
-                ]
-            },
             "CreateUserProfileDto": {
                 "type": "object",
                 "properties": {
@@ -653,10 +855,6 @@
                         "maxLength": 16,
                         "example": "12345678",
                         "description": "Пароль пользователя"
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"
                     },
                     "name": {
                         "type": "string",
@@ -673,21 +871,14 @@
                         "example": "stas9n",
                         "description": "Никнейм пользователя"
                     },
-                    "country": {
-                        "type": "string",
-                        "example": "Россия",
-                        "description": "Страна проживания пользователя"
-                    },
                     "city": {
                         "type": "string",
                         "example": "Москва",
                         "description": "Город проживания пользователя"
                     },
-                    "roles": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Role"
-                        }
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"
                     },
                     "photo": {
                         "type": "string"
@@ -696,15 +887,15 @@
                 "required": [
                     "email",
                     "password",
-                    "url",
                     "name",
                     "surname",
                     "nickname",
-                    "country",
-                    "city",
-                    "roles",
-                    "photo"
+                    "city"
                 ]
+            },
+            "Promise": {
+                "type": "object",
+                "properties": {}
             },
             "Actor": {
                 "type": "object",
@@ -1188,6 +1379,70 @@
                     "url",
                     "filmsCreated",
                     "filmViews"
+                ]
+            },
+            "CreateFilmDTO": {
+                "type": "object",
+                "properties": {
+                    "year": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Год выпуска",
+                        "example": 1999
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Название фильма",
+                        "example": "Матрица"
+                    },
+                    "originalTitle": {
+                        "type": "string",
+                        "description": "Оригинальное название",
+                        "example": "Matrix"
+                    },
+                    "slogan": {
+                        "type": "string",
+                        "description": "Слоган",
+                        "example": "«Добро пожаловать в реальный мир»"
+                    },
+                    "countryName": {
+                        "type": "string",
+                        "description": "Назвaние страны",
+                        "example": "USA"
+                    },
+                    "duration": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "year",
+                    "title",
+                    "originalTitle",
+                    "slogan",
+                    "countryName",
+                    "duration"
+                ]
+            },
+            "DeleteResult": {
+                "type": "object",
+                "properties": {}
+            },
+            "CreateGenreDTO": {
+                "type": "object",
+                "properties": {
+                    "genreName": {
+                        "type": "string",
+                        "description": "Название жанра",
+                        "example": "Комедия"
+                    },
+                    "genreNameEn": {
+                        "type": "string",
+                        "description": "Genre title",
+                        "example": "Comedy "
+                    }
+                },
+                "required": [
+                    "genreName"
                 ]
             },
             "Genre": {

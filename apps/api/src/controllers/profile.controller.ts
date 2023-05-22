@@ -34,7 +34,7 @@ import { BearerAuth } from '../guards/bearer';
 
 @Controller()
 export class ProfilesController {
-  constructor(@Inject(PROFILES) private client: ClientProxy) {}
+  constructor(@Inject(PROFILES) private readonly client: ClientProxy) {}
 
   @Post('/registration')
   @UsePipes(ValidationPipe)
@@ -110,7 +110,7 @@ export class ProfilesController {
 
   @Get('/profiles')
   async getProfiles() {
-    return firstValueFrom(
+    return await firstValueFrom(
       this.client.send(
         {
           cmd: GET_PROFILES,

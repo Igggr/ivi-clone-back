@@ -59,6 +59,7 @@ export class ProfilesService {
       const profile = await this.profileRepository.create({
         ...userProfileDto,
         userId: newUser.id,
+        url: '',
       });
       await this.profileRepository.save(profile);
       if (photo) {
@@ -93,10 +94,10 @@ export class ProfilesService {
     photo: any,
   ) {
     try {
-      let photoName;
       const profile = await this.profileRepository.findOneBy({
         id: profileId,
       });
+      let photoName = profile.photo;
       const userId = profile.userId;
       if (userProfileDto.email || userProfileDto.password) {
         const user = await firstValueFrom(

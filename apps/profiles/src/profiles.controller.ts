@@ -22,18 +22,14 @@ export class ProfilesController {
 
   @MessagePattern({ cmd: GET_PROFILES })
   getProfiles(@Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return this.profileService.getAllProfiles();
   }
 
   @MessagePattern({ cmd: REGISTRATION })
   async registration(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return await this.profileService.createUserProfile(
       userProfileInfo.userProfileDto,
@@ -43,9 +39,7 @@ export class ProfilesController {
 
   @MessagePattern({ cmd: UPDATE_PROFILE })
   async updateProfile(@Payload() userProfileInfo, @Ctx() context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return await this.profileService.updateUserProfile(
       userProfileInfo.profileId,
@@ -59,9 +53,7 @@ export class ProfilesController {
     @Payload() profileId: number,
     @Ctx() context: RmqContext,
   ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    ack(context);
 
     return await this.profileService.deleteUserProfile(profileId);
   }

@@ -3,12 +3,19 @@ import { User } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { RolesService } from './roles/roles.service';
+import { USER } from '@app/shared/constants/role.const';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userService: UsersService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly roleService: RolesService,
   ) {}
 
   async login(userDto: LoginDto) {
@@ -65,5 +72,36 @@ export class AuthService {
       status: 'error',
       error: 'Не удалось проверить токен',
     };
+  }
+
+  async ensureGoogleUser(userDto: LoginDto) {
+    console.log('Auth Service');
+    console.log(userDto);
+    const user = await this.userRepository.findOneBy({
+      email: userDto.email,
+    });
+    if (user) {
+      return user;
+    }
+    console.log('User not found');
+    const newGoogleUser = await this.userRepository.create(userDto);
+    await newGoogleUser.setPassword(userDto.password);
+    let role = await this.roleService.getRoleByValue('User');
+    if (!role) {
+      await this.roleService.createRole(USER);
+    }
+    role = await this.roleService.getRoleByValue('User');
+    newGoogleUser.addRole(role);
+
+    return await this.userRepository.save(newGoogleUser);
+  }
+
+  async findUserById(userId: number) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    return user;
+  }
+
+  async googleRedirect(user: User) {
+    return await this.generateToken(user);
   }
 }
