@@ -1,4 +1,4 @@
-import { Body, Controller } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   Ctx,
@@ -48,10 +48,7 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: CREATE_USER })
-  createUser(
-    @Payload() userDto: CreateUserDTO,
-    @Ctx() context: RmqContext,
-  ) {
+  createUser(@Payload() userDto: CreateUserDTO, @Ctx() context: RmqContext) {
     ack(context);
 
     return this.userService.createUser(userDto);

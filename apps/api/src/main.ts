@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ApiModule } from './api.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { HttpExceptionFilter } from '@app/shared';
 import * as fs from 'fs';
 import { BearerAuth } from './guards/bearer';

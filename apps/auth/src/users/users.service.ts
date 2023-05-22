@@ -1,9 +1,8 @@
-import { User, ParsedProfileDTO, CreateUserDTO } from '@app/shared';
+import { User, CreateUserDTO } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import * as uuid from 'uuid';
 import { RolesService } from '../roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { USER } from '@app/shared/constants/role.const';

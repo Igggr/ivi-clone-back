@@ -31,7 +31,6 @@ import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
 import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
 
-
 @ApiTags('film')
 @Controller('film')
 export class FilmController {
@@ -143,7 +142,9 @@ export class FilmController {
     @Body() dto: CreateFilmDTO,
   ): Promise<ResponseDTO<Film>> {
     const payload: UpdateFilmDTO = { ...dto, id };
-    return await firstValueFrom(this.client.send({ cmd: UPDATE_FILM }, payload));
+    return await firstValueFrom(
+      this.client.send({ cmd: UPDATE_FILM }, payload),
+    );
   }
 
   @UseGuards(RolesGuard)

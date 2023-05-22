@@ -37,4 +37,3 @@ export const ENSURE_ALL_GENRES_EXISTS = 'ensure_all_genre_exists';
 export const GOOGLE_LOGIN = 'google-login';
 export const GOOGLE_REDIRECT = 'google-redirect';
 export const ENSURE_GOOGLE_USER = 'ensure-google-user';
-export const FIND_GOOGLE_USER = 'find-google-user';

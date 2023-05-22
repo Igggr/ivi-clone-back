@@ -205,14 +205,18 @@ export class ProfilesService {
     const fakeUserPayload: CreateUserDTO = {
       password: '1111',
       email: uuid.v4() + '@com',
-    }
+    };
     const fakeProfileData = {
       name: dto.nickname,
       surname: 'Doe',
-      city: ''
-    }
-    const userProfileDto: CreateUserProfileDto = { ...dto, ...fakeProfileData, ...fakeUserPayload };
-    const newProfile = await this.createUserProfile(userProfileDto, null)
+      city: '',
+    };
+    const userProfileDto: CreateUserProfileDto = {
+      ...dto,
+      ...fakeProfileData,
+      ...fakeUserPayload,
+    };
+    const newProfile = await this.createUserProfile(userProfileDto, null);
     return newProfile;
   }
 }
