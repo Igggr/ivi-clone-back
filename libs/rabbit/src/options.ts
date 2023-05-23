@@ -5,6 +5,7 @@ export const RABBIT_OPTIONS = (name: string) => ({
   options: {
     urls: [
       'amqp://rabbit:5672', // микросервис заппущен из контейнера
+      'amqp://rabbit_test:5672', // используется для тестов
       'amqp://localhost:5672', // микросервис заппущен из командной строки
     ],
     queue: `${name}_queue`,

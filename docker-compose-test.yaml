@@ -35,8 +35,6 @@ services:
       - 5672
     environment:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
-    volumes:
-      - ./rabbitmq:/var/lib/rabbitmq
     networks:
       - rabbit_test
 
