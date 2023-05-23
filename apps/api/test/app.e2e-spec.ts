@@ -1,24 +1,53 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication } from "@nestjs/common";
+import { Test } from "@nestjs/testing";
 import * as request from 'supertest';
-import { ApiModule } from './../src/api.module';
+import { ApiModule } from "../src/api.module";
+import { CreateUserProfileDto } from "@app/shared";
+import { ConfigService } from "@nestjs/config";
 
-describe('ApiController (e2e)', () => {
-  let app: INestApplication;
+describe('Registration', () => {
+    let app: INestApplication;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ApiModule],
-    }).compile();
+    beforeAll(async () => {
+        const moduleRef = await Test.createTestingModule({
+            imports: [ApiModule,
+                // AuthModule, ProfilesModule
+            ],
+        }).overrideProvider(ConfigService).useValue({
+            get(key) {
+                if (key === 'IS_TEST') {
+                    return true;
+            } 
+        }})
+            .compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+        app = moduleRef.createNestApplication();
+        await app.init();
+    });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
+    it(`/POST registration`, () => {
+        const dto: CreateUserProfileDto = {
+            email: "firstuser@mail.com",
+            password: '1111',
+            name: 'Jack',
+            surname: 'Kent',
+            nickname: 'jackiee',
+            country: 'Usa',
+            city: 'Chickago',
+            url: null,
+            photo: null
+        };
+        return request(app.getHttpServer())
+            .post('/registration')
+            .send(dto)
+            .expect(400)
+            // .expect({
+            //     status: 'ok',
+            // })
+            .then((r) => console.log(r));
+    });
+
+    afterAll(async () => {
+        await app.close();
+    });
 });

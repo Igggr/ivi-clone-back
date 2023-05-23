@@ -1,0 +1,143 @@
+version: "3"
+services:
+
+  # для тестов все микросервисы могут и одну базу шарить
+  postgres_test:
+    container_name: postgres_test
+    image: postgres:latest
+    ports:
+      - "5440:5432"
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    networks:
+      - postgres_test
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+    - "8080:80"
+    env_file:
+    - docker.pgadmin.env
+    networks:
+    - postgres_test
+
+  rabbit_test:
+    image: rabbitmq:3.10.7-management
+    container_name: rabbit_test
+    restart: always
+    ports:
+      - 15672:15672   # смотреть что происходит в браузере 
+      - 5672:5672     # AMQP порт
+    expose:
+      - 5672
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    networks:
+      - rabbit_test
+
+  api_test:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      target: development
+    command: npm run start:test api
+    depends_on:
+      - rabbit_test
+      - auth_test
+      - profiles_test
+      - file_test
+      - film_test
+      - genre_test
+    ports:
+      - '3001:3000'
+    networks:
+      - rabbit_test
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+  
+  film_test:
+    build:
+      context: .
+      dockerfile: ./apps/film/Dockerfile
+    command: npm run start:test film
+    depends_on:
+      - rabbit_test
+      - postgres_test
+    networks:
+      - rabbit_test
+      - postgres_test
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  genre_test:
+    build:
+      context: .
+      dockerfile: ./apps/genre/Dockerfile
+    command: npm run start:test genre
+    depends_on:
+      - rabbit_test
+      - postgres_test
+    networks:
+      - rabbit_test
+      - postgres_test
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  profiles_test:
+    build:
+      context: .
+      dockerfile: ./apps/profiles/Dockerfile
+    command: npm run start:test profiles
+    depends_on:
+      - rabbit_test
+      - postgres_test
+    networks:
+      - rabbit_test
+      - postgres_test
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  auth_test:
+    build:
+      context: .
+      dockerfile: ./apps/film/Dockerfile
+    command: npm run start:test auth
+    depends_on:
+      - rabbit_test
+      - postgres_test
+    networks:
+      - rabbit_test
+      - postgres_test
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  file_test:
+    build:
+      context: .
+      dockerfile: ./apps/film/Dockerfile
+    command: npm run start:test files-record
+    depends_on:
+      - rabbit_test
+      - postgres_test
+    networks:
+      - rabbit_test
+      - postgres_test
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+networks:
+  rabbit_test:
+    driver: bridge
+  postgres_test:
+    driver: bridge

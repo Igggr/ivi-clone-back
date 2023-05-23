@@ -117,7 +117,6 @@ export class UsersService {
       country: '',
       city: '',
       email: uuid.v4() + '@com',
-      roles: []
     };
     return this.createUser(dummyData);
   }
