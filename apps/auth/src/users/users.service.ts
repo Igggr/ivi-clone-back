@@ -23,11 +23,11 @@ export class UsersService {
         ...userDto,
       });
       await user.setPassword(userDto.password);
-      let role = await this.roleService.getRoleByValue('User');
+      let role = await this.roleService.getRoleByValue(USER.value);
       if (!role) {
         await this.roleService.createRole(USER);
       }
-      role = await this.roleService.getRoleByValue('User');
+      role = await this.roleService.getRoleByValue(USER.value);
       user.addRole(role);
       await this.userRepository.save(user);
 
