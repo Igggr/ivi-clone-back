@@ -1,12 +1,15 @@
 import { LoginDto } from '@app/shared/dto/login.dto';
 import { User } from '@app/shared';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RolesService } from './roles/roles.service';
 import { USER } from '@app/shared/constants/role.const';
+import { GET_PROFILE_BY_USER_ID, PROFILES } from '@app/rabbit';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -16,12 +19,13 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly roleService: RolesService,
+    @Inject(PROFILES) private profileClient: ClientProxy
   ) {}
 
   async login(userDto: LoginDto) {
     const user = await this.validateUser(userDto);
     if (user instanceof User) {
-      return this.generateToken(user);
+      return this.googleRedirect(user);
     }
     return user;
   }
@@ -102,6 +106,14 @@ export class AuthService {
   }
 
   async googleRedirect(user: User) {
-    return await this.generateToken(user);
+    const token = await this.generateToken(user);
+    const profile = await firstValueFrom(
+      this.profileClient.send(
+        { cmd: GET_PROFILE_BY_USER_ID },
+        user.id,
+      ),
+    );
+
+    return {token, 'profileInfo': profile};
   }
 }

@@ -9,6 +9,8 @@ import { Role } from '@app/shared/entities/role.entity';
 import { RolesService } from './roles/roles.service';
 import { DatabaseModule, db_schema } from '@app/database';
 import * as Joi from 'joi';
+import { ClientsModule } from '@nestjs/microservices';
+import { PROFILES, RABBIT_OPTIONS } from '@app/rabbit';
 
 @Module({
   imports: [
@@ -19,6 +21,12 @@ import * as Joi from 'joi';
         PRIVATE_KEY: Joi.string().required(),
       }).concat(db_schema),
     }),
+    ClientsModule.register([
+      {
+        name: PROFILES,
+        ...RABBIT_OPTIONS(PROFILES),
+      },
+    ]),
     JwtModule.register({
       secret: process.env.PRIVATE_KEY,
       signOptions: {
