@@ -5,7 +5,7 @@ export const UPDATE_FILM = 'update_film';
 export const GET_FILMS = 'get_films';
 export const GET_ONE_FILM = 'get_one_film';
 export const DELETE_FILM = 'delete_film';
-
+export const GET_PROFILE_BY_USER_ID = 'get_profile_by_user_id';
 export const CREATE_PROFILE_WITH_DUMMY_USER = 'create_profile_with_dumy_user';
 export const CREATE_DUMMY_USER = 'create_dummy_user';
 export const CREATE_USER = 'create-user';

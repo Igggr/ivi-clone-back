@@ -50,6 +50,13 @@ export class ProfilesService {
           error: 'Пользователь с таким email уже существует',
         };
       }
+      const foundProfile = await this.profileRepository.findOneBy({nickname: userProfileDto.nickname});
+      if (foundProfile) {
+        return {
+          status: 'error',
+          error: 'Пользователь с таким никнеймом уже существует',
+        };
+      }
       const newUser = await firstValueFrom(
         this.authClient.send({ cmd: CREATE_USER }, userProfileDto),
       );
@@ -75,11 +82,12 @@ export class ProfilesService {
         );
       }
       profile.photo = photoName;
-      await this.profileRepository.save(profile);
-
-      return await firstValueFrom(
+      const profileInfo = await this.profileRepository.save(profile);
+      const token = await firstValueFrom(
         this.authClient.send({ cmd: GET_TOKEN }, newUser),
       );
+
+      return {token, 'profileInfo': profileInfo};
     } catch (error) {
       return {
         status: 'error',
@@ -213,5 +221,9 @@ export class ProfilesService {
       userId: user.id,
     });
     return newProfile;
+  }
+
+  async getProfileByUserId(userId: number) {
+    return await this.profileRepository.findOneBy({userId: userId});
   }
 }
