@@ -11,7 +11,6 @@ export class DatabaseModule {
         imports: [
           TypeOrmModule.forRootAsync({
             useFactory: (configService: ConfigService) => {
-
               if (configService.get('IS_TEST')) {
                 console.log('Test DB');
                 return {
@@ -24,7 +23,7 @@ export class DatabaseModule {
                   entities: entities,
                   synchronize: true,
                   autoLoadEntities: true,
-                }
+                };
               }
               console.log('Normal DB');
               return {
@@ -44,7 +43,7 @@ export class DatabaseModule {
                 synchronize: configService.get('NODE_ENV') !== 'prod' || true,
                 autoLoadEntities:
                   configService.get('NODE_ENV') !== 'prod' || true,
-              }
+              };
             },
             inject: [ConfigService],
           }),
