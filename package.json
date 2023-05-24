@@ -19,9 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "start:test": "cross-env IS_TEST=true nest start --watch",
-    "pretestt:e2e": "docker compose -f docker-compose-test.yaml up -d",
+    "pretest:e2e": "docker compose -f docker-compose-test.yaml up -d",
     "test:e2e": "jest --config ./apps/api/test/jest-e2e.json",
-    "posttestt:e2e": "docker compose -f docker-compose-test.yaml down"
+    "posttest:e2e": "docker compose -f docker-compose-test.yaml down"
   },
   "dependencies": {
     "@fastify/static": "^6.10.1",
