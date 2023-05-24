@@ -25,14 +25,7 @@ export class AuthService {
   async login(userDto: LoginDto) {
     const user = await this.validateUser(userDto);
     if (user instanceof User) {
-      const token = await this.generateToken(user);
-      const profile = await firstValueFrom(
-        this.profileClient.send(
-          { cmd: GET_PROFILE_BY_USER_ID },
-          user.id,
-        ),
-      );
-      return {token, 'profileInfo': profile};
+      return this.googleRedirect(user);
     }
     return user;
   }
