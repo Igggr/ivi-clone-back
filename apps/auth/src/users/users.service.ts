@@ -14,7 +14,11 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly roleService: RolesService,
-  ) {}
+  ) { }
+
+  async findUserById(id: number) {
+    return this.userRepository.findOneBy({ id: id });
+  }
 
   // поля Profile не еспользуются - стоило бы их выпилить
   async createUser(userDto: CreateUserProfileDto) {
