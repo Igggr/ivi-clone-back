@@ -1,4 +1,9 @@
-import { HttpStatus, INestApplication, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  INestApplication,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { ApiModule } from '../src/api.module';
@@ -13,12 +18,13 @@ import { ClientProxy, ClientsModule } from '@nestjs/microservices';
 import { ADD_ROLE, AUTH, CREATE_ROLE, RABBIT_OPTIONS } from '@app/rabbit';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { firstValueFrom } from 'rxjs';
+import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
 
 type Token = { token: string };
 
 @Injectable()
-class ClientService{
-  constructor(@Inject(AUTH) public readonly client: ClientProxy) { }  
+class ClientService {
+  constructor(@Inject(AUTH) public readonly client: ClientProxy) {}
 }
 
 describe('Registration', () => {
@@ -45,6 +51,11 @@ describe('Registration', () => {
     password: '2222',
   };
 
+  const testerRole: CreateRoleDto = {
+    value: 'ALPHA_TESTER',
+    description: 'На них проверяют работоспособность новой версии сайта',
+  };
+
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -53,21 +64,22 @@ describe('Registration', () => {
           {
             name: AUTH,
             ...RABBIT_OPTIONS(AUTH),
-          }]),
+          },
+        ]),
       ],
       providers: [
         RolesService,
         UsersService,
         ClientService,
         {
-        provide: getRepositoryToken(User),
-        useClass: Repository<User>,
-      },
-      {
-        provide: getRepositoryToken(Role),
-        useClass: Repository<Role>,
+          provide: getRepositoryToken(User),
+          useClass: Repository<User>,
         },
-      ]
+        {
+          provide: getRepositoryToken(Role),
+          useClass: Repository<Role>,
+        },
+      ],
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -76,7 +88,7 @@ describe('Registration', () => {
     await app.init();
   });
 
-  it(`/POST registration: user can register`, () => {
+  it(`/POST /registration: user can register`, () => {
     return request(app.getHttpServer())
       .post('/registration')
       .send(adminDTO)
@@ -84,7 +96,7 @@ describe('Registration', () => {
       .then((r) => expect(r.body.token).toBeDefined());
   }, 100000);
 
-  it(`/POST registration: only one user can register with email`, () => {
+  it(`/POST /registration: only one user can register with email`, () => {
     return request(app.getHttpServer())
       .post('/registration')
       .send(adminDTO)
@@ -94,7 +106,7 @@ describe('Registration', () => {
       );
   }, 100000);
 
-  it(`/POST registration: other users can register as well`, () => {
+  it(`/POST /registration: other users can register as well`, () => {
     return request(app.getHttpServer())
       .post('/registration')
       .send(simpleUserDTO)
@@ -105,16 +117,16 @@ describe('Registration', () => {
       });
   }, 100000);
 
-  it("/POST login: Admin can login", async () => {
+  it('/POST /auth/login: Admin can login', async () => {
     await makeAdmin(adminId, clientService.client);
 
     return request(app.getHttpServer())
       .post('/auth/login')
       .send({
         email: adminDTO.email,
-        password: adminDTO.password
+        password: adminDTO.password,
       })
-      .expect(HttpStatus.CREATED)  // а почему CREATED - а не OK?
+      .expect(HttpStatus.CREATED) // а почему CREATED - а не OK?
       .then((r) => {
         expect(r.body.profileInfo).toMatchObject({
           name: adminDTO.name,
@@ -127,14 +139,14 @@ describe('Registration', () => {
       });
   }, 100000);
 
-  it("/POST login: User can login", () => {
+  it('/POST /auth/login: User can login', () => {
     return request(app.getHttpServer())
       .post('/auth/login')
       .send({
         email: simpleUserDTO.email,
-        password: simpleUserDTO.password
+        password: simpleUserDTO.password,
       })
-      .expect(HttpStatus.CREATED)  // а почему CREATED - а не OK?
+      .expect(HttpStatus.CREATED) // а почему CREATED - а не OK?
       .then((r) => {
         expect(r.body.profileInfo).toMatchObject({
           name: simpleUserDTO.name,
@@ -147,23 +159,58 @@ describe('Registration', () => {
       });
   }, 100000);
 
-  it("/GET roles: Should be forbidden to simple user", () => {
+  it('/GET /auth/roles: Should be forbidden to simple user', () => {
     return request(app.getHttpServer())
       .get('/auth/roles')
-      .auth(simpleUserToken.token, { type: "bearer" })
+      .auth(simpleUserToken.token, { type: 'bearer' })
       .expect(HttpStatus.FORBIDDEN)
       .then((r) => expect(r.body.error).toEqual('Forbidden resource'));
   }, 100000);
 
-  it("/GET roles: Admin should be able to get roles", () => {
+  it('/GET /auth/roles: Admin should be able to get roles', () => {
     return request(app.getHttpServer())
       .get('/auth/roles')
-      .auth(adminToken.token, { type: "bearer" })
+      .auth(adminToken.token, { type: 'bearer' })
       .expect(HttpStatus.OK)
-      .then((r) => expect(r.body).toEqual([
-        { ...USER, id: 1 },
-        { ...ADMIN, id: 2 },
-      ]));
+      .then((r) =>
+        expect(r.body).toEqual([
+          { ...USER, id: 1 },
+          { ...ADMIN, id: 2 },
+        ]),
+      );
+  }, 100000);
+
+  it('/POST /auth/roles: Admin should be able to add new role', () => {
+    return request(app.getHttpServer())
+      .post('/auth/roles')
+      .auth(adminToken.token, { type: 'bearer' })
+      .send(testerRole)
+      .expect(HttpStatus.CREATED)
+      .then((r) => expect(r.body).toEqual({ ...testerRole, id: 3 }));
+  }, 100000);
+
+  it('/GET /auth/roles: this new role should be saved in DB', () => {
+    return request(app.getHttpServer())
+      .get('/auth/roles')
+      .auth(adminToken.token, { type: 'bearer' })
+      .expect(HttpStatus.OK)
+      .then((r) =>
+        expect(r.body).toEqual([
+          { ...USER, id: 1 },
+          { ...ADMIN, id: 2 },
+          { ...testerRole, id: 3 },
+        ]),
+      );
+  }, 100000);
+
+  it('/POST auth/users/role: Admin should be able to assign role to other user', () => {
+    const dto: AddRoleDto = { userId: 2, value: ADMIN.value };
+    return request(app.getHttpServer())
+      .post('/auth/users/role')
+      .auth(adminToken.token, { type: 'bearer' })
+      .send(testerRole)
+      .expect(HttpStatus.CREATED)
+      .then((r) => expect(r.body).toEqual({ ...testerRole, id: 3 }));
   }, 100000);
 
   afterAll(async () => {

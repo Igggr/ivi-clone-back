@@ -50,7 +50,9 @@ export class ProfilesService {
           error: 'Пользователь с таким email уже существует',
         };
       }
-      const foundProfile = await this.profileRepository.findOneBy({nickname: userProfileDto.nickname});
+      const foundProfile = await this.profileRepository.findOneBy({
+        nickname: userProfileDto.nickname,
+      });
       if (foundProfile) {
         return {
           status: 'error',
@@ -87,7 +89,7 @@ export class ProfilesService {
         this.authClient.send({ cmd: GET_TOKEN }, newUser),
       );
 
-      return {token, 'profileInfo': profileInfo};
+      return { token, profileInfo: profileInfo };
     } catch (error) {
       return {
         status: 'error',
@@ -224,6 +226,6 @@ export class ProfilesService {
   }
 
   async getProfileByUserId(userId: number) {
-    return await this.profileRepository.findOneBy({userId: userId});
+    return await this.profileRepository.findOneBy({ userId: userId });
   }
 }
