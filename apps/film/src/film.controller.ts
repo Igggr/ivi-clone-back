@@ -19,7 +19,7 @@ import {
   ParsedFilmDTO,
   CreateFilmDTO,
   UpdateFilmDTO,
-} from '@app/shared';;
+} from '@app/shared';
 import { ack } from '@app/rabbit';
 
 @Controller()

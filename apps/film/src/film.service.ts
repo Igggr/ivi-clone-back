@@ -110,7 +110,7 @@ export class FilmService {
         };
       }
     }
-    
+
     await this.filmRepository.save(film);
     return {
       status: 'ok',
