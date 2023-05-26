@@ -6,6 +6,8 @@ import { HttpExceptionFilter } from '@app/shared';
 
 describe('Registration', () => {
   let app: INestApplication;
+  let firstUserToken: string;
+  let secondUserToken: string;
 
   const firstUserDTO = {
     name: 'first',
@@ -38,7 +40,10 @@ describe('Registration', () => {
       .post('/registration')
       .send(firstUserDTO)
       .expect(HttpStatus.CREATED)
-      .then((r) => expect(r.body.token).toBeDefined());
+      .then((r) => {
+        firstUserToken = r.body.token;
+        expect(r.body.token).toBeDefined();
+      });
   }, 100000);
 
   it(`/POST registration: only one user can register with email`, () => {
@@ -56,8 +61,37 @@ describe('Registration', () => {
       .post('/registration')
       .send(secondUserDTO)
       .expect(HttpStatus.CREATED)
-      .then((r) => expect(r.body.token).toBeDefined());
+      .then((r) => {
+        secondUserToken = r.body.token;
+        expect(r.body.token).toBeDefined();
+      });
   }, 100000);
+
+  it("/POST login: User can login", () => {
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: firstUserDTO.email,
+        password: firstUserDTO.password
+      })
+      .expect(HttpStatus.CREATED)  // а почему CREATED - а не OK?
+      .then((r) => {
+        const profile = r.body.profileInfo;
+        expect(profile.name).toBe(firstUserDTO.name);
+        expect(profile.surname).toBe(firstUserDTO.surname);
+        expect(profile.nickname).toBe(firstUserDTO.nickname);
+        expect(profile.userId).toBeDefined();
+        expect(r.body.token).toBeDefined();
+      });
+  }, 100000);
+
+  it("/GET roles: Should be forbidden to simple user", () => {
+    return request(app.getHttpServer())
+      .get('/auth/roles')
+      .send({token: firstUserToken})
+      .expect(HttpStatus.FORBIDDEN)
+      .then((r) => expect(r.body.error).toEqual('Forbidden resource'));
+  }, 100000)
 
   afterAll(async () => {
     await app.close();
