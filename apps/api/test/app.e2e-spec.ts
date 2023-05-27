@@ -239,8 +239,8 @@ describe('Registration', () => {
           id: dto.userId,
           roles: [
             { ...USER, id: 1 },
-            { ...testerRole, id: 3},
-          ]
+            { ...testerRole, id: 3 },
+          ],
         });
         expect(r.body.password).toBeUndefined();
       });
