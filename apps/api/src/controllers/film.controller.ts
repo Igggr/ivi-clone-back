@@ -32,7 +32,7 @@ import { Roles } from '../guards/roles-auth.decorator';
 import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
 
 @ApiTags('film')
-@Controller('film')
+@Controller('/film')
 export class FilmController {
   constructor(@Inject(FILM) private readonly client: ClientProxy) {}
 

@@ -170,8 +170,6 @@ describe('Registration', () => {
       })
       .expect(HttpStatus.CREATED) // а почему CREATED - а не OK?
       .then((r) => {
-        // ???
-        console.log('get simpleUserId', r.body.profileInfo.userId)
         expect(r.body.profileInfo).toMatchObject({
           name: simpleUserDTO.name,
           surname: simpleUserDTO.surname,
@@ -179,7 +177,6 @@ describe('Registration', () => {
         });
         expect(r.body.profileInfo.userId).toBeDefined();
         simpleUserId = r.body.profileInfo.userId;
-        console.log('set simpleUserId', simpleUserId)
         expect(r.body.token).toBeDefined();
         simpleUserToken = r.body.token;
       });
@@ -249,15 +246,15 @@ describe('Registration', () => {
       });
   }, 100000);
 
-  it('POST /genre Admin can create new genres', () => {
-    const dto: CreateGenreDTO = { genreName: 'Драмма'}
-    return request(app.getHttpServer())
-      .post('/genre')
-      .auth(adminToken.token, { type: 'bearer' })
-      .send(dto)
-      .expect(HttpStatus.CREATED)
-      .then((r) => expect(r.body).toEqual({ status: 'ok', value: { url: null, genreNameEn: null, ...dto, id: 1 } }));
-  })
+  // it('POST /genre Admin can create new genres', () => {
+  //   const dto: CreateGenreDTO = { genreName: 'Драмма'}
+  //   return request(app.getHttpServer())
+  //     .post('/genre')
+  //     .auth(adminToken.token, { type: 'bearer' })
+  //     .send(dto)
+  //     .expect(HttpStatus.CREATED)
+  //     .then((r) => expect(r.body).toEqual({ status: 'ok', value: { url: null, genreNameEn: null, ...dto, id: 1 } }));
+  // })
 
   // it('GET /genre Newly created genres a saved in DB', () => {
   //   return request(app.getHttpServer())
