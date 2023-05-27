@@ -18,7 +18,7 @@ export class GenreService {
     return genre;
   }
 
-  async create(dto: CreateGenreDTO): Promise<ResponseDTO<Genre> |Genre> {
+  async create(dto: CreateGenreDTO): Promise<ResponseDTO<Genre>> {
     const genre = await this.findByName(dto.genreName);
     if (genre) {
       return {
