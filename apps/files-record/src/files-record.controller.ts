@@ -6,7 +6,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { DELETE_FILE, RECORD_FILE, UPDATE_FILE, ack } from '@app/rabbit';
+import { DELETE_FILE, GET_PHOTO, RECORD_FILE, UPDATE_FILE, ack } from '@app/rabbit';
 import { FilesService } from './files.service';
 
 @Controller()
@@ -46,5 +46,12 @@ export class FilesRecordController {
       recordInfo.essenceId,
       recordInfo.fileName,
     );
+  }
+
+  @MessagePattern({ cmd: GET_PHOTO })
+  getPhoto(@Payload() name: string, @Ctx() context: RmqContext) {
+    ack(context);
+
+    return this.fileService.readFile(name);
   }
 }

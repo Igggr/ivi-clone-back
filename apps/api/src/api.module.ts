@@ -12,6 +12,7 @@ import { AuthController } from './controllers/auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
 import { SessionSerializer } from './utils/serializer';
 import * as Joi from 'joi';
+import { FilesController } from './controllers/files-record.controller';
 
 @Module({
   imports: [
@@ -27,6 +28,12 @@ import * as Joi from 'joi';
       {
         name: FILM,
         ...RABBIT_OPTIONS(FILM),
+      },
+    ]),
+    ClientsModule.register([
+      {
+        name: FILES_RECORD,
+        ...RABBIT_OPTIONS(FILES_RECORD),
       },
     ]),
     ClientsModule.register([
@@ -60,6 +67,7 @@ import * as Joi from 'joi';
     ProfilesController,
     FilmController,
     GenreController,
+    FilesController
   ],
   providers: [GoogleStrategy, SessionSerializer],
 })

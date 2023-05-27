@@ -22,6 +22,7 @@ export const ADD_ROLE = 'add-role';
 export const GET_USERS = 'get-users';
 export const GET_PROFILES = 'get-profiles';
 export const RECORD_FILE = 'record-file';
+export const GET_PHOTO = 'get-photo';
 export const GET_ROLES = 'get_roles';
 export const UPDATE_FILE = 'update-file';
 export const DELETE_FILE = 'delete-file';

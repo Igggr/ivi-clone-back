@@ -34,7 +34,9 @@ import { RolesGuard } from '../guards/roles.guard';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
 export class AuthController {
@@ -109,6 +111,8 @@ export class AuthController {
   }
 
   @Get('/users')
+  @UseGuards(RolesGuard)
+  @Roles(ADMIN)
   async getUsers() {
     return await firstValueFrom(
       this.client.send(

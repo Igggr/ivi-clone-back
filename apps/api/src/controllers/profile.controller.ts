@@ -29,7 +29,9 @@ import { ProfilesGuard } from '../guards/profile-auth.guard';
 import { Roles } from '../guards/roles-auth.decorator';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('profiles')
 @Controller()
 export class ProfilesController {
   constructor(@Inject(PROFILES) private readonly client: ClientProxy) {}

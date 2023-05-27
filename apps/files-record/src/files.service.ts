@@ -68,12 +68,13 @@ export class FilesService {
    * @returns Название файла
    */
   async readFile(fileName): Promise<string> {
-    try {
-      const filePath = path.join(process.cwd(), 'libs', 'static');
-      fs.readFileSync(path.join(filePath, fileName), 'utf-8');
-      return fileName;
-    } catch (error) {
-      return null;
-    }
+    const filePath = path.join(
+      process.cwd(),
+      'apps',
+      'files-record',
+      'src',
+      'static',
+    );
+    return fs.readFileSync(path.join(filePath, fileName), 'utf-8');
   }
 }
