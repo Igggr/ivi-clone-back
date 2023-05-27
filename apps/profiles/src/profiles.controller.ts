@@ -69,7 +69,7 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: GET_PROFILE_BY_USER_ID })
-  getProfileByUserId(@Ctx() context: RmqContext, userId: number) {
+  getProfileByUserId(@Ctx() context: RmqContext, @Payload() userId: number) {
     ack(context);
     return this.profileService.getProfileByUserId(userId);
   }

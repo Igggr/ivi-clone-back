@@ -7,7 +7,7 @@ import {
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { ApiModule } from '../src/api.module';
-import { HttpExceptionFilter, User } from '@app/shared';
+import { CreateGenreDTO, HttpExceptionFilter, User } from '@app/shared';
 import { RolesService } from '../../auth/src/roles/roles.service';
 import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
 import { UsersService } from '../../auth/src/users/users.service';
@@ -34,6 +34,7 @@ describe('Registration', () => {
   let adminToken: Token;
   let adminId: number;
   let simpleUserToken: Token;
+  let simpleUserId: number;
 
   const adminDTO = {
     name: 'first',
@@ -55,6 +56,8 @@ describe('Registration', () => {
     value: 'ALPHA_TESTER',
     description: 'На них проверяют работоспособность новой версии сайта',
   };
+
+  const genreDTO: CreateGenreDTO = { genreName: 'Драмма' };
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -93,7 +96,16 @@ describe('Registration', () => {
       .post('/registration')
       .send(adminDTO)
       .expect(HttpStatus.CREATED)
-      .then((r) => expect(r.body.token).toBeDefined());
+      .then((r) => {
+        expect(r.body.token).toBeDefined();
+        expect(r.body.profileInfo).toMatchObject({
+          name: adminDTO.name,
+          surname: adminDTO.surname,
+          nickname: adminDTO.nickname,
+        });
+        expect(r.body.profileInfo.userId).toBeDefined();
+        adminId = r.body.profileInfo.userId;
+      });
   }, 100000);
 
   it(`/POST /registration: only one user can register with email`, () => {
@@ -112,13 +124,21 @@ describe('Registration', () => {
       .send(simpleUserDTO)
       .expect(HttpStatus.CREATED)
       .then((r) => {
-        simpleUserToken = r.body.token;
         expect(r.body.token).toBeDefined();
+        simpleUserToken = r.body.token;
+
+        expect(r.body.profileInfo).toMatchObject({
+          name: simpleUserDTO.name,
+          surname: simpleUserDTO.surname,
+          nickname: simpleUserDTO.nickname,
+        });
+        expect(r.body.profileInfo.userId).toBeDefined();
+        simpleUserId = r.body.profileInfo.userId;
       });
   }, 100000);
 
   it('/POST /auth/login: Admin can login', async () => {
-    await makeAdmin(adminId, clientService.client);
+    await makeAdmin(adminId ?? 1, clientService.client);
 
     return request(app.getHttpServer())
       .post('/auth/login')
@@ -134,6 +154,8 @@ describe('Registration', () => {
           nickname: adminDTO.nickname,
         });
         expect(r.body.profileInfo.userId).toBeDefined();
+        adminId = r.body.profileInfo.userId;
+
         expect(r.body.token).toBeDefined();
         adminToken = r.body.token;
       });
@@ -148,12 +170,16 @@ describe('Registration', () => {
       })
       .expect(HttpStatus.CREATED) // а почему CREATED - а не OK?
       .then((r) => {
+        // ???
+        console.log('get simpleUserId', r.body.profileInfo.userId)
         expect(r.body.profileInfo).toMatchObject({
           name: simpleUserDTO.name,
           surname: simpleUserDTO.surname,
           nickname: simpleUserDTO.nickname,
         });
         expect(r.body.profileInfo.userId).toBeDefined();
+        simpleUserId = r.body.profileInfo.userId;
+        console.log('set simpleUserId', simpleUserId)
         expect(r.body.token).toBeDefined();
         simpleUserToken = r.body.token;
       });
@@ -203,15 +229,51 @@ describe('Registration', () => {
       );
   }, 100000);
 
-  it('/POST auth/users/role: Admin should be able to assign role to other user', () => {
-    const dto: AddRoleDto = { userId: 2, value: ADMIN.value };
+  it('/POST /auth/users/role: Admin should be able to assign role to other user', () => {
+    const dto: AddRoleDto = { userId: simpleUserId, value: testerRole.value };
     return request(app.getHttpServer())
       .post('/auth/users/role')
       .auth(adminToken.token, { type: 'bearer' })
-      .send(testerRole)
+      .send(dto)
       .expect(HttpStatus.CREATED)
-      .then((r) => expect(r.body).toEqual({ ...testerRole, id: 3 }));
+      .then((r) => {
+        expect(r.body).toMatchObject({
+          email: simpleUserDTO.email,
+          id: dto.userId,
+          roles: [
+            { ...USER, id: 1 },
+            { ...testerRole, id: 3},
+          ]
+        });
+        expect(r.body.password).toBeUndefined();
+      });
   }, 100000);
+
+  it('POST /genre Admin can create new genres', () => {
+    const dto: CreateGenreDTO = { genreName: 'Драмма'}
+    return request(app.getHttpServer())
+      .post('/genre')
+      .auth(adminToken.token, { type: 'bearer' })
+      .send(dto)
+      .expect(HttpStatus.CREATED)
+      .then((r) => expect(r.body).toEqual({ status: 'ok', value: { url: null, genreNameEn: null, ...dto, id: 1 } }));
+  })
+
+  // it('GET /genre Newly created genres a saved in DB', () => {
+  //   return request(app.getHttpServer())
+  //     .get('/genre')
+  //     .auth(adminToken.token, { type: 'bearer' })
+  //     .expect(HttpStatus.OK)
+  //     .then((r) => expect(r.body).toEqual({ ...genreDTO, id: 1 }));
+  // });
+
+  // it('DELETE /genre/1 Admin can delete genres', () => {
+  //   return request(app.getHttpServer())
+  //     .delete('/genre/1')
+  //     .auth(adminToken.token, { type: 'bearer' })
+  //     .expect(HttpStatus.GONE)
+  //     .then((r) => expect(r.body).toEqual({ ...genreDTO, id: 1 }));
+  // });
 
   afterAll(async () => {
     await app.close();
