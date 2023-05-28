@@ -16,7 +16,7 @@ export class Genre {
     example:
       'https://www.kinopoisk.ru/lists/movies/genre--comedy/?b=films&b=top',
   })
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   url: string;
 
   @IsString()

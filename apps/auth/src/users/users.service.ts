@@ -16,6 +16,10 @@ export class UsersService {
     private readonly roleService: RolesService,
   ) {}
 
+  async findUserById(id: number) {
+    return this.userRepository.findOneBy({ id: id });
+  }
+
   // поля Profile не еспользуются - стоило бы их выпилить
   async createUser(userDto: CreateUserProfileDto) {
     try {

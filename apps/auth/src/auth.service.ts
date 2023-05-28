@@ -19,7 +19,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly roleService: RolesService,
-    @Inject(PROFILES) private profileClient: ClientProxy
+    @Inject(PROFILES) private profileClient: ClientProxy,
   ) {}
 
   async login(userDto: LoginDto) {
@@ -108,12 +108,9 @@ export class AuthService {
   async googleRedirect(user: User) {
     const token = await this.generateToken(user);
     const profile = await firstValueFrom(
-      this.profileClient.send(
-        { cmd: GET_PROFILE_BY_USER_ID },
-        user.id,
-      ),
+      this.profileClient.send({ cmd: GET_PROFILE_BY_USER_ID }, user.id),
     );
 
-    return {token, 'profileInfo': profile};
+    return { token, profileInfo: profile };
   }
 }
