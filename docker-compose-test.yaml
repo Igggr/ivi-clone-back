@@ -38,26 +38,6 @@ services:
     networks:
       - rabbit_test
 
-  api_test:
-    build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile
-      target: development
-    command: npm run start:test api
-    depends_on:
-      - rabbit_test
-      - auth_test
-      - profiles_test
-      - file_test
-      - film_test
-      - genre_test
-    ports:
-      - '3001:3000'
-    networks:
-      - rabbit_test
-    volumes:
-      - .:/usr/src/app
-  
   film_test:
     build:
       context: .

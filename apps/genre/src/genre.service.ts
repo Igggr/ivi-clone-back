@@ -19,7 +19,7 @@ export class GenreService {
   }
 
   async create(dto: CreateGenreDTO): Promise<ResponseDTO<Genre>> {
-    const genre = this.findByName(dto.genreName);
+    const genre = await this.findByName(dto.genreName);
     if (genre) {
       return {
         status: 'error',
