@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { AUTH, FIND_GOOGLE_USER } from '@app/rabbit';
+import { AUTH } from '@app/rabbit';
 import { User } from '@app/shared';
 import { FIND_USER_BY_ID } from '@app/shared/events';
-import { Controller, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportSerializer } from '@nestjs/passport';
 import { firstValueFrom } from 'rxjs';
