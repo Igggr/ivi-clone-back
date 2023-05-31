@@ -1,3 +1,4 @@
+import { staticDir } from '@app/shared';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -14,18 +15,15 @@ export class FilesService {
   async createFile(file): Promise<string> {
     try {
       const fileName = uuid.v4() + '.jpg';
-      const filePath = path.join(
-        process.cwd(),
-        'apps',
-        'files-record',
-        'src',
-        'static',
-      );
+      const directory = staticDir();
 
-      if (!fs.existsSync(filePath)) {
-        fs.mkdirSync(filePath, { recursive: true });
+      if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
       }
-      fs.writeFileSync(path.join(filePath, fileName), Buffer.from(file.buffer));
+      fs.writeFileSync(
+        path.join(directory, fileName),
+        Buffer.from(file.buffer),
+      );
 
       return fileName;
     } catch (error) {
@@ -44,36 +42,14 @@ export class FilesService {
    */
   async deleteFile(fileName): Promise<string> {
     try {
-      const filePath = path.join(
-        process.cwd(),
-        'apps',
-        'files-record',
-        'src',
-        'static',
-      );
-      fs.unlinkSync(path.join(filePath, fileName));
+      const filePath = path.join(staticDir(), fileName);
+      fs.unlinkSync(filePath);
       return 'Success';
     } catch (error) {
       throw new HttpException(
         'Произошла ошибка при удалении файла',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
-    }
-  }
-
-  /**
-   * Читает файл
-   *
-   * @param fileName Название файла
-   * @returns Название файла
-   */
-  async readFile(fileName): Promise<string> {
-    try {
-      const filePath = path.join(process.cwd(), 'libs', 'static');
-      fs.readFileSync(path.join(filePath, fileName), 'utf-8');
-      return fileName;
-    } catch (error) {
-      return null;
     }
   }
 }

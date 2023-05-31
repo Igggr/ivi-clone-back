@@ -30,7 +30,7 @@ import { BearerAuth } from '../guards/bearer';
 import { DeleteResult } from 'typeorm';
 
 @ApiTags('genre')
-@Controller('genre')
+@Controller('/genre')
 export class GenreController {
   constructor(@Inject(GENRE) private client: ClientProxy) {}
 
@@ -68,7 +68,7 @@ export class GenreController {
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
-  @Put('')
+  @Put()
   async updateGenre(@Body() dto: UpdateGenreDto): Promise<Genre> {
     return await firstValueFrom(
       this.client.send(

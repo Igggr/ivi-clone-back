@@ -9,6 +9,7 @@ import {
 import { IsEmail, IsInt, IsPositive, IsString, Length } from 'class-validator';
 import { Role } from './role.entity';
 import * as bcrypt from 'bcryptjs';
+import { instanceToPlain } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -43,5 +44,12 @@ export class User {
 
   async setPassword(password, hash = 5) {
     this.password = await bcrypt.hash(password, hash);
+  }
+
+  // пароли не должныутекать в ответе
+  toJSON() {
+    const record = instanceToPlain(this);
+    delete record.password;
+    return record;
   }
 }

@@ -14,6 +14,10 @@ export class UsersService {
     private readonly roleService: RolesService,
   ) {}
 
+  async findUserById(id: number) {
+    return this.userRepository.findOneBy({ id: id });
+  }
+
   // поля Profile не еспользуются - стоило бы их выпилить
   async createUser(userDto: CreateUserDTO) {
     try {
@@ -21,11 +25,11 @@ export class UsersService {
         ...userDto,
       });
       await user.setPassword(userDto.password);
-      let role = await this.roleService.getRoleByValue('User');
+      let role = await this.roleService.getRoleByValue(USER.value);
       if (!role) {
         await this.roleService.createRole(USER);
       }
-      role = await this.roleService.getRoleByValue('User');
+      role = await this.roleService.getRoleByValue(USER.value);
       user.addRole(role);
       await this.userRepository.save(user);
 
@@ -90,6 +94,20 @@ export class UsersService {
       };
     }
   }
+
+  // async ensureGoogleUser(details: CreateGoogleUserDetailsDto) {
+  //   console.log('Auth Service');
+  //   console.log(details);
+  //   const user = await this.userRepository.findOneBy({
+  //     email: details.email,
+  //   });
+  //   if (user) {
+  //     return user;
+  //   }
+  //   console.log('User not found');
+  //   const newGoogleUser = await this.googleUserRepository.create(details);
+  //   return await this.googleUserRepository.save(newGoogleUser);
+  // }
 
   /**
    *  Получает пользователя по емэйлу

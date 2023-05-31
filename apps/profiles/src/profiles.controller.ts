@@ -14,6 +14,7 @@ import {
   REGISTRATION,
   CREATE_PROFILE_WITH_DUMMY_USER,
   ack,
+  GET_PROFILE_BY_USER_ID,
 } from '@app/rabbit';
 
 @Controller()
@@ -65,5 +66,11 @@ export class ProfilesController {
   ) {
     ack(context);
     return this.profileService.createProfileForDummyUser(dto);
+  }
+
+  @MessagePattern({ cmd: GET_PROFILE_BY_USER_ID })
+  getProfileByUserId(@Ctx() context: RmqContext, @Payload() userId: number) {
+    ack(context);
+    return this.profileService.getProfileByUserId(userId);
   }
 }
