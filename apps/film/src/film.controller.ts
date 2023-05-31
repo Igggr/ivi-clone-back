@@ -21,16 +21,20 @@ import {
   UpdateFilmDTO,
 } from '@app/shared';
 import { ack } from '@app/rabbit';
+import { ParserSaverService } from './parser.saver/parser.saver.service';
 
 @Controller()
 export class FilmController {
-  constructor(private readonly filmService: FilmService) {}
+  constructor(
+    private readonly filmService: FilmService,
+    private readonly parserSaverService: ParserSaverService,
+  ) {}
 
   @EventPattern({ cmd: PARSED_DATA })
   async saveParsedData(@Payload() data: ParsedFilmDTO) {
     console.log('Recieve parsed data');
 
-    await this.filmService.createFromParsedData(data);
+    await this.parserSaverService.createFromParsedData(data);
     console.log('Saved to DB');
   }
 

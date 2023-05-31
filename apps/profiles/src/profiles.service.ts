@@ -215,10 +215,12 @@ export class ProfilesService {
     const profileWithTheSameNickName = await this.profileRepository.findOne({
       where: { nickname: Equal(dto.nickname) },
     });
-  
+
     if (profileWithTheSameNickName) {
-      const double = await this.profileRepository.findOneBy({nickname: dto.nickname})
-      console.log("Nickname is used by few users:", dto.url, double.url);
+      const double = await this.profileRepository.findOneBy({
+        nickname: dto.nickname,
+      });
+      console.log('Nickname is used by few users:', dto.url, double.url);
     }
 
     const fakeUserPayload: CreateUserDTO = {

@@ -8,6 +8,7 @@ import {
   IsNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Film } from './film.entity';
 
 @Entity()
 export class FilmViewsCountry {
@@ -26,8 +27,16 @@ export class FilmViewsCountry {
   @Column()
   countryId: number;
 
-  @ApiProperty({ description: 'Дата премьеры' })
+  @ManyToOne(() => Film, (film) => film.views)
+  film: Film;
+
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Foreign key', example: 1 })
   @Column()
+  filmId: number;
+
+  @ApiProperty({ description: 'Дата премьеры' })
   premiere_date: Date;
 
   @IsString()
@@ -47,5 +56,5 @@ export class FilmViewsCountry {
     example: '2 142 550 чел.',
   })
   @Column({ nullable: false })
-  viewersCount?: number;
+  viewersCount?: string;
 }

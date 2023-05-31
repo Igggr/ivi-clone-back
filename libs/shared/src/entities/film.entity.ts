@@ -12,6 +12,7 @@ import { Review } from './review.entity';
 import { FilmGenre } from './film-genre.entity';
 import { IsInt, IsPositive, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { FilmViewsCountry } from './film-views-country';
 
 @Entity()
 export class Film {
@@ -87,4 +88,8 @@ export class Film {
 
   @OneToMany(() => Review, (review) => review.film)
   reviews: Review[];
+
+  // количество просмотров для каждой странф
+  @OneToMany(() => FilmViewsCountry, (views) => views.film)
+  views: FilmViewsCountry[];
 }
