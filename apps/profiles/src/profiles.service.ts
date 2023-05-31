@@ -68,7 +68,7 @@ export class ProfilesService {
       const profile = await this.profileRepository.create({
         ...userProfileDto,
         userId: newUser.id,
-        url: '',
+        url: userProfileDto.url ?? '',
       });
       await this.profileRepository.save(profile);
       if (photo) {
@@ -210,6 +210,15 @@ export class ProfilesService {
     if (profile) {
       // для этого профиля с кинопоиска уже создавали и профиль и юзера
       return profile;
+    }
+
+    const profileWithTheSameNickName = await this.profileRepository.findOne({
+      where: { nickname: Equal(dto.nickname) },
+    });
+  
+    if (profileWithTheSameNickName) {
+      const double = await this.profileRepository.findOneBy({nickname: dto.nickname})
+      console.log("Nickname is used by few users:", dto.url, double.url);
     }
 
     const fakeUserPayload: CreateUserDTO = {
