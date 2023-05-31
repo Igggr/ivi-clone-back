@@ -6,6 +6,7 @@ import { CreateCountryDTO } from '../create-country.dto';
 import { ParsedGenreDTO } from './parsed-genre.dto';
 import { CreateAgeRestrictionDTO } from '../create-age-restriction.dto';
 import { ParsedReviewDTO } from './parsed-review.dto';
+import { ParsedViewDTO } from './parsed-views.dto';
 
 export class ParsedFilmDTO extends PickType(Film, [
   'url',
@@ -21,4 +22,5 @@ export class ParsedFilmDTO extends PickType(Film, [
   persons: Record<RoleType, ParsedActorDTO[]>;
   ageRestriction: CreateAgeRestrictionDTO;
   reviews: ParsedReviewDTO[];
+  views: ParsedViewDTO[];
 }

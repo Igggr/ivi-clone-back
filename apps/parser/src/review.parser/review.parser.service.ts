@@ -17,8 +17,8 @@ import {
 
 @Injectable()
 export class ReviewParserService {
-  async parseReviews(page: Page, film: number) {
-    const reviews = [];
+  async parseReviews(page: Page, film: number): Promise<ParsedReviewDTO[]> {
+    const reviews: ParsedReviewDTO[] = [];
 
     const links = await this.getAllReviewLinks(page, film);
     for (const link of links) {
@@ -41,7 +41,7 @@ export class ReviewParserService {
     return (await Promise.all(links)).map((link) => fullUrl(link));
   }
 
-  async getAllReviewLinks(page: Page, film: number) {
+  async getAllReviewLinks(page: Page, film: number): Promise<string[]> {
     let reviewsUrl = `${DOMEN}/film/${film}/reviews/ord/date/status/all/perpage/10/page/1/`;
     const links = [];
     try {
@@ -117,7 +117,7 @@ export class ReviewParserService {
     return Promise.all(comments);
   }
 
-  private async getCommentDate(handle: ElementHandle<Node>) {
+  private async getCommentDate(handle: ElementHandle<Node>): Promise<string> {
     const date = (await handle.$eval('b.date', (el) => el.textContent)).replace(
       ' пожаловаться',
       '',
@@ -125,7 +125,7 @@ export class ReviewParserService {
     return replaceNbsp(date);
   }
 
-  private async getUserPhoto(handle: ElementHandle<Node>) {
+  private async getUserPhoto(handle: ElementHandle<Node>): Promise<string> {
     try {
       return await handle.$eval('div.toppy>img', (el) =>
         el.getAttribute('src'),
@@ -135,7 +135,7 @@ export class ReviewParserService {
     }
   }
 
-  private async getParentId(handle: ElementHandle<Node>) {
+  private async getParentId(handle: ElementHandle<Node>): Promise<string> {
     try {
       const gotoParent = await handle.$eval(
         'b.arrows>a[onclick*="gotoParent"]',
@@ -150,7 +150,7 @@ export class ReviewParserService {
     }
   }
 
-  private async getCommentId(handle: ElementHandle<Node>) {
+  private async getCommentId(handle: ElementHandle<Node>): Promise<string> {
     const commentId = await handle.$eval('div.toppy', (el) =>
       el.getAttribute('id'),
     );

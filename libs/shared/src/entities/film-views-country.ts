@@ -32,14 +32,20 @@ export class FilmViewsCountry {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ description: 'Где состоялась премьера' })
+  @ApiProperty({
+    description: 'Где состоялась премьера фильма в данной стране',
+    example: 'Кинофестиваль в Лос-Анджелесе',
+  })
   @Column({ nullable: true })
   premiere_place?: string;
 
   @IsNumber()
   @IsPositive()
   @IsOptional()
-  @ApiProperty({ description: 'Число просмотров' })
+  @ApiProperty({
+    description: 'Число просмотров в данной стране',
+    example: '2 142 550 чел.',
+  })
   @Column({ nullable: false })
   viewersCount?: number;
 }
