@@ -22,7 +22,7 @@
     "pretest:e2e": "docker compose -f docker-compose-test.yaml down; docker compose -f docker-compose-test.yaml up -d",
     "test:e2e": "jest --config ./apps/api/test/jest-e2e.json",
     "posttest:e2e": "docker compose -f docker-compose-test.yaml down",
-    "clear": "docker compose down; sudo rm -rf rabbitmq; sudo rm -rf redis_data; sudo rm -rf db_data"
+    "clear": "docker compose down; npm run posttest:e2e; sudo rm -rf rabbitmq; sudo rm -rf redis_data; sudo rm -rf db_data"
   },
   "dependencies": {
     "@fastify/static": "^6.10.1",

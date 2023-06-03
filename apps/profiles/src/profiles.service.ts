@@ -3,6 +3,7 @@ import {
   CREATE_USER,
   DELETE_FILE,
   DELETE_USER,
+  ErrorDTO,
   FILES_RECORD,
   GET_TOKEN,
   GET_USER_BY_EMAIL,
@@ -38,7 +39,8 @@ export class ProfilesService {
     return await this.profileRepository.find();
   }
 
-  async createUserProfile(userProfileDto: CreateUserProfileDto, photo: any) {
+  async createUserProfile(userProfileDto: CreateUserProfileDto, photo: any):
+    Promise<{ token: string, profileInfo: Profile } | ErrorDTO> {
     try {
       let photoName = null;
       const user = await firstValueFrom(
@@ -203,13 +205,13 @@ export class ProfilesService {
     }
   }
 
-  async createProfileForDummyUser(dto: ParsedProfileDTO) {
+  async createProfileForDummyUser(dto: ParsedProfileDTO): Promise<{ token: string, profileInfo: Profile } | ErrorDTO > {
     const profile = await this.profileRepository.findOne({
       where: { url: Equal(dto.url) },
     });
     if (profile) {
       // для этого профиля с кинопоиска уже создавали и профиль и юзера
-      return profile;
+      return { profileInfo: profile, token: 'auto generated bot doesn\'t need token'};
     }
 
     const profileWithTheSameNickName = await this.profileRepository.findOne({

@@ -6,7 +6,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { ParsedProfileDTO } from '@app/shared';
+import { ParsedProfileDTO, Profile } from '@app/shared';
 import {
   DELETE_PROFILE,
   GET_PROFILES,
@@ -15,6 +15,7 @@ import {
   CREATE_PROFILE_WITH_DUMMY_USER,
   ack,
   GET_PROFILE_BY_USER_ID,
+  ErrorDTO,
 } from '@app/rabbit';
 
 @Controller()
@@ -63,7 +64,10 @@ export class ProfilesController {
   createProfileWithDummmyUser(
     @Ctx() context: RmqContext,
     @Payload() dto: ParsedProfileDTO,
-  ) {
+  ): Promise<ErrorDTO | {
+    token: string;
+    profileInfo: Profile;
+  } > {
     ack(context);
     return this.profileService.createProfileForDummyUser(dto);
   }

@@ -21,7 +21,7 @@ export class ReviewService {
     const reviewDTOs = parsedReviews.map((review) => ({
       ...review,
       filmId,
-      profile: profiles.get(review.profile.url),
+      profileId: profiles.get(review.profile.url).id,
     }));
 
     const reviews = this.reviewRepository.create(reviewDTOs);

@@ -19,6 +19,7 @@ import { AgeRestrictionService } from '../age.restriction/age.restriction.servic
 import {
   CREATE_PROFILE_WITH_DUMMY_USER,
   ENSURE_ALL_GENRES_EXISTS,
+  ErrorDTO,
   GENRE,
   PROFILES,
 } from '@app/rabbit';
@@ -106,11 +107,16 @@ export class ParserSaverService {
     if (profiles.has(dto.url)) {
       return profiles.get(dto.url);
     }
-    const profile: Profile = await firstValueFrom(
+    const response: ErrorDTO | {
+      token: string;
+      profileInfo: Profile;
+    } = await firstValueFrom(
       this.profileClient.send({ cmd: CREATE_PROFILE_WITH_DUMMY_USER }, dto),
-    );
-    profiles.set(dto.url, profile);
-    return profile;
+      );
+    if ('profileInfo' in response) {
+      profiles.set(dto.url, response.profileInfo);
+      return response.profileInfo;
+    }
   }
 
   async saveParsedViews(parsedViews: ParsedViewDTO[], film: Film) {
