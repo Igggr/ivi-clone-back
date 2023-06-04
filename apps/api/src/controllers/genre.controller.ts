@@ -36,6 +36,7 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @Post()
   async createGenre(@Body() dto: CreateGenreDTO): Promise<ResponseDTO<Genre>> {
     return await firstValueFrom(
@@ -82,6 +83,7 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @Delete('/:id')
   async deleteGenre(
     @Param('id', ParseIntPipe) id: number,

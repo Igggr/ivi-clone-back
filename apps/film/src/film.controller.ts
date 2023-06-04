@@ -30,12 +30,13 @@ export class FilmController {
     private readonly parserSaverService: ParserSaverService,
   ) {}
 
-  @EventPattern({ cmd: PARSED_DATA })
+  // вобще говоря emit здесь подходит больше, чем send
+  // но тогда непонятно как протестировать, что данные создались
+  @MessagePattern({ cmd: PARSED_DATA })
   async saveParsedData(@Payload() data: ParsedFilmDTO) {
     console.log('Recieve parsed data');
 
-    await this.parserSaverService.createFromParsedData(data);
-    console.log('Saved to DB');
+    return await this.parserSaverService.createFromParsedData(data);
   }
 
   @MessagePattern({ cmd: GET_FILMS })

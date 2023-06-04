@@ -33,7 +33,7 @@ export class TasksService {
 
     if (res.status === 'ok') {
       this.logger.log(`Film ${film} parsed succesefully`);
-      this.client.emit({ cmd: PARSED_DATA }, res.value);
+      this.client.send({ cmd: PARSED_DATA }, res.value);
     } else {
       console.log(`Unable to parse film ${film}`);
       console.log(res.error);

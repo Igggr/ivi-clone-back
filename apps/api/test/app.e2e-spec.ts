@@ -6,25 +6,42 @@ import {
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { ApiModule } from '../src/api.module';
-import { CreateGenreDTO, HttpExceptionFilter, UpdateGenreDto, User } from '@app/shared';
-import { RolesService } from '../../auth/src/roles/roles.service';
-import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
-import { UsersService } from '../../auth/src/users/users.service';
-import { Role } from '@app/shared/entities/role.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientProxy, ClientsModule } from '@nestjs/microservices';
-import { ADD_ROLE, AUTH, CREATE_ROLE, RABBIT_OPTIONS } from '@app/rabbit';
-import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { firstValueFrom } from 'rxjs';
-import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
+import {
+  ADD_ROLE,
+  AUTH,
+  CREATE_ROLE,
+  FILM,
+  PARSED_DATA,
+  RABBIT_OPTIONS,
+} from '@app/rabbit';
+import {
+  CreateGenreDTO,
+  HttpExceptionFilter,
+  UpdateGenreDto,
+  User,
+  CreateRoleDto,
+  Role,
+  AddRoleDto,
+  Film,
+} from '@app/shared';
+import { ApiModule } from '../src/api.module';
+import { RolesService } from '../../auth/src/roles/roles.service';
+import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
+import { UsersService } from '../../auth/src/users/users.service';
+import { parsedFilm } from './data';
 
 type Token = { token: string };
 
 @Injectable()
 class ClientService {
-  constructor(@Inject(AUTH) public readonly client: ClientProxy) {}
+  constructor(
+    @Inject(AUTH) public readonly authClient: ClientProxy,
+    @Inject(FILM) public readonly filmClient: ClientProxy,
+  ) {}
 }
 
 describe('Test API', () => {
@@ -57,7 +74,10 @@ describe('Test API', () => {
     description: 'На них проверяют работоспособность новой версии сайта',
   };
 
-  const comedyDTO: CreateGenreDTO = { genreName: 'Комедия', genreNameEn: 'comedy' };
+  const comedyDTO: CreateGenreDTO = {
+    genreName: 'Комедия',
+    genreNameEn: 'comedy',
+  };
   const dramaDTO: CreateGenreDTO = { genreName: 'Драмма' };
   let comedyId: number;
   let dramaId: number;
@@ -70,6 +90,12 @@ describe('Test API', () => {
           {
             name: AUTH,
             ...RABBIT_OPTIONS(AUTH),
+          },
+        ]),
+        ClientsModule.register([
+          {
+            name: FILM,
+            ...RABBIT_OPTIONS(FILM),
           },
         ]),
       ],
@@ -118,7 +144,9 @@ describe('Test API', () => {
         .send(adminDTO)
         .expect(HttpStatus.BAD_REQUEST)
         .then((r) =>
-          expect(r.body.error).toBe('Пользователь с таким email уже существует'),
+          expect(r.body.error).toBe(
+            'Пользователь с таким email уже существует',
+          ),
         );
     }, 100000);
 
@@ -142,7 +170,7 @@ describe('Test API', () => {
     }, 100000);
 
     it('/POST /auth/login: Admin can login', async () => {
-      await makeAdmin(adminId ?? 1, clientService.client);
+      await makeAdmin(adminId ?? 1, clientService.authClient);
 
       return request(app.getHttpServer())
         .post('/auth/login')
@@ -263,9 +291,9 @@ describe('Test API', () => {
         .then((r) => {
           expect(r.body).toEqual({
             status: 'ok',
-            value: { url: null, ...comedyDTO, id: 1 }
+            value: { url: null, ...comedyDTO, id: 1 },
           });
-          comedyId = r.body.value.id
+          comedyId = r.body.value.id;
         });
     }, 100000);
 
@@ -278,9 +306,9 @@ describe('Test API', () => {
         .then((r) => {
           expect(r.body).toEqual({
             status: 'ok',
-            value: { url: null, ...dramaDTO, genreNameEn: null, id: 2 }
+            value: { url: null, ...dramaDTO, genreNameEn: null, id: 2 },
           });
-          dramaId = r.body.value.id
+          dramaId = r.body.value.id;
         });
     }, 100000);
 
@@ -289,8 +317,8 @@ describe('Test API', () => {
         .get('/genre')
         .auth(adminToken.token, { type: 'bearer' })
         .expect(HttpStatus.OK)
-        .then((r) => expect(r.body).toEqual(
-          [
+        .then((r) =>
+          expect(r.body).toEqual([
             {
               genreName: comedyDTO.genreName,
               genreNameEn: comedyDTO.genreNameEn,
@@ -302,9 +330,9 @@ describe('Test API', () => {
               genreNameEn: null,
               url: null,
               id: 2,
-            }
-          ]
-        ));
+            },
+          ]),
+        );
     });
 
     it('GET /genre/:id Can get genre by id', () => {
@@ -312,34 +340,38 @@ describe('Test API', () => {
         .get(`/genre/${comedyId}`)
         .auth(adminToken.token, { type: 'bearer' })
         .expect(HttpStatus.OK)
-        .then((r) => expect(r.body).toEqual({
-          url: null,
-          ...comedyDTO,
-          id: 1,
-        }));
+        .then((r) =>
+          expect(r.body).toEqual({
+            url: null,
+            ...comedyDTO,
+            id: 1,
+          }),
+        );
     });
 
     it('PUT /genre Admin can update genre', () => {
       const payload: UpdateGenreDto = {
         id: dramaId,
         genreNameEn: 'Drama',
-      }
-      
+      };
+
       return request(app.getHttpServer())
         .put('/genre')
         .auth(adminToken.token, { type: 'bearer' })
         .send(payload)
         .expect(HttpStatus.OK)
-        .then((r) => expect(r.body).toEqual({
-          status: 'ok',
-          value: {
-            url: null,
-            ...dramaDTO,
-            genreNameEn: payload.genreNameEn,
-            id: dramaId,
-          }
-        }));
-    })
+        .then((r) =>
+          expect(r.body).toEqual({
+            status: 'ok',
+            value: {
+              url: null,
+              ...dramaDTO,
+              genreNameEn: payload.genreNameEn,
+              id: dramaId,
+            },
+          }),
+        );
+    });
 
     it('DELETE /genre/:id Admin can delete genre', () => {
       return request(app.getHttpServer())
@@ -355,6 +387,40 @@ describe('Test API', () => {
         .expect(HttpStatus.OK)
         .then((r) => expect(r.body).toEqual({}));
     });
+  });
+
+  describe('film', () => {
+    it(`Film will be created when ${PARSED_DATA} message is send`, async () => {
+      const film: Film = await firstValueFrom(
+        clientService.filmClient.send({ cmd: PARSED_DATA }, parsedFilm),
+      );
+      console.log('should be handled by now');
+      console.log(film);
+
+      return request(app.getHttpServer())
+        .get('/film')
+        .expect(200)
+        .then((r) => {
+          expect(r.body).toEqual(
+            [
+              {
+                id: 1,
+                url: parsedFilm.url,
+                preview: parsedFilm.preview,
+                year: parsedFilm.year,
+                title: parsedFilm.title,
+                originalTitle: parsedFilm.originalTitle,
+                slogan: parsedFilm.slogan,
+                ageRestrictionId: 1,
+                countryId: 1,
+                duration: {
+                  hours: 2,
+                },
+              }
+            ]
+          )
+        });
+    }, 100000);
   });
 
   afterAll(async () => {

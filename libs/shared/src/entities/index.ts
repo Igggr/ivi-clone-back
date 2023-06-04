@@ -11,3 +11,4 @@ export * from './age-restriction';
 export * from './film.entity';
 export * from './user.entity';
 export * from './profile.entity';
+export * from './role.entity';

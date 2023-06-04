@@ -64,10 +64,13 @@ export class ProfilesController {
   createProfileWithDummmyUser(
     @Ctx() context: RmqContext,
     @Payload() dto: ParsedProfileDTO,
-  ): Promise<ErrorDTO | {
-    token: string;
-    profileInfo: Profile;
-  } > {
+  ): Promise<
+    | ErrorDTO
+    | {
+        token: string;
+        profileInfo: Profile;
+      }
+  > {
     ack(context);
     return this.profileService.createProfileForDummyUser(dto);
   }

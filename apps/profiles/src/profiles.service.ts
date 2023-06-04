@@ -39,8 +39,10 @@ export class ProfilesService {
     return await this.profileRepository.find();
   }
 
-  async createUserProfile(userProfileDto: CreateUserProfileDto, photo: any):
-    Promise<{ token: string, profileInfo: Profile } | ErrorDTO> {
+  async createUserProfile(
+    userProfileDto: CreateUserProfileDto,
+    photo: any,
+  ): Promise<{ token: string; profileInfo: Profile } | ErrorDTO> {
     try {
       let photoName = null;
       const user = await firstValueFrom(
@@ -205,13 +207,18 @@ export class ProfilesService {
     }
   }
 
-  async createProfileForDummyUser(dto: ParsedProfileDTO): Promise<{ token: string, profileInfo: Profile } | ErrorDTO > {
+  async createProfileForDummyUser(
+    dto: ParsedProfileDTO,
+  ): Promise<{ token: string; profileInfo: Profile } | ErrorDTO> {
     const profile = await this.profileRepository.findOne({
       where: { url: Equal(dto.url) },
     });
     if (profile) {
       // для этого профиля с кинопоиска уже создавали и профиль и юзера
-      return { profileInfo: profile, token: 'auto generated bot doesn\'t need token'};
+      return {
+        profileInfo: profile,
+        token: "auto generated bot doesn't need token",
+      };
     }
 
     const profileWithTheSameNickName = await this.profileRepository.findOne({

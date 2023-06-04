@@ -12,8 +12,8 @@ describe('CommentService', () => {
         CommentService,
         {
           provide: getRepositoryToken(Comment),
-          useValue: []
-        }
+          useValue: [],
+        },
       ],
     }).compile();
 

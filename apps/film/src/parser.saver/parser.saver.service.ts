@@ -46,6 +46,12 @@ export class ParserSaverService {
   async createFromParsedData(dto: ParsedFilmDTO) {
     console.log('Creating films from parsed data');
 
+    const oldFilm = await this.filmRepository.findOneBy({ url: dto.url });
+    if (oldFilm) {
+      console.log(`Film ${dto.url} already exists, exiting..`);
+      return;
+    }
+
     const country = await this.countryService.ensureCountry(dto.country);
     const genres: Genre[] = await firstValueFrom(
       this.genreClient.send({ cmd: ENSURE_ALL_GENRES_EXISTS }, dto.genres),
@@ -73,14 +79,15 @@ export class ParserSaverService {
     await this.reviewService.saveParsedReviews(dto.reviews, profiles, film.id);
 
     await this.saveParsedViews(dto.views, film);
+    console.log('All parsed data is save into DB');
     return film;
   }
 
   private async addGenresToFilm(film: Film, genres: Genre[]) {
-      const filmGenre = this.filmGenreRepository.create(
-          genres.map((genre) => ({ genreId: genre.id, filmId: film.id })),
-      );
-      await this.filmGenreRepository.save(filmGenre);
+    const filmGenre = this.filmGenreRepository.create(
+      genres.map((genre) => ({ genreId: genre.id, filmId: film.id })),
+    );
+    await this.filmGenreRepository.save(filmGenre);
   }
 
   // создает все профили, которые есть в ревью / комментариях
@@ -107,12 +114,14 @@ export class ParserSaverService {
     if (profiles.has(dto.url)) {
       return profiles.get(dto.url);
     }
-    const response: ErrorDTO | {
-      token: string;
-      profileInfo: Profile;
-    } = await firstValueFrom(
+    const response:
+      | ErrorDTO
+      | {
+          token: string;
+          profileInfo: Profile;
+        } = await firstValueFrom(
       this.profileClient.send({ cmd: CREATE_PROFILE_WITH_DUMMY_USER }, dto),
-      );
+    );
     if ('profileInfo' in response) {
       profiles.set(dto.url, response.profileInfo);
       return response.profileInfo;

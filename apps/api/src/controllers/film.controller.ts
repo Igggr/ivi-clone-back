@@ -23,13 +23,14 @@ import {
   ParseArrayPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
 import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
+import { BearerAuth } from '../guards/bearer';
 
 @ApiTags('film')
 @Controller('/film')
@@ -38,6 +39,7 @@ export class FilmController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @ApiOperation({ summary: 'Создание фильма' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Promise<ResponseDTO<Film>> })
   @Post()
@@ -131,6 +133,7 @@ export class FilmController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @ApiOperation({ summary: 'Обновление информации о фильме' })
   @ApiResponse({
     status: HttpStatus.ACCEPTED,
@@ -149,6 +152,7 @@ export class FilmController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @ApiOperation({ summary: 'Удаление фильма' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: DeleteResult })
   @Delete('/:id')

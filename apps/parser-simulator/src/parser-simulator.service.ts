@@ -14,6 +14,6 @@ export class ParserSimulatorService {
   @Cron('5 * * * * *')
   async handleCron() {
     console.log('sending data...');
-    this.client.emit({ cmd: PARSED_DATA }, data);
+    this.client.send({ cmd: PARSED_DATA }, data);
   }
 }

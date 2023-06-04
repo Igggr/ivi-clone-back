@@ -25,6 +25,7 @@ export class FilmService {
   ) {}
 
   async find(dto: FilmQueryDTO) {
+    console.log('find', dto)
     const genres: Genre[] = await firstValueFrom(
       this.genreClient.send(
         {
@@ -33,13 +34,36 @@ export class FilmService {
         dto.genres,
       ),
     );
+    if (genres.length === 0) {
+      return this.filmRepository.find();
+      const res = await this.filmRepository.createQueryBuilder('films')
+        // .leftJoinAndSelect('films.country', 'country')
+        // .leftJoinAndSelect('films.ageRestriction', 'ageRestriction')
+        // .leftJoinAndSelect('films.filmGenres', 'filmGenres', )
+        .offset(dto.pagination.ofset)
+        .take(dto.pagination.limit)
+        ;
+      
+      console.log(res);
+      
+      return res;
+
+      // console.log('all genres');
+      // const res = await this.filmRepository.find({
+      //   relations: ['country', 'filmGenres'],
+      //   // skip: dto.pagination.ofset,
+      //   // take: dto.pagination.limit,
+      // }); 
+      // console.log('res', res);
+      // return res;
+    }
     return this.filmRepository.find({
       where: {
         filmGenres: {
           genreId: In(genres.map((genre) => genre.id)),
         },
       },
-      relations: ['filmGenres'],
+      relations: ['country', 'filmGenres'],
       skip: dto.pagination.ofset,
       take: dto.pagination.limit,
     });
