@@ -7,7 +7,6 @@ import {
   ParsedReviewDTO,
   Profile,
 } from '@app/shared';
-import { FilmGenre } from '@app/shared/entities/film-genre.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -25,6 +24,7 @@ import {
 } from '@app/rabbit';
 import { firstValueFrom } from 'rxjs';
 import { ParsedViewDTO } from '@app/shared/dto/parser.dto/parsed-views.dto';
+import { FilmService } from '../film.service';
 
 @Injectable()
 export class ParserSaverService {
@@ -32,13 +32,12 @@ export class ParserSaverService {
     private readonly actorService: ActorService,
     private readonly countryService: CountryService,
     private readonly reviewService: ReviewService,
+    private readonly filmService: FilmService,
     private readonly restrictionService: AgeRestrictionService,
     @Inject(GENRE) private readonly genreClient: ClientProxy,
     @Inject(PROFILES) private profileClient: ClientProxy,
     @InjectRepository(Film)
     private readonly filmRepository: Repository<Film>,
-    @InjectRepository(FilmGenre)
-    private readonly filmGenreRepository: Repository<FilmGenre>,
     @InjectRepository(FilmViewsCountry)
     private readonly filmViewsRepository: Repository<FilmViewsCountry>,
   ) {}
@@ -69,7 +68,7 @@ export class ParserSaverService {
     });
 
     await this.filmRepository.save(film);
-    await this.addGenresToFilm(film, genres);
+    await this.filmService.addGenresToFilm(film, genres);
 
     await this.actorService.saveParsedActors(film.id, dto.persons);
 
@@ -78,13 +77,6 @@ export class ParserSaverService {
 
     await this.saveParsedViews(dto.views, film);
     return film;
-  }
-
-  private async addGenresToFilm(film: Film, genres: Genre[]) {
-    const filmGenre = this.filmGenreRepository.create(
-      genres.map((genre) => ({ genreId: genre.id, filmId: film.id })),
-    );
-    await this.filmGenreRepository.save(filmGenre);
   }
 
   // создает все профили, которые есть в ревью / комментариях

@@ -417,12 +417,50 @@ describe('Test API', () => {
         });
     }, 100000);
 
-    it('Admin can create new film', () => {
+    // it('Can create film if his genre doesn\'t exist', () => {
+    //   const filmDto: CreateFilmDTO = {
+    //     title: 'Терминатор',
+    //     originalTitle: 'The Terminator',
+    //     year: 1984,
+    //     countryName: 'США',
+    //     genreNames: ['фантастика', 'боевик', 'триллер'],
+    //     slogan: '«Твоё будущее в его руках»',
+    //     duration: '108 minutes',
+    //   }
+    //   return request(app.getHttpServer())
+    //     .post(`/film`)
+    //     .auth(adminToken.token, { type: 'bearer' })
+    //     .send(filmDto)
+    //     .expect(HttpStatus.BAD_REQUEST)
+    //     .then((r) => {
+    //       expect(r.body).toEqual({
+    //         error: "Some genres doesn't exist",
+    //         status: "error",
+    //       })
+    //     })
+    // });
+
+    it('Admin can create new film', async () => {
+      // создадим недостающие жанры
+      const fantasy: CreateGenreDTO = { genreName: 'фантастика', genreNameEn: 'fantasy' };
+      const thriller: CreateGenreDTO = { genreName: 'триллер', genreNameEn: 'thriller' };
+
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(fantasy);
+      
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(thriller);
+
       const filmDto: CreateFilmDTO = {
         title: 'Терминатор',
         originalTitle: 'The Terminator',
         year: 1984,
         countryName: 'США',
+        genreNames: ['фантастика', 'боевик', 'триллер'],
         slogan: '«Твоё будущее в его руках»',
         duration: '108 minutes',
       }

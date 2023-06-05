@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ClientProxy } from '@nestjs/microservices';
 import { DeleteResult, In, Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
-import { GENRE, ResponseDTO, GET_GENRES_BY_NAMES, GET_GENRES } from '@app/rabbit';
+import { GENRE, ResponseDTO, GET_GENRES_BY_NAMES, GET_GENRES, ENSURE_ALL_GENRES_EXISTS } from '@app/rabbit';
 import {
   Film,
   FilmQueryDTO,
   Genre,
   CreateFilmDTO,
   UpdateFilmDTO,
-  FilmGenre,
   CountryWithThisNameNotFound,
+  FilmGenre,
 } from '@app/shared';
 import { CountryService } from './country/country.service';
 
@@ -20,6 +20,8 @@ export class FilmService {
   constructor(
     @InjectRepository(Film)
     private readonly filmRepository: Repository<Film>,
+    @InjectRepository(FilmGenre)
+    private readonly filmGenreRepository: Repository<FilmGenre>,
     private readonly countryService: CountryService,
     @Inject(GENRE) private readonly genreClient: ClientProxy,
   ) {}
@@ -82,6 +84,13 @@ export class FilmService {
     return genres;
   }
 
+  async findGenresByNames(genreNames: string[]): Promise<Genre[]> {
+    const genres: Genre[] = await firstValueFrom(
+      this.genreClient.send({ cmd: GET_GENRES_BY_NAMES }, genreNames),
+    );
+    return genres;
+  }
+
   async delete(id: number): Promise<DeleteResult> {
     return await this.filmRepository.delete(id);
   }
@@ -100,6 +109,18 @@ export class FilmService {
       }
     }
 
+    if (dto.genreNames) {
+      const genres = await this.findGenresByNames(dto.genreNames);
+      if (genres.length < dto.genreNames.length) {
+        return {
+          status: 'error',
+          error: "Some genres doesn't exist"
+        };
+      }
+      await this.filmRepository.save(film);
+      await this.addGenresToFilm(film, genres);
+    }
+
     await this.filmRepository.save(film);
     console.log(film);
     return {
@@ -110,35 +131,40 @@ export class FilmService {
 
   async update(dto: UpdateFilmDTO): Promise<ResponseDTO<Film>> {
     const film = await this.filmRepository.findOneBy({ id: dto.id });
-    if (film) {
-      if (dto.countryName) {
-        const country = await this.countryService.findByName(dto.countryName);
-        if (country) {
-          film.country = country;
-        } else {
-          return {
-            status: 'error',
-            error: CountryWithThisNameNotFound,
-          };
-        }
-      }
-
-      film.title = dto.title ?? film.title;
-      film.originalTitle = dto.originalTitle ?? film.title;
-      film.slogan = dto.slogan ?? film.slogan;
-      film.year = dto.year ?? film.year;
-      film.duration = dto.duration ?? film.duration;
-
-      await this.filmRepository.save(film);
-      return {
-        status: 'ok',
-        value: film,
-      };
-    } else {
+    if (!film) {
       return {
         status: 'error',
         error: "Film with such id doesn't exist",
       };
     }
+    if (dto.countryName) {
+      const country = await this.countryService.findByName(dto.countryName);
+      if (country) {
+        film.country = country;
+      } else {
+        return {
+          status: 'error',
+          error: CountryWithThisNameNotFound,
+        };
+      }
+    }
+
+    film.title = dto.title ?? film.title;
+    film.originalTitle = dto.originalTitle ?? film.title;
+    film.slogan = dto.slogan ?? film.slogan;
+    film.year = dto.year ?? film.year;
+    film.duration = dto.duration ?? film.duration;
+
+    await this.filmRepository.save(film);
+    return {
+      status: 'ok',
+      value: film,
+    };
+  }
+
+  async addGenresToFilm(film: Film, genres: Genre[]): Promise<void> {
+    const dtos = genres.map((genre) => ({ genreId: genre.id, filmId: film.id }));
+    const filmGenres = this.filmGenreRepository.create(dtos);
+    await this.filmGenreRepository.save(filmGenres);
   }
 }

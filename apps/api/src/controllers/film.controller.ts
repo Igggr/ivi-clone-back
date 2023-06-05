@@ -52,7 +52,6 @@ export class FilmController {
         dto,
       ),
     );
-    console.log(film);
     return film;
   }
 

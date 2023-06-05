@@ -10,4 +10,10 @@ export class CreateFilmDTO extends PickType(Film, [
 ]) {
   @ApiProperty({ description: 'Назвaние страны', example: 'USA' })
   countryName: string;
+
+  @ApiProperty({
+    description: 'Назвaние жанров',
+    example: ['фантастика', 'боевик', 'триллер'],
+  })
+  genreNames?: string[]
 }
