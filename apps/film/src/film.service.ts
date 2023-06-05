@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ClientProxy } from '@nestjs/microservices';
 import { DeleteResult, In, Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
-import { GENRE, ResponseDTO, GET_GENRES_BY_NAMES } from '@app/rabbit';
+import { GENRE, ResponseDTO, GET_GENRES_BY_NAMES, GET_GENRES } from '@app/rabbit';
 import {
   Film,
   FilmQueryDTO,
@@ -67,6 +67,19 @@ export class FilmService {
       skip: dto.pagination.ofset,
       take: dto.pagination.limit,
     });
+  }
+
+  async findOneById(id: number): Promise<Film> {
+    const film = await this.filmRepository
+      .createQueryBuilder('film')
+      .where('film.id = :id', { id })
+      .getOne();
+    return film;
+  }
+
+  async getAllGenres(): Promise<Genre[]> {
+    const genres: Genre[] = await firstValueFrom(this.genreClient.send({ cmd: GET_GENRES }, {}));
+    return genres;
   }
 
   async delete(id: number): Promise<DeleteResult> {

@@ -398,27 +398,23 @@ describe('Test API', () => {
       console.log(film);
 
       return request(app.getHttpServer())
-        .get('/film')
+        .get('/film/1')
         .expect(200)
         .then((r) => {
-          expect(r.body).toEqual(
-            [
-              {
-                id: 1,
-                url: parsedFilm.url,
-                preview: parsedFilm.preview,
-                year: parsedFilm.year,
-                title: parsedFilm.title,
-                originalTitle: parsedFilm.originalTitle,
-                slogan: parsedFilm.slogan,
-                ageRestrictionId: 1,
-                countryId: 1,
-                duration: {
-                  hours: 2,
-                },
-              }
-            ]
-          )
+          expect(r.body).toEqual({
+            id: 1,
+            url: parsedFilm.url,
+            preview: parsedFilm.preview,
+            year: parsedFilm.year,
+            title: parsedFilm.title,
+            originalTitle: parsedFilm.originalTitle,
+            slogan: parsedFilm.slogan,
+            ageRestrictionId: 1,
+            countryId: 1,
+            duration: {
+              hours: 2,
+            },
+          });
         });
     }, 100000);
   });

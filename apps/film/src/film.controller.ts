@@ -11,6 +11,7 @@ import {
   CREATE_FILM,
   DELETE_FILM,
   GET_FILMS,
+  GET_ONE_FILM,
   PARSED_DATA,
   UPDATE_FILM,
 } from '@app/rabbit/events';
@@ -45,6 +46,12 @@ export class FilmController {
     return (await this.filmService.find(dto)) ?? [];
   }
 
+  @MessagePattern({ cmd: GET_ONE_FILM })
+  async getOneFilm(@Payload() id: number, @Ctx() context: RmqContext) {
+    ack(context);
+    return this.filmService.findOneById(id);
+  }
+ 
   @MessagePattern({ cmd: DELETE_FILM })
   deleteFilm(@Payload() id: number, @Ctx() context: RmqContext) {
     ack(context);
