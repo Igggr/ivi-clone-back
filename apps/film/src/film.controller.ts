@@ -35,8 +35,6 @@ export class FilmController {
   // но тогда непонятно как протестировать, что данные создались
   @MessagePattern({ cmd: PARSED_DATA })
   async saveParsedData(@Payload() data: ParsedFilmDTO) {
-    console.log('Recieve parsed data');
-
     return await this.parserSaverService.createFromParsedData(data);
   }
 

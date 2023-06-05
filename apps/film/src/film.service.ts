@@ -11,6 +11,7 @@ import {
   CreateFilmDTO,
   UpdateFilmDTO,
   FilmGenre,
+  CountryWithThisNameNotFound,
 } from '@app/shared';
 import { CountryService } from './country/country.service';
 
@@ -19,7 +20,6 @@ export class FilmService {
   constructor(
     @InjectRepository(Film)
     private readonly filmRepository: Repository<Film>,
-    @InjectRepository(FilmGenre)
     private readonly countryService: CountryService,
     @Inject(GENRE) private readonly genreClient: ClientProxy,
   ) {}
@@ -95,12 +95,13 @@ export class FilmService {
       } else {
         return {
           status: 'error',
-          error: 'Страны с таким countryName не существует',
+          error: CountryWithThisNameNotFound,
         };
       }
     }
 
     await this.filmRepository.save(film);
+    console.log(film);
     return {
       status: 'ok',
       value: film,
@@ -117,7 +118,7 @@ export class FilmService {
         } else {
           return {
             status: 'error',
-            error: 'Страны с таким countryName не существует',
+            error: CountryWithThisNameNotFound,
           };
         }
       }

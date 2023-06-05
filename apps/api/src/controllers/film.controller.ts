@@ -44,7 +44,7 @@ export class FilmController {
   @ApiResponse({ status: HttpStatus.CREATED, type: Promise<ResponseDTO<Film>> })
   @Post()
   async createFilm(@Body() dto): Promise<ResponseDTO<Film>> {
-    return await firstValueFrom(
+    const film = await firstValueFrom(
       this.client.send(
         {
           cmd: CREATE_FILM,
@@ -52,6 +52,8 @@ export class FilmController {
         dto,
       ),
     );
+    console.log(film);
+    return film;
   }
 
   @ApiOperation({ summary: 'Получение информации о всей кинопродукции' })

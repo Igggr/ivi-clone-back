@@ -1,0 +1,1 @@
+export const CountryWithThisNameNotFound = 'Страны с таким countryName не существует';

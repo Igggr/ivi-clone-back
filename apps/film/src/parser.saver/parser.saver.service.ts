@@ -44,8 +44,6 @@ export class ParserSaverService {
   ) {}
 
   async createFromParsedData(dto: ParsedFilmDTO) {
-    console.log('Creating films from parsed data');
-
     const oldFilm = await this.filmRepository.findOneBy({ url: dto.url });
     if (oldFilm) {
       console.log(`Film ${dto.url} already exists, exiting..`);
@@ -79,7 +77,6 @@ export class ParserSaverService {
     await this.reviewService.saveParsedReviews(dto.reviews, profiles, film.id);
 
     await this.saveParsedViews(dto.views, film);
-    console.log('All parsed data is save into DB');
     return film;
   }
 

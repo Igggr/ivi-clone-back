@@ -27,6 +27,7 @@ import {
   Role,
   AddRoleDto,
   Film,
+  CreateFilmDTO,
 } from '@app/shared';
 import { ApiModule } from '../src/api.module';
 import { RolesService } from '../../auth/src/roles/roles.service';
@@ -394,15 +395,13 @@ describe('Test API', () => {
       const film: Film = await firstValueFrom(
         clientService.filmClient.send({ cmd: PARSED_DATA }, parsedFilm),
       );
-      console.log('should be handled by now');
-      console.log(film);
 
       return request(app.getHttpServer())
-        .get('/film/1')
+        .get(`/film/${film.id}`)
         .expect(200)
         .then((r) => {
           expect(r.body).toEqual({
-            id: 1,
+            id: film.id,
             url: parsedFilm.url,
             preview: parsedFilm.preview,
             year: parsedFilm.year,
@@ -417,6 +416,41 @@ describe('Test API', () => {
           });
         });
     }, 100000);
+
+    it('Admin can create new film', () => {
+      const filmDto: CreateFilmDTO = {
+        title: 'Терминатор',
+        originalTitle: 'The Terminator',
+        year: 1984,
+        countryName: 'США',
+        slogan: '«Твоё будущее в его руках»',
+        duration: '108 minutes',
+      }
+      return request(app.getHttpServer())
+        .post(`/film`)
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(filmDto)
+        .expect(HttpStatus.CREATED)
+        .then((r) => {
+          expect(r.body).toEqual({
+            status: 'ok',
+            value: {
+              year: 1984,
+              title: 'Терминатор',
+              originalTitle: 'The Terminator',
+              slogan: '«Твоё будущее в его руках»',
+              duration: '108 minutes',
+              country: { id: 13, countryName: 'США', url: '/lists/m_act[country]/1/' },
+              countryId: 13,
+              url: null,
+              preview: null,
+              ageRestrictionId: null,
+              id: 2,
+            }
+          })
+        })
+    })
+
   });
 
   afterAll(async () => {

@@ -27,8 +27,8 @@ export class Film {
     description: 'Ссылка фильм на кинопоиске',
     example: 'https://www.kinopoisk.ru/film/301/',
   })
-  @Column()
-  url: string;
+  @Column({nullable: true})
+  url?: string;
 
   @IsString()
   @ApiProperty({ description: 'Ссылка на preview' })
@@ -78,13 +78,13 @@ export class Film {
   duration: string; // кривоватое хранение для интервала
 
   @ManyToOne(() => AgeRestriction, (restriction) => restriction.films)
-  ageRestriction: AgeRestriction;
+  ageRestriction?: AgeRestriction;
 
   @IsInt()
   @IsPositive()
   @ApiProperty({ description: 'Foreign Key', example: 1 })
-  @Column()
-  ageRestrictionId: number;
+  @Column({nullable: true})
+  ageRestrictionId?: number;
 
   @OneToMany(() => Review, (review) => review.film)
   reviews: Review[];
