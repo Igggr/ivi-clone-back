@@ -28,6 +28,7 @@ import {
   AddRoleDto,
   Film,
   CreateFilmDTO,
+  SomeGenresNotFound,
 } from '@app/shared';
 import { ApiModule } from '../src/api.module';
 import { RolesService } from '../../auth/src/roles/roles.service';
@@ -417,39 +418,44 @@ describe('Test API', () => {
         });
     }, 100000);
 
-    // it('Can create film if his genre doesn\'t exist', () => {
-    //   const filmDto: CreateFilmDTO = {
-    //     title: 'Терминатор',
-    //     originalTitle: 'The Terminator',
-    //     year: 1984,
-    //     countryName: 'США',
-    //     genreNames: ['фантастика', 'боевик', 'триллер'],
-    //     slogan: '«Твоё будущее в его руках»',
-    //     duration: '108 minutes',
-    //   }
-    //   return request(app.getHttpServer())
-    //     .post(`/film`)
-    //     .auth(adminToken.token, { type: 'bearer' })
-    //     .send(filmDto)
-    //     .expect(HttpStatus.BAD_REQUEST)
-    //     .then((r) => {
-    //       expect(r.body).toEqual({
-    //         error: "Some genres doesn't exist",
-    //         status: "error",
-    //       })
-    //     })
-    // });
+    it("Can't create film if his genre doesn't exist", () => {
+      const filmDto: CreateFilmDTO = {
+        title: 'Терминатор',
+        originalTitle: 'The Terminator',
+        year: 1984,
+        countryName: 'США',
+        genreNames: ['фантастика', 'боевик', 'триллер'],
+        slogan: '«Твоё будущее в его руках»',
+        duration: '108 minutes',
+      };
+      return request(app.getHttpServer())
+        .post(`/film`)
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(filmDto)
+        .then((r) => {
+          expect(r.body).toEqual({
+            error: SomeGenresNotFound,
+            status: 'error',
+          });
+        });
+    });
 
     it('Admin can create new film', async () => {
       // создадим недостающие жанры
-      const fantasy: CreateGenreDTO = { genreName: 'фантастика', genreNameEn: 'fantasy' };
-      const thriller: CreateGenreDTO = { genreName: 'триллер', genreNameEn: 'thriller' };
+      const fantasy: CreateGenreDTO = {
+        genreName: 'фантастика',
+        genreNameEn: 'fiction',
+      };
+      const thriller: CreateGenreDTO = {
+        genreName: 'триллер',
+        genreNameEn: 'thriller',
+      };
 
       await request(app.getHttpServer())
         .post('/genre')
         .auth(adminToken.token, { type: 'bearer' })
         .send(fantasy);
-      
+
       await request(app.getHttpServer())
         .post('/genre')
         .auth(adminToken.token, { type: 'bearer' })
@@ -463,7 +469,7 @@ describe('Test API', () => {
         genreNames: ['фантастика', 'боевик', 'триллер'],
         slogan: '«Твоё будущее в его руках»',
         duration: '108 minutes',
-      }
+      };
       return request(app.getHttpServer())
         .post(`/film`)
         .auth(adminToken.token, { type: 'bearer' })
@@ -478,17 +484,59 @@ describe('Test API', () => {
               originalTitle: 'The Terminator',
               slogan: '«Твоё будущее в его руках»',
               duration: '108 minutes',
-              country: { id: 13, countryName: 'США', url: '/lists/m_act[country]/1/' },
+              country: {
+                id: 13,
+                countryName: 'США',
+                url: '/lists/m_act[country]/1/',
+              },
               countryId: 13,
               url: null,
               preview: null,
               ageRestrictionId: null,
               id: 2,
-            }
-          })
-        })
-    })
+            },
+          });
+        });
+    });
 
+    it('Can get films without limiting then by genre', () => {
+      return request(app.getHttpServer())
+        .get('/film')
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body.length).toBe(2);
+          expect(r.body[0]).toMatchObject({
+            title: parsedFilm.title,
+          });
+          expect(r.body[1]).toMatchObject({
+            title: 'Терминатор',
+          });
+        });
+    });
+
+    it('Can filter films by genre', () => {
+      return request(app.getHttpServer())
+        .get('/film?genres=fiction,action')
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body.length).toBe(1);
+          expect(r.body[0]).toMatchObject({
+            title: 'Терминатор',
+          });
+        });
+    });
+
+    it('Can limit returned film number', () => {
+      return request(app.getHttpServer())
+        .get('/film?limit=1&ofset=0')
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body.length).toBe(1);
+          expect(r.body[0]).toMatchObject({
+            title: parsedFilm.title,
+          });
+        });
+    });
   });
 
   afterAll(async () => {

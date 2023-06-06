@@ -12,6 +12,7 @@ import {
   ENSURE_ALL_GENRES_EXISTS,
   GET_GENRES,
   GET_GENRES_BY_NAMES,
+  GET_GENRES_BY_NAMES_EN,
   GET_GENRE_BY_ID,
   ResponseDTO,
   UPDATE_GENRE,
@@ -54,9 +55,18 @@ export class GenreController {
   }
 
   @MessagePattern({ cmd: GET_GENRES_BY_NAMES })
-  getGenresByName(@Payload() genreNames: any, @Ctx() context: RmqContext) {
+  getGenresByName(@Payload() genreNames: string[], @Ctx() context: RmqContext) {
     ack(context);
     return this.genreService.getGenresByNames(genreNames);
+  }
+
+  @MessagePattern({ cmd: GET_GENRES_BY_NAMES_EN })
+  getGenresByNameEN(
+    @Payload() genreNames: string[],
+    @Ctx() context: RmqContext,
+  ) {
+    ack(context);
+    return this.genreService.getGenresByNamesEn(genreNames);
   }
 
   @MessagePattern({ cmd: GET_GENRE_BY_ID })

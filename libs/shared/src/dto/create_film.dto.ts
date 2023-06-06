@@ -15,5 +15,5 @@ export class CreateFilmDTO extends PickType(Film, [
     description: 'Назвaние жанров',
     example: ['фантастика', 'боевик', 'триллер'],
   })
-  genreNames?: string[]
+  genreNames?: string[];
 }

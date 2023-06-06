@@ -25,12 +25,12 @@ import {
   LOGIN,
   UPDATE_USER,
   VERIFY_TOKEN,
+  FIND_USER_BY_ID,
   ack,
 } from '@app/rabbit';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { RolesService } from './roles/roles.service';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
-import { FIND_USER_BY_ID } from '@app/shared/events';
 
 @Controller()
 export class AuthController {

@@ -2,7 +2,6 @@ import { Controller } from '@nestjs/common';
 import { FilmService } from './film.service';
 import {
   Ctx,
-  EventPattern,
   MessagePattern,
   Payload,
   RmqContext,
@@ -49,7 +48,7 @@ export class FilmController {
     ack(context);
     return this.filmService.findOneById(id);
   }
- 
+
   @MessagePattern({ cmd: DELETE_FILM })
   deleteFilm(@Payload() id: number, @Ctx() context: RmqContext) {
     ack(context);

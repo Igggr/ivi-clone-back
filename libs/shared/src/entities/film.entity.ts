@@ -27,7 +27,7 @@ export class Film {
     description: 'Ссылка фильм на кинопоиске',
     example: 'https://www.kinopoisk.ru/film/301/',
   })
-  @Column({nullable: true})
+  @Column({ nullable: true })
   url?: string;
 
   @IsString()
@@ -83,7 +83,7 @@ export class Film {
   @IsInt()
   @IsPositive()
   @ApiProperty({ description: 'Foreign Key', example: 1 })
-  @Column({nullable: true})
+  @Column({ nullable: true })
   ageRestrictionId?: number;
 
   @OneToMany(() => Review, (review) => review.film)

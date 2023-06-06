@@ -1,9 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientProxy } from '@nestjs/microservices';
-import { DeleteResult, In, Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
-import { GENRE, ResponseDTO, GET_GENRES_BY_NAMES, GET_GENRES, ENSURE_ALL_GENRES_EXISTS } from '@app/rabbit';
+import {
+  GENRE,
+  ResponseDTO,
+  GET_GENRES_BY_NAMES,
+  GET_GENRES,
+  GET_GENRES_BY_NAMES_EN,
+} from '@app/rabbit';
 import {
   Film,
   FilmQueryDTO,
@@ -12,6 +18,7 @@ import {
   UpdateFilmDTO,
   CountryWithThisNameNotFound,
   FilmGenre,
+  SomeGenresNotFound,
 } from '@app/shared';
 import { CountryService } from './country/country.service';
 
@@ -27,48 +34,48 @@ export class FilmService {
   ) {}
 
   async find(dto: FilmQueryDTO) {
-    console.log('find', dto)
-    const genres: Genre[] = await firstValueFrom(
-      this.genreClient.send(
-        {
-          cmd: GET_GENRES_BY_NAMES,
-        },
-        dto.genres,
-      ),
-    );
-    if (genres.length === 0) {
-      return this.filmRepository.find();
-      const res = await this.filmRepository.createQueryBuilder('films')
-        // .leftJoinAndSelect('films.country', 'country')
-        // .leftJoinAndSelect('films.ageRestriction', 'ageRestriction')
-        // .leftJoinAndSelect('films.filmGenres', 'filmGenres', )
+    if (dto.genres.length === 0) {
+      const res = await this.filmRepository
+        .createQueryBuilder('films')
         .offset(dto.pagination.ofset)
         .take(dto.pagination.limit)
-        ;
-      
-      console.log(res);
-      
+        .getMany();
       return res;
-
-      // console.log('all genres');
-      // const res = await this.filmRepository.find({
-      //   relations: ['country', 'filmGenres'],
-      //   // skip: dto.pagination.ofset,
-      //   // take: dto.pagination.limit,
-      // }); 
-      // console.log('res', res);
-      // return res;
     }
-    return this.filmRepository.find({
-      where: {
-        filmGenres: {
-          genreId: In(genres.map((genre) => genre.id)),
-        },
-      },
-      relations: ['country', 'filmGenres'],
-      skip: dto.pagination.ofset,
-      take: dto.pagination.limit,
-    });
+
+    // console.log(dto)
+    const genres = await this.findGenresByNamesEn(dto.genres);
+    // console.log('Get only films with all this genres:', dto, genres)
+    if (dto.genres.length !== genres.length) {
+      return {
+        status: 'error',
+        error: SomeGenresNotFound,
+      };
+    }
+    const genreIds = genres.map((g) => g.id);
+
+    // чтобы получить фильмы у кторых есть все указанные жанры
+    // сначала отфильтруй filmGenre, по жанрам
+    // а потом сгруппируй по фильму и оставь только те фильмыэ
+    // у которым соотвествует то же количество жанров
+    const rightfilms = await this.filmRepository
+      .createQueryBuilder('films')
+      .leftJoinAndSelect('films.filmGenres', 'fg')
+      .where('fg.genreId IN(:...genreIds)', { genreIds })
+      .groupBy('films.id')
+      .having('COUNT(fg.genreId) = 2')
+      .select('films.id', 'id')
+      .addSelect('films.title')
+      .getRawMany();
+
+    const res = await this.filmRepository
+      .createQueryBuilder('films')
+      .where('films.id IN(:...ids)', { ids: rightfilms.map((film) => film.id) })
+      .offset(dto.pagination.ofset)
+      .take(dto.pagination.limit)
+      .getMany();
+
+    return res;
   }
 
   async findOneById(id: number): Promise<Film> {
@@ -80,13 +87,22 @@ export class FilmService {
   }
 
   async getAllGenres(): Promise<Genre[]> {
-    const genres: Genre[] = await firstValueFrom(this.genreClient.send({ cmd: GET_GENRES }, {}));
+    const genres: Genre[] = await firstValueFrom(
+      this.genreClient.send({ cmd: GET_GENRES }, {}),
+    );
     return genres;
   }
 
   async findGenresByNames(genreNames: string[]): Promise<Genre[]> {
     const genres: Genre[] = await firstValueFrom(
       this.genreClient.send({ cmd: GET_GENRES_BY_NAMES }, genreNames),
+    );
+    return genres;
+  }
+
+  async findGenresByNamesEn(genreNames: string[]): Promise<Genre[]> {
+    const genres: Genre[] = await firstValueFrom(
+      this.genreClient.send({ cmd: GET_GENRES_BY_NAMES_EN }, genreNames),
     );
     return genres;
   }
@@ -114,7 +130,7 @@ export class FilmService {
       if (genres.length < dto.genreNames.length) {
         return {
           status: 'error',
-          error: "Some genres doesn't exist"
+          error: SomeGenresNotFound,
         };
       }
       await this.filmRepository.save(film);
@@ -122,7 +138,6 @@ export class FilmService {
     }
 
     await this.filmRepository.save(film);
-    console.log(film);
     return {
       status: 'ok',
       value: film,
@@ -163,7 +178,10 @@ export class FilmService {
   }
 
   async addGenresToFilm(film: Film, genres: Genre[]): Promise<void> {
-    const dtos = genres.map((genre) => ({ genreId: genre.id, filmId: film.id }));
+    const dtos = genres.map((genre) => ({
+      genreId: genre.id,
+      filmId: film.id,
+    }));
     const filmGenres = this.filmGenreRepository.create(dtos);
     await this.filmGenreRepository.save(filmGenres);
   }

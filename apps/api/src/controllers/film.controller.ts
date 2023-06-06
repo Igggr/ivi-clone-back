@@ -23,7 +23,12 @@ import {
   ParseArrayPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
@@ -61,8 +66,8 @@ export class FilmController {
   async getAll(
     @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
     genres: string[] = [],
-    @Query('limit') limit = 0,
-    @Query('ofset') ofset = 10,
+    @Query('limit') limit = 10,
+    @Query('ofset') ofset = 0,
   ) {
     const res = await firstValueFrom(
       this.client.send(

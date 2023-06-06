@@ -139,8 +139,7 @@ export class ActorParserService {
 
       return Promise.all(dublers);
     } catch (e) {
-      console.log('Не удалось спасить дублепа');
-      console.log(e);
+      console.log('Не удалось спасить дублера', e);
       return;
     }
   }

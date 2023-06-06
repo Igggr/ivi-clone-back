@@ -76,6 +76,14 @@ export class GenreService {
     });
   }
 
+  async getGenresByNamesEn(genreNamesEn: string[]): Promise<Genre[]> {
+    return this.genreRepository.find({
+      where: {
+        genreNameEn: In(genreNamesEn),
+      },
+    });
+  }
+
   async updateGenre(dto: UpdateGenreDto): Promise<ResponseDTO<Genre>> {
     const genre = await this.getById(dto.id);
     if (genre) {
