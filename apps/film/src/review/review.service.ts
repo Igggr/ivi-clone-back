@@ -1,4 +1,4 @@
-import { ParsedReviewDTO } from '@app/shared';
+import { CreateReviewDTO, ParsedReviewDTO } from '@app/shared';
 import { Review, Profile } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,5 +44,10 @@ export class ReviewService {
       profiles,
     );
     return reviews;
+  }
+
+  async addReview(dto: CreateReviewDTO): Promise<Review> {
+    const review = this.reviewRepository.create(dto);
+    return this.reviewRepository.save(review);
   }
 }

@@ -18,6 +18,7 @@ export * from './parser.dto/roles';
 export * from './create-role.dto';
 export * from './add-role.dto';
 export * from './create-review.dto';
+export * from './submit-review.dto';
 export * from './create-age-restriction.dto';
 export * from './create-country.dto';
 export * from './create_film.dto';

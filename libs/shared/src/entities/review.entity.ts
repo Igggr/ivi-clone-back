@@ -23,8 +23,8 @@ export class Review {
     description: 'Ссылка на ревью на кинопоиске',
     example: 'https://www.kinopoisk.ru/user/15854772/comment/3251114/',
   })
-  @Column()
-  url: string;
+  @Column({nullable: true})
+  url?: string;
 
   @IsString()
   @ApiProperty({
@@ -43,7 +43,7 @@ export class Review {
   text: string;
 
   @Column({ nullable: true })
-  isPositive: boolean; // вот из-за этого (и title) приходится выносить review и comment в разные таблицы
+  isPositive?: boolean; // вот из-за этого (и title) приходится выносить review и comment в разные таблицы
 
   @OneToMany(() => Comment, (comment) => comment.review)
   comments: Comment[];

@@ -5,8 +5,10 @@ import {
   DELETE_FILM,
   GET_FILMS,
   UPDATE_FILM,
+  GET_PROFILE_BY_USER_ID,
+  ADD_REVIEW,
 } from '@app/rabbit/events';
-import { FILM } from '@app/rabbit/queues';
+import { FILM, PROFILES } from '@app/rabbit/queues';
 import {
   Body,
   Controller,
@@ -21,6 +23,7 @@ import {
   Query,
   UseGuards,
   ParseArrayPipe,
+  Req,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
@@ -34,13 +37,18 @@ import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
-import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
+import { CreateFilmDTO, CreateReviewDTO, Film, PaginationDTO, SubmitReviewDTO, UpdateFilmDTO } from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
+import { IsAuthenticatedGuard } from '../guards/autenticated.guard';
+import { Request } from 'express';
 
 @ApiTags('film')
 @Controller('/film')
 export class FilmController {
-  constructor(@Inject(FILM) private readonly client: ClientProxy) {}
+  constructor(
+    @Inject(FILM) private readonly filmClient: ClientProxy,
+    @Inject(PROFILES) private readonly profileClient: ClientProxy,
+  ) { }
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -50,7 +58,7 @@ export class FilmController {
   @Post()
   async createFilm(@Body() dto): Promise<ResponseDTO<Film>> {
     const film = await firstValueFrom(
-      this.client.send(
+      this.filmClient.send(
         {
           cmd: CREATE_FILM,
         },
@@ -70,7 +78,7 @@ export class FilmController {
     @Query('ofset') ofset = 0,
   ) {
     const res = await firstValueFrom(
-      this.client.send(
+      this.filmClient.send(
         { cmd: GET_FILMS },
         {
           genres: genres,
@@ -119,7 +127,7 @@ export class FilmController {
 
   async dispatch(genre: string, genres: string[], pagination: PaginationDTO) {
     const res = await firstValueFrom(
-      this.client.send(
+      this.filmClient.send(
         { cmd: GET_FILMS },
         {
           genres: genres.concat(genre),
@@ -134,7 +142,7 @@ export class FilmController {
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: Film })
   @Get('/:id')
   async getFilm(@Param('id', ParseIntPipe) id: number) {
-    return await firstValueFrom(this.client.send({ cmd: GET_ONE_FILM }, id));
+    return await firstValueFrom(this.filmClient.send({ cmd: GET_ONE_FILM }, id));
   }
 
   @UseGuards(RolesGuard)
@@ -152,8 +160,21 @@ export class FilmController {
   ): Promise<ResponseDTO<Film>> {
     const payload: UpdateFilmDTO = { ...dto, id };
     return await firstValueFrom(
-      this.client.send({ cmd: UPDATE_FILM }, payload),
+      this.filmClient.send({ cmd: UPDATE_FILM }, payload),
     );
+  }
+
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiBearerAuth(BearerAuth)
+  @Post('/review')
+  async addReview(@Body() dto: SubmitReviewDTO, @Req() request: Request) {
+
+    const profile = await this.getProfileId(request.user);
+    const payload: CreateReviewDTO = { ...dto, profileId: profile.id };
+
+    return await firstValueFrom(this.filmClient.send({
+      cmd: ADD_REVIEW
+    }, payload));
   }
 
   @UseGuards(RolesGuard)
@@ -166,12 +187,18 @@ export class FilmController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<DeleteResult> {
     return await firstValueFrom(
-      this.client.send(
+      this.filmClient.send(
         {
           cmd: DELETE_FILM,
         },
         id,
       ),
+    );
+  }
+
+  private async getProfileId(user) {
+    return await firstValueFrom(
+      this.profileClient.send({ cmd: GET_PROFILE_BY_USER_ID }, user.id),
     );
   }
 }

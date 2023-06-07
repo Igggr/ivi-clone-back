@@ -7,6 +7,7 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import {
+  ADD_REVIEW,
   CREATE_FILM,
   DELETE_FILM,
   GET_FILMS,
@@ -19,15 +20,18 @@ import {
   ParsedFilmDTO,
   CreateFilmDTO,
   UpdateFilmDTO,
+  CreateReviewDTO,
 } from '@app/shared';
 import { ack } from '@app/rabbit';
 import { ParserSaverService } from './parser.saver/parser.saver.service';
+import { ReviewService } from './review/review.service';
 
 @Controller()
 export class FilmController {
   constructor(
     private readonly filmService: FilmService,
     private readonly parserSaverService: ParserSaverService,
+    private readonly reviewService: ReviewService,
   ) {}
 
   // вобще говоря emit здесь подходит больше, чем send
@@ -68,5 +72,11 @@ export class FilmController {
     ack(context);
 
     return this.filmService.update(dto);
+  }
+
+  @MessagePattern({ cmd: ADD_REVIEW })
+  addReview(@Payload() dto: CreateReviewDTO, @Ctx() context: RmqContext) {
+    ack(context);
+    return this.reviewService.addReview(dto);
   }
 }

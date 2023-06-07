@@ -29,6 +29,7 @@ import {
   Film,
   CreateFilmDTO,
   SomeGenresNotFound,
+  SubmitReviewDTO,
 } from '@app/shared';
 import { ApiModule } from '../src/api.module';
 import { RolesService } from '../../auth/src/roles/roles.service';
@@ -537,6 +538,31 @@ describe('Test API', () => {
           });
         });
     });
+
+    it('POST /film/review User can add review for film', () => {
+      const review: SubmitReviewDTO = {
+        title: 'Aaaaa',
+        text: 'Да кто вобще так снимает-то? О чем фильм, непонтнооо :((',
+        filmId: 1,
+        isPositive: false,
+      };
+
+      return request(app.getHttpServer())
+        .post('/film/review')
+        .auth(simpleUserToken.token, { type: 'bearer' })
+        .send(review)
+        .expect(HttpStatus.CREATED)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            filmId: review.filmId,
+            isPositive: review.isPositive ?? null,
+            profileId: simpleUserId, // потому что использовали его jwt-токен
+            title: review.title,
+            text: review.text
+          });
+          expect(r.body.id).toBeDefined();
+      })
+    })
   });
 
   afterAll(async () => {
