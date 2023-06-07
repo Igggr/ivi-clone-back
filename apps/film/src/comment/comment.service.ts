@@ -10,8 +10,8 @@ export class CommentService {
     private readonly commentRepository: Repository<Comment>,
   ) {}
 
-  findCommentById(id: number) {
-    return this.commentRepository.findOne({
+  async findCommentById(id: number) {
+    return await this.commentRepository.findOne({
       where: {
         id: Equal(id),
       },
