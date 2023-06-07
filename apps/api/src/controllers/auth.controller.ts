@@ -33,6 +33,8 @@ import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { BearerAuth } from '../guards/bearer';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 
 @UseInterceptors(LoggingInterceptor)
@@ -58,6 +60,7 @@ export class AuthController {
   }
 
   @Post('/roles')
+  @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   @UsePipes(ValidationPipe)
@@ -77,6 +80,7 @@ export class AuthController {
   }
 
   @Get('/roles')
+  @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   async getRoles() {
@@ -91,6 +95,7 @@ export class AuthController {
   }
 
   @Post('/users/role')
+  @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   async addRole(@Body() roleDto: AddRoleDto) {

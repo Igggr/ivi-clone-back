@@ -12,6 +12,7 @@ import { ActorParserService } from './actor.parser/actor.parser.service';
 import { ReviewParserService } from './review.parser/review.parser.service';
 import { MainPageParserService } from './main-page.parser/main-page.parser.service';
 import { DOMEN } from './constants';
+import { ParsedViewDTO } from '@app/shared/dto/parser.dto/parsed-views.dto';
 
 @Injectable()
 export class ParserService {
@@ -93,7 +94,7 @@ export class ParserService {
     });
   }
 
-  private async getPreview(page: Page, film: number) {
+  private async getPreview(page: Page, film: number): Promise<string> {
     console.log('Патаюсь спаристь preview');
     try {
       const url = await page
@@ -116,7 +117,7 @@ export class ParserService {
     }
   }
 
-  private async parseViews(page: Page, film: number) {
+  private async parseViews(page: Page, film: number): Promise<ParsedViewDTO[]> {
     const datesUrl = `${DOMEN}/film/${film}/dates/`;
 
     console.log(`Паршу views, navigate to ${datesUrl}`);
@@ -129,8 +130,8 @@ export class ParserService {
         handles.map(async (handle) => ({
           date: await handle.$eval('td>span>b', (node) => node.textContent),
           country: {
-            country: await handle.$eval('td>a', (node) => node.textContent),
-            countryLink: await handle.$eval(
+            countryName: await handle.$eval('td>a', (node) => node.textContent),
+            url: await handle.$eval(
               'xpath/td/a[starts-with(@href, "/lists/m_act")]',
               (node) => node.getAttribute('href'),
             ),

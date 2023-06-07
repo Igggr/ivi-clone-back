@@ -1,50 +1,35 @@
-import { CREATE_PROFILE_WITH_DUMMY_USER, PROFILES } from '@app/rabbit';
-import { ParsedProfileDTO, ParsedReviewDTO } from '@app/shared';
-import { Review, Comment, Profile } from '@app/shared';
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ParsedReviewDTO } from '@app/shared';
+import { Review, Profile } from '@app/shared';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { firstValueFrom } from 'rxjs';
 import { Equal, Repository } from 'typeorm';
+import { CommentService } from '../comment/comment.service';
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
-    @Inject(PROFILES) private client: ClientProxy,
+    private readonly commentService: CommentService,
   ) {}
 
-  async ensureProfile(saved: Map<string, Profile>, dto: ParsedProfileDTO) {
-    if (saved.has(dto.url)) {
-      return saved.get(dto.url);
-    }
-    const profile = await firstValueFrom(
-      this.client.send({ cmd: CREATE_PROFILE_WITH_DUMMY_USER }, dto),
-    );
-    console.log(profile);
-
-    saved.set(dto.url, profile);
-    return profile;
-  }
-
-  async createReviews(dtos: ParsedReviewDTO[], filmId: number) {
-    const savedProfiles = new Map<string, Profile>();
-
-    const reviewDTOs = [];
-    for (const dto of dtos) {
-      const profile = await this.ensureProfile(savedProfiles, dto.profile);
-      reviewDTOs.push({ ...dto, profile, filmId, comments: undefined });
-    }
+  async saveParsedReviews(
+    parsedReviews: ParsedReviewDTO[],
+    profiles: Map<string, Profile>, // авторы review / комментариев
+    filmId: number,
+  ) {
+    const reviewDTOs = parsedReviews.map((review) => ({
+      ...review,
+      filmId,
+      profileId: profiles.get(review.profile.url).id,
+    }));
 
     const reviews = this.reviewRepository.create(reviewDTOs);
     await this.reviewRepository.save(reviews);
 
     const savedReviews = new Map<string, Review>();
 
-    for (const dto of dtos) {
+    for (const dto of parsedReviews) {
       const review = await this.reviewRepository.findOne({
         where: {
           url: Equal(dto.url),
@@ -53,35 +38,11 @@ export class ReviewService {
       savedReviews.set(review.url, review);
     }
 
-    const commentsDTO = dtos.flatMap((review) =>
-      review.comments.map((dto) => ({
-        ...dto,
-        reviewId: savedReviews.get(review.url).id,
-      })),
+    await this.commentService.saveParsedComments(
+      parsedReviews,
+      savedReviews,
+      profiles,
     );
-
-    const map = new Map<number, Comment>();
-    for (const dto of commentsDTO) {
-      const comment = this.commentRepository.create(dto);
-      await this.commentRepository.save(comment);
-      // commentId - соответсвует id на кинопоиске
-      map.set(+dto.commentId, comment);
-    }
-
-    const commentsWithParent = commentsDTO.filter((dto) => dto.parentId);
-    for (const dto of commentsWithParent) {
-      const child = map.get(+dto.commentId);
-      const parent = map.get(+dto.parentId);
-      child.parentComment = parent;
-      await this.commentRepository.save(child);
-    }
-  }
-
-  findCommentById(id: number) {
-    return this.commentRepository.findOne({
-      where: {
-        id: Equal(id),
-      },
-    });
+    return reviews;
   }
 }

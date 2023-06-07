@@ -23,6 +23,8 @@ import { ActorRoleService } from './actor.role/actor.role.service';
 import { ReviewService } from './review/review.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
 import { FilmGenre } from '@app/shared/entities/film-genre.entity';
+import { ParserSaverService } from './parser.saver/parser.saver.service';
+import { CommentService } from './comment/comment.service';
 
 @Module({
   imports: [
@@ -65,6 +67,8 @@ import { FilmGenre } from '@app/shared/entities/film-genre.entity';
     ActorRoleService,
     ReviewService,
     AgeRestrictionService,
+    ParserSaverService,
+    CommentService,
   ],
 })
 export class FilmModule {}

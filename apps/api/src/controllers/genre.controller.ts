@@ -25,7 +25,8 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { CreateGenreDTO, Genre, UpdateGenreDto } from '@app/shared';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { BearerAuth } from '../guards/bearer';
 import { DeleteResult } from 'typeorm';
 
 @ApiTags('genre')
@@ -35,6 +36,7 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @Post()
   async createGenre(@Body() dto: CreateGenreDTO): Promise<ResponseDTO<Genre>> {
     return await firstValueFrom(
@@ -64,6 +66,7 @@ export class GenreController {
     return await firstValueFrom(this.client.send({ cmd: GET_GENRE_BY_ID }, id));
   }
 
+  @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   @Put()
@@ -80,6 +83,7 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @Delete('/:id')
   async deleteGenre(
     @Param('id', ParseIntPipe) id: number,

@@ -69,9 +69,17 @@ export class GenreService {
   }
 
   async getGenresByNames(genreNames: string[]): Promise<Genre[]> {
-    return this.genreRepository.find({
+    return await this.genreRepository.find({
       where: {
         genreName: In(genreNames),
+      },
+    });
+  }
+
+  async getGenresByNamesEn(genreNamesEn: string[]): Promise<Genre[]> {
+    return await this.genreRepository.find({
+      where: {
+        genreNameEn: In(genreNamesEn),
       },
     });
   }

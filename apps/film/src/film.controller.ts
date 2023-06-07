@@ -2,7 +2,6 @@ import { Controller } from '@nestjs/common';
 import { FilmService } from './film.service';
 import {
   Ctx,
-  EventPattern,
   MessagePattern,
   Payload,
   RmqContext,
@@ -11,6 +10,7 @@ import {
   CREATE_FILM,
   DELETE_FILM,
   GET_FILMS,
+  GET_ONE_FILM,
   PARSED_DATA,
   UPDATE_FILM,
 } from '@app/rabbit/events';
@@ -21,23 +21,32 @@ import {
   UpdateFilmDTO,
 } from '@app/shared';
 import { ack } from '@app/rabbit';
+import { ParserSaverService } from './parser.saver/parser.saver.service';
 
 @Controller()
 export class FilmController {
-  constructor(private readonly filmService: FilmService) {}
+  constructor(
+    private readonly filmService: FilmService,
+    private readonly parserSaverService: ParserSaverService,
+  ) {}
 
-  @EventPattern({ cmd: PARSED_DATA })
+  // вобще говоря emit здесь подходит больше, чем send
+  // но тогда непонятно как протестировать, что данные создались
+  @MessagePattern({ cmd: PARSED_DATA })
   async saveParsedData(@Payload() data: ParsedFilmDTO) {
-    console.log('Recieve parsed data');
-
-    await this.filmService.createFromParsedData(data);
-    console.log('Saved to DB');
+    return await this.parserSaverService.createFromParsedData(data);
   }
 
   @MessagePattern({ cmd: GET_FILMS })
   async getFilms(@Payload() dto: FilmQueryDTO, @Ctx() context: RmqContext) {
     ack(context);
     return (await this.filmService.find(dto)) ?? [];
+  }
+
+  @MessagePattern({ cmd: GET_ONE_FILM })
+  async getOneFilm(@Payload() id: number, @Ctx() context: RmqContext) {
+    ack(context);
+    return this.filmService.findOneById(id);
   }
 
   @MessagePattern({ cmd: DELETE_FILM })

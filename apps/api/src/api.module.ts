@@ -71,6 +71,13 @@ import { staticDir } from '@app/shared';
 })
 export class ApiModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes(ProfilesController, AuthController);
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes(
+        ProfilesController,
+        AuthController,
+        GenreController,
+        FilmController,
+      );
   }
 }

@@ -1,10 +1,8 @@
-import { CreateUserProfileDto } from '@app/shared/dto/create-user-profile.dto';
-import { User, ParsedProfileDTO } from '@app/shared';
+import { User, CreateUserDTO } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import * as uuid from 'uuid';
 import { RolesService } from '../roles/roles.service';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { USER } from '@app/shared/constants/role.const';
@@ -21,7 +19,7 @@ export class UsersService {
   }
 
   // поля Profile не еспользуются - стоило бы их выпилить
-  async createUser(userDto: CreateUserProfileDto) {
+  async createUser(userDto: CreateUserDTO) {
     try {
       const user = await this.userRepository.create({
         ...userDto,
@@ -44,7 +42,7 @@ export class UsersService {
     }
   }
 
-  async updateUser(userDto: CreateUserProfileDto, userId: number) {
+  async updateUser(userDto: CreateUserDTO, userId: number) {
     try {
       const foundUser = await this.userRepository.findOneBy({
         email: userDto.email,
@@ -95,34 +93,6 @@ export class UsersService {
         error: 'Ошибка при удалении пользователя',
       };
     }
-  }
-
-  // async ensureGoogleUser(details: CreateGoogleUserDetailsDto) {
-  //   console.log('Auth Service');
-  //   console.log(details);
-  //   const user = await this.userRepository.findOneBy({
-  //     email: details.email,
-  //   });
-  //   if (user) {
-  //     return user;
-  //   }
-  //   console.log('User not found');
-  //   const newGoogleUser = await this.googleUserRepository.create(details);
-  //   return await this.googleUserRepository.save(newGoogleUser);
-  // }
-
-  async createDummyUser(dto: ParsedProfileDTO) {
-    const dummyData: CreateUserProfileDto = {
-      ...dto,
-      password: '111111',
-      nickname: dto.nickname,
-      name: '',
-      surname: '',
-      country: '',
-      city: '',
-      email: uuid.v4() + '@com',
-    };
-    return this.createUser(dummyData);
   }
 
   /**

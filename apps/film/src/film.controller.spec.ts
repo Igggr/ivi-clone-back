@@ -13,12 +13,15 @@ import {
   Review,
   AgeRestriction,
   Comment,
+  FilmViewsCountry,
 } from '@app/shared';
 import { ActorRoleService } from './actor.role/actor.role.service';
 import { CountryService } from './country/country.service';
 import { ReviewService } from './review/review.service';
 import { AgeRestrictionService } from './age.restriction/age.restriction.service';
 import { FilmGenre } from '@app/shared/entities/film-genre.entity';
+import { CommentService } from './comment/comment.service';
+import { ParserSaverService } from './parser.saver/parser.saver.service';
 
 describe('FilmController', () => {
   let filmController: FilmController;
@@ -32,6 +35,8 @@ describe('FilmController', () => {
         CountryService,
         ReviewService,
         AgeRestrictionService,
+        CommentService,
+        ParserSaverService,
         {
           provide: 'ActorService',
           useValue: {},
@@ -74,7 +79,7 @@ describe('FilmController', () => {
           useValue: {},
         },
         {
-          provide: 'CountryService',
+          provide: getRepositoryToken(FilmViewsCountry),
           useValue: {},
         },
         {

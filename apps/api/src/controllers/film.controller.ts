@@ -23,13 +23,19 @@ import {
   ParseArrayPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
 import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
+import { BearerAuth } from '../guards/bearer';
 
 @ApiTags('film')
 @Controller('/film')
@@ -38,11 +44,12 @@ export class FilmController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @ApiOperation({ summary: 'Создание фильма' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Promise<ResponseDTO<Film>> })
   @Post()
   async createFilm(@Body() dto): Promise<ResponseDTO<Film>> {
-    return await firstValueFrom(
+    const film = await firstValueFrom(
       this.client.send(
         {
           cmd: CREATE_FILM,
@@ -50,6 +57,7 @@ export class FilmController {
         dto,
       ),
     );
+    return film;
   }
 
   @ApiOperation({ summary: 'Получение информации о всей кинопродукции' })
@@ -58,8 +66,8 @@ export class FilmController {
   async getAll(
     @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
     genres: string[] = [],
-    @Query('limit') limit = 0,
-    @Query('ofset') ofset = 10,
+    @Query('limit') limit = 10,
+    @Query('ofset') ofset = 0,
   ) {
     const res = await firstValueFrom(
       this.client.send(
@@ -131,6 +139,7 @@ export class FilmController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @ApiOperation({ summary: 'Обновление информации о фильме' })
   @ApiResponse({
     status: HttpStatus.ACCEPTED,
@@ -149,6 +158,7 @@ export class FilmController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiBearerAuth(BearerAuth)
   @ApiOperation({ summary: 'Удаление фильма' })
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: DeleteResult })
   @Delete('/:id')

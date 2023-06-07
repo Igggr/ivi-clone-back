@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { AUTH } from '@app/rabbit';
 import { User } from '@app/shared';
-import { FIND_USER_BY_ID } from '@app/shared/events';
+import { FIND_USER_BY_ID } from '@app/rabbit';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportSerializer } from '@nestjs/passport';

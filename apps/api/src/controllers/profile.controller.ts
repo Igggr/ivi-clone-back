@@ -29,6 +29,8 @@ import { ProfilesGuard } from '../guards/profile-auth.guard';
 import { Roles } from '../guards/roles-auth.decorator';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { BearerAuth } from '../guards/bearer';
 
 @Controller()
 export class ProfilesController {
@@ -59,6 +61,7 @@ export class ProfilesController {
   }
 
   @Put('/profiles/:id')
+  @ApiBearerAuth(BearerAuth)
   @UseGuards(ProfilesGuard)
   @Roles(ADMIN)
   @UsePipes(ValidationPipe)
@@ -87,6 +90,7 @@ export class ProfilesController {
   }
 
   @Delete('/profiles/:id')
+  @ApiBearerAuth(BearerAuth)
   @UseGuards(ProfilesGuard)
   @Roles(ADMIN)
   async deleteProfile(@Param('id') profileId: number) {

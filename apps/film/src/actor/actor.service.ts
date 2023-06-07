@@ -4,6 +4,7 @@ import {
   RoleType,
   Actor,
   ActorFilm,
+  ActorRole,
 } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -47,11 +48,11 @@ export class ActorService {
     return savedActors;
   }
 
-  async bulkCreate(
+  async saveParsedActors(
     filmId: number,
     persons: Record<RoleType, ParsedActorDTO[]>,
   ) {
-    if (!persons) {
+    if (!persons || Object.keys(persons).length === 0) {
       return;
     }
     const roles = await this.actorRoleService.ensureAllRolesExist(
@@ -60,6 +61,15 @@ export class ActorService {
 
     const savedActors = await this.ensureAllActorsExists(persons);
 
+    await this.assignRolesToActors(persons, savedActors, roles, filmId);
+  }
+
+  async assignRolesToActors(
+    persons: Record<RoleType, ParsedActorDTO[]>,
+    savedActors: Map<string, Actor>,
+    roles: Map<string, ActorRole>,
+    filmId: number,
+  ) {
     const actorRoles = await Promise.all(
       Object.entries(persons).flatMap(([roleName, actors]) =>
         actors.map(async (dto) => ({
@@ -77,10 +87,18 @@ export class ActorService {
       roleNotes: dto.role,
     }));
 
-    const actorsInFilm = this.actorFilmRepository.create(actorRolesInput);
-    // console.log(actorsInFilm);
-    await this.actorFilmRepository.save(actorsInFilm);
+    const newActorsRolesInput = actorRolesInput.filter(
+      async (actorRole) =>
+        !(await this.actorFilmRepository.exist({
+          where: {
+            filmId: actorRole.actorId,
+            actorId: actorRole.actorId,
+            roleId: actorRole.actorId,
+          },
+        })),
+    );
 
-    return actorRoles;
+    const actorsInFilm = this.actorFilmRepository.create(newActorsRolesInput);
+    await this.actorFilmRepository.save(actorsInFilm);
   }
 }
