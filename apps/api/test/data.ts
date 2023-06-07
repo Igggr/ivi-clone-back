@@ -1,6 +1,6 @@
 import { ParsedFilmDTO } from '@app/shared';
 
-export const parsedFilm: ParsedFilmDTO = {
+export const crouchingTigerHiddenDragon: ParsedFilmDTO = {
   url: 'https://www.kinopoisk.ru/film/378/',
   title: 'Крадущийся тигр, затаившийся дракон',
   originalTitle: 'Wo hu cang long',

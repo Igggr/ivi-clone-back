@@ -35,7 +35,7 @@ import { ApiModule } from '../src/api.module';
 import { RolesService } from '../../auth/src/roles/roles.service';
 import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
 import { UsersService } from '../../auth/src/users/users.service';
-import { parsedFilm } from './data';
+import { crouchingTigerHiddenDragon } from './data';
 
 type Token = { token: string };
 
@@ -84,6 +84,8 @@ describe('Test API', () => {
   const dramaDTO: CreateGenreDTO = { genreName: 'Драмма' };
   let comedyId: number;
   let dramaId: number;
+
+  let crouchingTigerId: number;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -395,26 +397,44 @@ describe('Test API', () => {
   describe('film', () => {
     it(`Film will be created when ${PARSED_DATA} message is send`, async () => {
       const film: Film = await firstValueFrom(
-        clientService.filmClient.send({ cmd: PARSED_DATA }, parsedFilm),
+        clientService.filmClient.send({ cmd: PARSED_DATA }, crouchingTigerHiddenDragon),
       );
 
+      expect(film.id).toBeDefined();
+      crouchingTigerId = film.id;
+    }, 100000);
+
+    it('Can get film by id with all reviews and comments', () => {
       return request(app.getHttpServer())
-        .get(`/film/${film.id}`)
+        .get(`/film/${crouchingTigerId}`)
         .expect(200)
-        .then((r) => {
-          expect(r.body).toEqual({
-            id: film.id,
-            url: parsedFilm.url,
-            preview: parsedFilm.preview,
-            year: parsedFilm.year,
-            title: parsedFilm.title,
-            originalTitle: parsedFilm.originalTitle,
-            slogan: parsedFilm.slogan,
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            id: crouchingTigerId,
+            url: crouchingTigerHiddenDragon.url,
+            preview: crouchingTigerHiddenDragon.preview,
+            year: crouchingTigerHiddenDragon.year,
+            title: crouchingTigerHiddenDragon.title,
+            originalTitle: crouchingTigerHiddenDragon.originalTitle,
+            slogan: crouchingTigerHiddenDragon.slogan,
             ageRestrictionId: 1,
             countryId: 1,
             duration: {
               hours: 2,
             },
+          });
+
+          expect(response.body.reviews.length).toEqual(crouchingTigerHiddenDragon.reviews.length);
+
+          crouchingTigerHiddenDragon.reviews.forEach((review) => {
+            const responseReview = response.body.reviews.find((r) => r.title === review.title && r.text === review.text);
+            expect(responseReview).toBeDefined();
+            expect(responseReview.comments.length).toEqual(review.comments.length);
+
+            review.comments.forEach((comment) => {
+              const responseComment = responseReview.comments.find((c) => c.text === comment.text);
+              expect(responseComment).toBeDefined();
+            })
           });
         });
     }, 100000);
@@ -507,7 +527,7 @@ describe('Test API', () => {
         .then((r) => {
           expect(r.body.length).toBe(2);
           expect(r.body[0]).toMatchObject({
-            title: parsedFilm.title,
+            title: crouchingTigerHiddenDragon.title,
           });
           expect(r.body[1]).toMatchObject({
             title: 'Терминатор',
@@ -534,7 +554,7 @@ describe('Test API', () => {
         .then((r) => {
           expect(r.body.length).toBe(1);
           expect(r.body[0]).toMatchObject({
-            title: parsedFilm.title,
+            title: crouchingTigerHiddenDragon.title,
           });
         });
     });
