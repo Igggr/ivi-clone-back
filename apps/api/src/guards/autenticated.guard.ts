@@ -4,11 +4,11 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class IsAuthenticatedGuard extends AbstractRoleGuard {
-    constructor(reflector: Reflector) {
-        super(reflector);
-    }
+  constructor(reflector: Reflector) {
+    super(reflector);
+  }
 
-    check(req: any, user: any, requiredRoles: string[]): boolean {
-        return user !== undefined;
-    }
+  check(req: any, user: any): boolean {
+    return user !== undefined;
+  }
 }

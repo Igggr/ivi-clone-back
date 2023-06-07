@@ -38,5 +38,4 @@ describe('IsAuthenticatedGuard', () => {
     mockExecutionContext.switchToHttp().getRequest.mockReturnValue({});
     expect(profilesGuard.canActivate(mockExecutionContext)).toBe(false);
   });
-
 });

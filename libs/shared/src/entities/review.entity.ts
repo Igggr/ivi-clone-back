@@ -23,7 +23,7 @@ export class Review {
     description: 'Ссылка на ревью на кинопоиске',
     example: 'https://www.kinopoisk.ru/user/15854772/comment/3251114/',
   })
-  @Column({nullable: true})
+  @Column({ nullable: true })
   url?: string;
 
   @IsString()

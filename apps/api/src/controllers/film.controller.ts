@@ -37,7 +37,14 @@ import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
-import { CreateFilmDTO, CreateReviewDTO, Film, PaginationDTO, SubmitReviewDTO, UpdateFilmDTO } from '@app/shared';
+import {
+  CreateFilmDTO,
+  CreateReviewDTO,
+  Film,
+  PaginationDTO,
+  SubmitReviewDTO,
+  UpdateFilmDTO,
+} from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
 import { IsAuthenticatedGuard } from '../guards/autenticated.guard';
 import { Request } from 'express';
@@ -48,7 +55,7 @@ export class FilmController {
   constructor(
     @Inject(FILM) private readonly filmClient: ClientProxy,
     @Inject(PROFILES) private readonly profileClient: ClientProxy,
-  ) { }
+  ) {}
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -142,7 +149,9 @@ export class FilmController {
   @ApiResponse({ status: HttpStatus.ACCEPTED, type: Film })
   @Get('/:id')
   async getFilm(@Param('id', ParseIntPipe) id: number) {
-    return await firstValueFrom(this.filmClient.send({ cmd: GET_ONE_FILM }, id));
+    return await firstValueFrom(
+      this.filmClient.send({ cmd: GET_ONE_FILM }, id),
+    );
   }
 
   @UseGuards(RolesGuard)
@@ -168,13 +177,17 @@ export class FilmController {
   @ApiBearerAuth(BearerAuth)
   @Post('/review')
   async addReview(@Body() dto: SubmitReviewDTO, @Req() request: Request) {
-
     const profile = await this.getProfileId(request.user);
     const payload: CreateReviewDTO = { ...dto, profileId: profile.id };
 
-    return await firstValueFrom(this.filmClient.send({
-      cmd: ADD_REVIEW
-    }, payload));
+    return await firstValueFrom(
+      this.filmClient.send(
+        {
+          cmd: ADD_REVIEW,
+        },
+        payload,
+      ),
+    );
   }
 
   @UseGuards(RolesGuard)

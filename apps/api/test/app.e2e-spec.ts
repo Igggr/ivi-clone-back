@@ -397,7 +397,10 @@ describe('Test API', () => {
   describe('film', () => {
     it(`Film will be created when ${PARSED_DATA} message is send`, async () => {
       const film: Film = await firstValueFrom(
-        clientService.filmClient.send({ cmd: PARSED_DATA }, crouchingTigerHiddenDragon),
+        clientService.filmClient.send(
+          { cmd: PARSED_DATA },
+          crouchingTigerHiddenDragon,
+        ),
       );
 
       expect(film.id).toBeDefined();
@@ -424,17 +427,25 @@ describe('Test API', () => {
             },
           });
 
-          expect(response.body.reviews.length).toEqual(crouchingTigerHiddenDragon.reviews.length);
+          expect(response.body.reviews.length).toEqual(
+            crouchingTigerHiddenDragon.reviews.length,
+          );
 
           crouchingTigerHiddenDragon.reviews.forEach((review) => {
-            const responseReview = response.body.reviews.find((r) => r.title === review.title && r.text === review.text);
+            const responseReview = response.body.reviews.find(
+              (r) => r.title === review.title && r.text === review.text,
+            );
             expect(responseReview).toBeDefined();
-            expect(responseReview.comments.length).toEqual(review.comments.length);
+            expect(responseReview.comments.length).toEqual(
+              review.comments.length,
+            );
 
             review.comments.forEach((comment) => {
-              const responseComment = responseReview.comments.find((c) => c.text === comment.text);
+              const responseComment = responseReview.comments.find(
+                (c) => c.text === comment.text,
+              );
               expect(responseComment).toBeDefined();
-            })
+            });
           });
         });
     }, 100000);
@@ -578,11 +589,11 @@ describe('Test API', () => {
             isPositive: review.isPositive ?? null,
             profileId: simpleUserId, // потому что использовали его jwt-токен
             title: review.title,
-            text: review.text
+            text: review.text,
           });
           expect(r.body.id).toBeDefined();
-      })
-    })
+        });
+    });
   });
 
   afterAll(async () => {
