@@ -35,6 +35,10 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
 /rabbitmq/
 /redis_data/
 /db_data/
+swagger.json
+*.md
+.github

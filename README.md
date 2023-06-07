@@ -1,4 +1,7 @@
-Проект запускается `docker compose up -d` по адресу http://localhost:3001
+Запускается по адресу http://localhost:3001
+
+- без парсера `docker compose up -d` 
+- с парсером `npm run launch`
 
 ## swagger
 

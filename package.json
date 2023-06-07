@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+    "launch": "docker compose up -d && npm run start:dev parser",
     "start": "nest start",
     "start:dev:docker": "cross-env FOR=docker nest start --debug --watch",
     "start:dev": "nest start --watch",
