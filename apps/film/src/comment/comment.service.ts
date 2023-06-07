@@ -1,4 +1,5 @@
 import { ParsedReviewDTO, Profile, Review, Comment } from '@app/shared';
+import { CreateCommentDTO } from '@app/shared/dto/create-comment.dtos';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
@@ -50,5 +51,10 @@ export class CommentService {
       child.parentComment = parent;
       await this.commentRepository.save(child);
     }
+  }
+
+  async addComment(dto: CreateCommentDTO): Promise<Comment> {
+    const comment = this.commentRepository.create(dto);
+    return this.commentRepository.save(comment);
   }
 }

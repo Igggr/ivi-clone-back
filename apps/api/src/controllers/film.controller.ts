@@ -7,6 +7,7 @@ import {
   UPDATE_FILM,
   GET_PROFILE_BY_USER_ID,
   ADD_REVIEW,
+  ADD_COMMENT,
 } from '@app/rabbit/events';
 import { FILM, PROFILES } from '@app/rabbit/queues';
 import {
@@ -44,6 +45,8 @@ import {
   PaginationDTO,
   SubmitReviewDTO,
   UpdateFilmDTO,
+  SubmitCommentDTO,
+  CreateCommentDTO,
 } from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
 import { IsAuthenticatedGuard } from '../guards/autenticated.guard';
@@ -173,6 +176,7 @@ export class FilmController {
     );
   }
 
+  @ApiOperation({ summary: 'Добавление рецензии на фильм' })
   @UseGuards(IsAuthenticatedGuard)
   @ApiBearerAuth(BearerAuth)
   @Post('/review')
@@ -184,6 +188,24 @@ export class FilmController {
       this.filmClient.send(
         {
           cmd: ADD_REVIEW,
+        },
+        payload,
+      ),
+    );
+  }
+
+  @ApiOperation({ summary: 'Добавление комментария к рецензии на фильм' })
+  @UseGuards(IsAuthenticatedGuard)
+  @ApiBearerAuth(BearerAuth)
+  @Post('/comment')
+  async addComment(@Body() dto: SubmitCommentDTO, @Req() request: Request) {
+    const profile = await this.getProfileId(request.user);
+    const payload: CreateCommentDTO = { ...dto, profileId: profile.id };
+
+    return await firstValueFrom(
+      this.filmClient.send(
+        {
+          cmd: ADD_COMMENT,
         },
         payload,
       ),

@@ -29,7 +29,7 @@ import {
   Film,
   CreateFilmDTO,
   SomeGenresNotFound,
-  SubmitReviewDTO,
+  SubmitCommentDTO,
 } from '@app/shared';
 import { ApiModule } from '../src/api.module';
 import { RolesService } from '../../auth/src/roles/roles.service';
@@ -86,6 +86,15 @@ describe('Test API', () => {
   let dramaId: number;
 
   let crouchingTigerId: number;
+  let newFilmId: number;
+  let newReviewId: number;
+
+  const newReview = {
+    title: 'Aaaaa',
+    text: 'Да кто вобще так снимает-то? О чем фильм, непонтнооо :((',
+    isPositive: false,
+  };
+  const newComment = 'Кто ж такие ревью пишет? Ты просто фильм не понял';
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -508,7 +517,7 @@ describe('Test API', () => {
         .send(filmDto)
         .expect(HttpStatus.CREATED)
         .then((r) => {
-          expect(r.body).toEqual({
+          expect(r.body).toMatchObject({
             status: 'ok',
             value: {
               year: 1984,
@@ -521,13 +530,13 @@ describe('Test API', () => {
                 countryName: 'США',
                 url: '/lists/m_act[country]/1/',
               },
-              countryId: 13,
               url: null,
               preview: null,
               ageRestrictionId: null,
-              id: 2,
             },
           });
+          expect(r.body.value.id).toBeDefined();
+          newFilmId = r.body.value.id;
         });
     });
 
@@ -571,25 +580,57 @@ describe('Test API', () => {
     });
 
     it('POST /film/review User can add review for film', () => {
-      const review: SubmitReviewDTO = {
-        title: 'Aaaaa',
-        text: 'Да кто вобще так снимает-то? О чем фильм, непонтнооо :((',
-        filmId: 1,
-        isPositive: false,
-      };
-
       return request(app.getHttpServer())
         .post('/film/review')
         .auth(simpleUserToken.token, { type: 'bearer' })
-        .send(review)
+        .send({ ...newReview, filmId: newFilmId })
         .expect(HttpStatus.CREATED)
         .then((r) => {
           expect(r.body).toMatchObject({
-            filmId: review.filmId,
-            isPositive: review.isPositive ?? null,
+            filmId: newFilmId,
+            isPositive: newReview.isPositive ?? null,
             profileId: simpleUserId, // потому что использовали его jwt-токен
-            title: review.title,
-            text: review.text,
+            title: newReview.title,
+            text: newReview.text,
+          });
+          expect(r.body.id).toBeDefined();
+          newReviewId = r.body.id;
+        });
+    });
+
+    it('POST /film/comment User can add comment for any review', () => {
+      const comment: SubmitCommentDTO = {
+        text: newComment,
+        reviewId: newReviewId,
+      };
+
+      return request(app.getHttpServer())
+        .post('/film/comment')
+        .auth(simpleUserToken.token, { type: 'bearer' })
+        .send(comment)
+        .expect(HttpStatus.CREATED)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            reviewId: comment.reviewId,
+            profileId: simpleUserId, // потому что использовали его jwt-токен
+            text: comment.text,
+          });
+          expect(r.body.id).toBeDefined();
+        });
+    });
+
+    it('GET /film/:id Newly created review anf film are saved in DB', () => {
+      return request(app.getHttpServer())
+        .get(`/film/${newFilmId}`)
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            reviews: [
+              {
+                ...newReview,
+                comments: [{ text: newComment }],
+              },
+            ],
           });
           expect(r.body.id).toBeDefined();
         });

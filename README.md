@@ -1,7 +1,9 @@
 Запускается по адресу http://localhost:3001
 
 - без парсера `docker compose up -d` 
-- с парсером `npm run launch`
+- с парсером `npm run launch` (постепенно наполнит БД фильмами/жанрами/актерами/ревью/просмотрами)
+
+Примеры запросов можно увидеть в тестах: apps/api/test/app.e2e-spec.ts
 
 ## swagger
 
