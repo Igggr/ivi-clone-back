@@ -15,16 +15,18 @@ export abstract class AbstractRoleGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     try {
+      const req = context.switchToHttp().getRequest();
+      if (!req.user) {
+        return false;
+      }
+
       const requiredRoles = this.reflector.getAllAndOverride<string[]>(
         ROLES_KEY,
         [context.getHandler(), context.getClass()],
       );
+
       if (!requiredRoles) {
         return true;
-      }
-      const req = context.switchToHttp().getRequest();
-      if (!req.user) {
-        return false;
       }
 
       return this.check(req, req.user, requiredRoles);

@@ -1,41 +1,38 @@
 import { ExecutionContext } from '@nestjs/common';
 import { createMock } from '@golevelup/ts-jest';
 import { Reflector } from '@nestjs/core';
-import { IsAuthenticatedGuard } from './autenticated.guard';
-import { ADMIN, USER } from '@app/shared/constants/role.const';
+import { RolesGuard } from './roles.guard';
+import { USER } from '@app/shared/constants/role.const';
 
-describe('IsAuthenticatedGuard', () => {
-  let profilesGuard: IsAuthenticatedGuard;
+describe('Authentication Guard', () => {
+  let authGuard: RolesGuard;
   let reflector: Reflector;
   let mockExecutionContext;
 
   beforeEach(async () => {
     mockExecutionContext = createMock<ExecutionContext>();
     reflector = new Reflector();
-    profilesGuard = new IsAuthenticatedGuard(reflector);
+    authGuard = new RolesGuard(reflector);
   });
 
   it('It should be defined', () => {
-    expect(profilesGuard).toBeDefined();
+    expect(authGuard).toBeDefined();
   });
 
   it('Authenticated user is allowed', () => {
-    reflector.getAllAndOverride = jest.fn().mockReturnValue([ADMIN.value]);
+    reflector.getAllAndOverride = jest.fn().mockReturnValue(undefined);
     mockExecutionContext.switchToHttp().getRequest.mockReturnValue({
-      params: {
-        id: 1,
-      },
       user: {
         id: 1,
         roles: [USER],
       },
     });
-    expect(profilesGuard.canActivate(mockExecutionContext)).toBe(true);
+    expect(authGuard.canActivate(mockExecutionContext)).toBe(true);
   });
 
   it('Anonymus is not allowed', () => {
-    reflector.getAllAndOverride = jest.fn().mockReturnValue([ADMIN.value]);
+    reflector.getAllAndOverride = jest.fn().mockReturnValue(undefined);
     mockExecutionContext.switchToHttp().getRequest.mockReturnValue({});
-    expect(profilesGuard.canActivate(mockExecutionContext)).toBe(false);
+    expect(authGuard.canActivate(mockExecutionContext)).toBe(false);
   });
 });

@@ -49,7 +49,6 @@ import {
   CreateCommentDTO,
 } from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
-import { IsAuthenticatedGuard } from '../guards/autenticated.guard';
 import { Request } from 'express';
 
 @ApiTags('film')
@@ -177,7 +176,7 @@ export class FilmController {
   }
 
   @ApiOperation({ summary: 'Добавление рецензии на фильм' })
-  @UseGuards(IsAuthenticatedGuard)
+  @UseGuards(RolesGuard)
   @ApiBearerAuth(BearerAuth)
   @Post('/review')
   async addReview(@Body() dto: SubmitReviewDTO, @Req() request: Request) {
@@ -195,7 +194,7 @@ export class FilmController {
   }
 
   @ApiOperation({ summary: 'Добавление комментария к рецензии на фильм' })
-  @UseGuards(IsAuthenticatedGuard)
+  @UseGuards(RolesGuard)
   @ApiBearerAuth(BearerAuth)
   @Post('/comment')
   async addComment(@Body() dto: SubmitCommentDTO, @Req() request: Request) {
