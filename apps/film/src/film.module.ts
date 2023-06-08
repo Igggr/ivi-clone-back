@@ -25,6 +25,7 @@ import { AgeRestrictionService } from './age.restriction/age.restriction.service
 import { FilmGenre } from '@app/shared/entities/film-genre.entity';
 import { ParserSaverService } from './parser.saver/parser.saver.service';
 import { CommentService } from './comment/comment.service';
+import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
@@ -33,13 +34,13 @@ import { CommentService } from './comment/comment.service';
       {
         name: PROFILES,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(PROFILES, configService.get('FOR')),
+          RABBIT_OPTIONS(PROFILES, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
       {
         name: GENRE,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(GENRE, configService.get('FOR')),
+          RABBIT_OPTIONS(GENRE, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
     ]),

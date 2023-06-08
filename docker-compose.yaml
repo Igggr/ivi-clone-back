@@ -122,7 +122,7 @@ services:
       context: .
       dockerfile: ./apps/api/Dockerfile
       target: development
-    command: npm run start:dev api
+    command: npm run start:dev:docker api
     depends_on:
       - rabbit
       - auth

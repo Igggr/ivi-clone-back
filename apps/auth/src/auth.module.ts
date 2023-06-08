@@ -11,7 +11,7 @@ import { DatabaseModule, db_schema } from '@app/database';
 import * as Joi from 'joi';
 import { ClientsModule } from '@nestjs/microservices';
 import { PROFILES, RABBIT_OPTIONS } from '@app/rabbit';
-import { PRIVATE_KEY } from '@app/shared/constants/keys';
+import { FOR, PRIVATE_KEY } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
@@ -26,13 +26,13 @@ import { PRIVATE_KEY } from '@app/shared/constants/keys';
       {
         name: PROFILES,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(PROFILES, configService.get('FOR')),
+          RABBIT_OPTIONS(PROFILES, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
     ]),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get(PRIVATE_KEY),
+        secret: configService.get<string>(PRIVATE_KEY),
         signOptions: {
           expiresIn: '24h',
         },

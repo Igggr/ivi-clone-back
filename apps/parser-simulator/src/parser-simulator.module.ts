@@ -4,6 +4,7 @@ import { ClientsModule } from '@nestjs/microservices';
 import { RABBIT_OPTIONS, FILM } from '@app/rabbit';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigService } from '@nestjs/config';
+import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
       {
         name: FILM,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(FILM, configService.get('FOR')),
+          RABBIT_OPTIONS(FILM, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
     ]),

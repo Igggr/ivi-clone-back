@@ -30,6 +30,7 @@ import { ApiModule } from '../src/api.module';
 import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
 import { parsedFilm } from './data';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FOR } from '@app/shared/constants/keys';
 
 type Token = { token: string };
 
@@ -90,13 +91,13 @@ describe('Test API', () => {
           {
             name: AUTH,
             useFactory: (configService: ConfigService) =>
-              RABBIT_OPTIONS(AUTH, configService.get('FOR')),
+              RABBIT_OPTIONS(AUTH, configService.get<string>(FOR)),
             inject: [ConfigService],
           },
           {
             name: FILM,
             useFactory: (configService: ConfigService) =>
-              RABBIT_OPTIONS(FILM, configService.get('FOR')),
+              RABBIT_OPTIONS(FILM, configService.get<string>(FOR)),
             inject: [ConfigService],
           },
         ]),

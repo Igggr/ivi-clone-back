@@ -14,6 +14,7 @@ import { SessionSerializer } from './utils/serializer';
 import * as Joi from 'joi';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { staticDir } from '@app/shared';
+import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
@@ -29,31 +30,31 @@ import { staticDir } from '@app/shared';
       {
         name: FILM,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(FILM, configService.get('FOR')),
+          RABBIT_OPTIONS(FILM, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
       {
         name: AUTH,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(AUTH, configService.get('FOR')),
+          RABBIT_OPTIONS(AUTH, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
       {
         name: PROFILES,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(PROFILES, configService.get('FOR')),
+          RABBIT_OPTIONS(PROFILES, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
       {
         name: GENRE,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(GENRE, configService.get('FOR')),
+          RABBIT_OPTIONS(GENRE, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
       {
         name: FILES_RECORD,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(FILES_RECORD, configService.get('FOR')),
+          RABBIT_OPTIONS(FILES_RECORD, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
     ]),

@@ -6,6 +6,7 @@ import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AUTH, FILES_RECORD, RABBIT_OPTIONS } from '@app/rabbit';
 import { DatabaseModule, db_schema } from '@app/database';
+import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
@@ -19,13 +20,13 @@ import { DatabaseModule, db_schema } from '@app/database';
       {
         name: AUTH,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(AUTH, configService.get('FOR')),
+          RABBIT_OPTIONS(AUTH, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
       {
         name: FILES_RECORD,
         useFactory: (configService: ConfigService) =>
-          RABBIT_OPTIONS(FILES_RECORD, configService.get('FOR')),
+          RABBIT_OPTIONS(FILES_RECORD, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
     ]),
