@@ -15,14 +15,17 @@ import { TasksService } from './task.service';
 import { ActorParserService } from './actor.parser/actor.parser.service';
 import { ReviewParserService } from './review.parser/review.parser.service';
 import { MainPageParserService } from './main-page.parser/main-page.parser.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: FILM,
-        ...RABBIT_OPTIONS(FILM),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(FILM, configService.get('FOR')),
+        inject: [ConfigService],
       },
     ]),
     CacheModule.register({

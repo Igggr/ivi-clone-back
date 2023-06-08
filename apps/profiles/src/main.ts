@@ -6,7 +6,7 @@ import { PROFILES, RABBIT_OPTIONS } from '@app/rabbit';
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     ProfilesModule,
-    RABBIT_OPTIONS(PROFILES),
+    RABBIT_OPTIONS(PROFILES, process.env.FOR),
   );
   await app.listen();
 }

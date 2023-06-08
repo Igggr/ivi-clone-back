@@ -6,8 +6,6 @@ import {
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientProxy, ClientsModule } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -22,19 +20,16 @@ import {
   CreateGenreDTO,
   HttpExceptionFilter,
   UpdateGenreDto,
-  User,
   CreateRoleDto,
-  Role,
   AddRoleDto,
   Film,
   CreateFilmDTO,
   SomeGenresNotFound,
 } from '@app/shared';
 import { ApiModule } from '../src/api.module';
-import { RolesService } from '../../auth/src/roles/roles.service';
 import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
-import { UsersService } from '../../auth/src/users/users.service';
 import { parsedFilm } from './data';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 type Token = { token: string };
 
@@ -88,32 +83,25 @@ describe('Test API', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         ApiModule,
-        ClientsModule.register([
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
+        ClientsModule.registerAsync([
           {
             name: AUTH,
-            ...RABBIT_OPTIONS(AUTH),
+            useFactory: (configService: ConfigService) =>
+              RABBIT_OPTIONS(AUTH, configService.get('FOR')),
+            inject: [ConfigService],
           },
-        ]),
-        ClientsModule.register([
           {
             name: FILM,
-            ...RABBIT_OPTIONS(FILM),
+            useFactory: (configService: ConfigService) =>
+              RABBIT_OPTIONS(FILM, configService.get('FOR')),
+            inject: [ConfigService],
           },
         ]),
       ],
-      providers: [
-        RolesService,
-        UsersService,
-        ClientService,
-        {
-          provide: getRepositoryToken(User),
-          useClass: Repository<User>,
-        },
-        {
-          provide: getRepositoryToken(Role),
-          useClass: Repository<Role>,
-        },
-      ],
+      providers: [ClientService],
     }).compile();
 
     app = moduleRef.createNestApplication();

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { FilmController } from './film.controller';
 import { FilmService } from './film.service';
 import { DatabaseModule, db_schema } from '@app/database';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule } from '@nestjs/microservices';
 import { GENRE, PROFILES } from '@app/rabbit/queues';
 import { RABBIT_OPTIONS } from '@app/rabbit';
@@ -29,16 +29,18 @@ import { CommentService } from './comment/comment.service';
 @Module({
   imports: [
     // кому отправлять собщения
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: PROFILES,
-        ...RABBIT_OPTIONS(PROFILES),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(PROFILES, configService.get('FOR')),
+        inject: [ConfigService],
       },
-    ]),
-    ClientsModule.register([
       {
         name: GENRE,
-        ...RABBIT_OPTIONS(GENRE),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(GENRE, configService.get('FOR')),
+        inject: [ConfigService],
       },
     ]),
     ConfigModule.forRoot({

@@ -7,7 +7,7 @@ import { GenreModule } from './genre.module';
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<RmqOptions>(
     GenreModule,
-    RABBIT_OPTIONS(GENRE),
+    RABBIT_OPTIONS(GENRE, process.env.FOR),
   );
   app.listen();
 }

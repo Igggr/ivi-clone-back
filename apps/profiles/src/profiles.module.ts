@@ -3,7 +3,7 @@ import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
 import { Profile } from '@app/shared';
 import { ClientsModule } from '@nestjs/microservices';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AUTH, FILES_RECORD, RABBIT_OPTIONS } from '@app/rabbit';
 import { DatabaseModule, db_schema } from '@app/database';
 
@@ -15,16 +15,18 @@ import { DatabaseModule, db_schema } from '@app/database';
       validationSchema: db_schema,
     }),
     ...DatabaseModule.forRoot([Profile]),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: AUTH,
-        ...RABBIT_OPTIONS(AUTH),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(AUTH, configService.get('FOR')),
+        inject: [ConfigService],
       },
-    ]),
-    ClientsModule.register([
       {
         name: FILES_RECORD,
-        ...RABBIT_OPTIONS(FILES_RECORD),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(FILES_RECORD, configService.get('FOR')),
+        inject: [ConfigService],
       },
     ]),
   ],

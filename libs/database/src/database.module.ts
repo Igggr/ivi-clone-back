@@ -11,7 +11,7 @@ export class DatabaseModule {
         imports: [
           TypeOrmModule.forRootAsync({
             useFactory: (configService: ConfigService) => {
-              if (configService.get('IS_TEST')) {
+              if (configService.get('FOR') === 'TEST') {
                 console.log('Test DB');
                 return {
                   type: 'postgres',

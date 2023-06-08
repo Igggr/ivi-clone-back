@@ -3,14 +3,17 @@ import { ParserSimulatorService } from './parser-simulator.service';
 import { ClientsModule } from '@nestjs/microservices';
 import { RABBIT_OPTIONS, FILM } from '@app/rabbit';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: FILM,
-        ...RABBIT_OPTIONS(FILM),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(FILM, configService.get('FOR')),
+        inject: [ConfigService],
       },
     ]),
   ],
