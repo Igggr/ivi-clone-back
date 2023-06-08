@@ -11,8 +11,7 @@ import { DatabaseModule, db_schema } from '@app/database';
 import * as Joi from 'joi';
 import { ClientsModule } from '@nestjs/microservices';
 import { PROFILES, RABBIT_OPTIONS } from '@app/rabbit';
-
-const PRIVATE_KEY = 'PRIVATE_KEY';
+import { PRIVATE_KEY } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
