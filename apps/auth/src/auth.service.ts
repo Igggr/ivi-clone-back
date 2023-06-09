@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RolesService } from './roles/roles.service';
 import { USER } from '@app/shared/constants/role.const';
-import { GET_PROFILE_BY_USER_ID, PROFILES } from '@app/rabbit';
+import { CREATE_PROFILE, GET_PROFILE_BY_USER_ID, PROFILES } from '@app/rabbit';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
@@ -88,7 +88,7 @@ export class AuthService {
       return user;
     }
     console.log('User not found');
-    const newOauthUser = await this.userRepository.create(userDto);
+    let newOauthUser = await this.userRepository.create(userDto);
     await newOauthUser.setPassword(userDto.password);
     let role = await this.roleService.getRoleByValue('User');
     if (!role) {
@@ -96,9 +96,15 @@ export class AuthService {
     }
     role = await this.roleService.getRoleByValue('User');
     newOauthUser.addRole(role);
+    newOauthUser = await this.userRepository.save(newOauthUser);
+    await firstValueFrom(
+      this.profileClient.send(
+        { cmd: CREATE_PROFILE },
+        { nickname: userDto.email.split('@')[0], userId: newOauthUser.id },
+      ),
+    );
 
-    console.log('new user');
-    return await this.userRepository.save(newOauthUser);
+    return newOauthUser;
   }
 
   async findUserById(userId: number) {

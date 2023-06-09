@@ -1,13 +1,11 @@
-import { AUTH } from '@app/rabbit';
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy, VerifyCallBack } from 'passport-vkontakte';
 import * as uuid from 'uuid';
 
 @Injectable()
 export class VKStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject(AUTH) private client: ClientProxy) {
+  constructor() {
     super(
       {
         clientID: process.env.VK_CLIENT_ID,

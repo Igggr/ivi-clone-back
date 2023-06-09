@@ -154,7 +154,6 @@ export class AuthController {
   @Get('vk/redirect')
   @UseGuards(VKAuthGuard)
   async handleVkRedirect(@Req() request: Request) {
-    console.log('api control');
     return await firstValueFrom(
       this.client.send(
         {
