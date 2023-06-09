@@ -30,12 +30,14 @@ import {
   CreateFilmDTO,
   SomeGenresNotFound,
   SubmitCommentDTO,
+  NotYours,
 } from '@app/shared';
 import { ApiModule } from '../src/api.module';
 import { RolesService } from '../../auth/src/roles/roles.service';
 import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
 import { UsersService } from '../../auth/src/users/users.service';
 import { crouchingTigerHiddenDragon } from './data';
+import { SubmitUpdateReview } from '@app/shared/dto/submit_update-review.dto';
 
 type Token = { token: string };
 
@@ -589,7 +591,6 @@ describe('Test API', () => {
           expect(r.body).toMatchObject({
             filmId: newFilmId,
             isPositive: newReview.isPositive ?? null,
-            profileId: simpleUserId, // потому что использовали его jwt-токен
             title: newReview.title,
             text: newReview.text,
           });
@@ -635,6 +636,45 @@ describe('Test API', () => {
           expect(r.body.id).toBeDefined();
         });
     });
+
+    it('PUT /film/review User can update his review', () => {
+      const updateReview: SubmitUpdateReview = {
+        id: newReviewId,
+        title: 'Новое заглавие ревью',
+        text: 'Новый текст ревью'
+      };
+      return request(app.getHttpServer())
+        .put('/film/review')
+        .expect(HttpStatus.OK)
+        .auth(simpleUserToken.token, { type: 'bearer' })
+        .send(updateReview)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            id: updateReview.id,
+            title: updateReview.title,
+            text: updateReview.text,
+          });
+        });
+    });
+
+    it("PUT /film/review User can't update review of other user", () => {
+      const updateReview: SubmitUpdateReview = {
+        id: newReviewId - 1,
+        title: 'Новое заглавие ревью',
+        text: 'Новый текст ревью'
+      };
+      return request(app.getHttpServer())
+        .put('/film/review')
+        .expect(HttpStatus.FORBIDDEN)
+        .auth(simpleUserToken.token, { type: 'bearer' })
+        .send(updateReview)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            error : NotYours
+          });
+        });
+    });
+
   });
 
   afterAll(async () => {

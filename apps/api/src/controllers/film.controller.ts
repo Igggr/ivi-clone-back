@@ -8,6 +8,7 @@ import {
   GET_PROFILE_BY_USER_ID,
   ADD_REVIEW,
   ADD_COMMENT,
+  UPDATE_REVIEW,
 } from '@app/rabbit/events';
 import { FILM, PROFILES } from '@app/rabbit/queues';
 import {
@@ -25,6 +26,8 @@ import {
   UseGuards,
   ParseArrayPipe,
   Req,
+  Put,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
@@ -47,9 +50,13 @@ import {
   UpdateFilmDTO,
   SubmitCommentDTO,
   CreateCommentDTO,
+  Review,
+  NotYours,
 } from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
 import { Request } from 'express';
+import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
+import { SubmitUpdateReview } from '@app/shared/dto/submit_update-review.dto';
 
 @ApiTags('film')
 @Controller('/film')
@@ -191,6 +198,31 @@ export class FilmController {
         payload,
       ),
     );
+  }
+
+  @ApiOperation({ summary: 'Обновление рецензии на фильм' })
+  @UseGuards(RolesGuard)
+  @ApiBearerAuth(BearerAuth)
+  @Put('/review')
+  async updateReview(@Body() dto: SubmitUpdateReview, @Req() request: Request) {
+    const profile = await this.getProfileId(request.user);
+    const payload: UpdateReviewDTO = { ...dto, profileId: profile.id };
+
+    const response: ResponseDTO<Review> = await firstValueFrom(
+      this.filmClient.send(
+        {
+          cmd: UPDATE_REVIEW,
+        },
+        payload,
+      ),
+    );
+    if (response.status === 'error' && response.error === NotYours) {
+      throw new ForbiddenException(NotYours);
+    }
+    if (response.status === 'ok') {
+      return response.value
+    }
+    return response;
   }
 
   @ApiOperation({ summary: 'Добавление комментария к рецензии на фильм' })

@@ -1,9 +1,11 @@
-import { CreateReviewDTO, ParsedReviewDTO } from '@app/shared';
+import { CreateReviewDTO, NotYours, ParsedReviewDTO, ReviewDoesNotExist } from '@app/shared';
 import { Review, Profile } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
 import { CommentService } from '../comment/comment.service';
+import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
+import { ResponseDTO } from '@app/rabbit';
 
 @Injectable()
 export class ReviewService {
@@ -49,5 +51,31 @@ export class ReviewService {
   async addReview(dto: CreateReviewDTO): Promise<Review> {
     const review = this.reviewRepository.create(dto);
     return this.reviewRepository.save(review);
+  }
+
+  async updateReview(dto: UpdateReviewDTO): Promise<ResponseDTO<Review>> {
+    const review = await this.reviewRepository.findOneBy({ id: dto.id });
+    if (!review) {
+      return {
+        status: 'error',
+        error: ReviewDoesNotExist,
+      }
+    }
+
+    if (review.profileId !== dto.profileId) {
+      return {
+        status: 'error',
+        error: NotYours,
+      }
+    }
+
+    review.title = dto.title ?? review.title;
+    review.text = dto.text ?? review.text;
+    review.isPositive = dto.isPositive ?? review.isPositive;
+    await this.reviewRepository.save(review);
+    return {
+      status: 'ok',
+      value: review,
+    }
   }
 }
