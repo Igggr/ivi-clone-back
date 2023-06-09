@@ -15,6 +15,7 @@ import * as Joi from 'joi';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { staticDir } from '@app/shared';
 import { FOR } from '@app/shared/constants/keys';
+import { VKStrategy } from './utils/vk.strategy';
 
 @Module({
   imports: [
@@ -22,8 +23,12 @@ import { FOR } from '@app/shared/constants/keys';
       isGlobal: true,
       envFilePath: './apps/api/.env',
       validationSchema: Joi.object({
-        CLIENT_ID: Joi.string().required(),
-        CLIENT_SECRET: Joi.string().required(),
+        GOOGLE_CLIENT_ID: Joi.string().required(),
+        GOOGLE_CLIENT_SECRET: Joi.string().required(),
+        GOOGLE_REDIRECT_URI: Joi.string().required(),
+        VK_CLIENT_ID: Joi.string().required(),
+        VK_CLIENT_SECRET: Joi.string().required(),
+        VK_REDIRECT_URI: Joi.string().required(),
       }),
     }),
     ClientsModule.registerAsync([
@@ -70,7 +75,7 @@ import { FOR } from '@app/shared/constants/keys';
     FilmController,
     GenreController,
   ],
-  providers: [GoogleStrategy, SessionSerializer],
+  providers: [GoogleStrategy, SessionSerializer, VKStrategy],
 })
 export class ApiModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

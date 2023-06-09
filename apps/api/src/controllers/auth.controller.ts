@@ -7,8 +7,8 @@ import {
   GET_ROLES,
   GET_USERS,
   LOGIN,
-  GOOGLE_LOGIN,
   GOOGLE_REDIRECT,
+  VK_REDIRECT,
 } from '@app/rabbit';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { CreateRoleDto } from '@app/shared/dto/create-role.dto';
@@ -36,6 +36,7 @@ import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { BearerAuth } from '../guards/bearer';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
+import { VKAuthGuard } from '../guards/vk-auth.guard';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
@@ -127,24 +128,37 @@ export class AuthController {
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
-  async handleLogin() {
-    return await firstValueFrom(
-      this.client.send(
-        {
-          cmd: GOOGLE_LOGIN,
-        },
-        {},
-      ),
-    );
+  async handleGoogleLogin() {
+    return { msg: 'Google Authentication' };
   }
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  async handleRedirect(@Req() request: Request) {
+  async handleGoogleRedirect(@Req() request: Request) {
     return await firstValueFrom(
       this.client.send(
         {
           cmd: GOOGLE_REDIRECT,
+        },
+        request.user,
+      ),
+    );
+  }
+
+  @Get('vk/login')
+  @UseGuards(VKAuthGuard)
+  async hangleVkLogin() {
+    return { msg: 'VK Authentication' };
+  }
+
+  @Get('vk/redirect')
+  @UseGuards(VKAuthGuard)
+  async handleVkRedirect(@Req() request: Request) {
+    console.log('api control');
+    return await firstValueFrom(
+      this.client.send(
+        {
+          cmd: VK_REDIRECT,
         },
         request.user,
       ),

@@ -38,4 +38,5 @@ export const ENSURE_ALL_GENRES_EXISTS = 'ensure_all_genre_exists';
 
 export const GOOGLE_LOGIN = 'google-login';
 export const GOOGLE_REDIRECT = 'google-redirect';
-export const ENSURE_GOOGLE_USER = 'ensure-google-user';
+export const VK_REDIRECT = 'vk-redirect';
+export const ENSURE_OAUTH_USER = 'ensure-oauth-user';

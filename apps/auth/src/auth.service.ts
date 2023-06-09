@@ -25,7 +25,7 @@ export class AuthService {
   async login(userDto: LoginDto) {
     const user = await this.validateUser(userDto);
     if (user instanceof User) {
-      return this.googleRedirect(user);
+      return this.redirect(user);
     }
     return user;
   }
@@ -78,7 +78,7 @@ export class AuthService {
     };
   }
 
-  async ensureGoogleUser(userDto: LoginDto) {
+  async ensureOauthUser(userDto: LoginDto) {
     console.log('Auth Service');
     console.log(userDto);
     const user = await this.userRepository.findOneBy({
@@ -88,16 +88,17 @@ export class AuthService {
       return user;
     }
     console.log('User not found');
-    const newGoogleUser = await this.userRepository.create(userDto);
-    await newGoogleUser.setPassword(userDto.password);
+    const newOauthUser = await this.userRepository.create(userDto);
+    await newOauthUser.setPassword(userDto.password);
     let role = await this.roleService.getRoleByValue('User');
     if (!role) {
       await this.roleService.createRole(USER);
     }
     role = await this.roleService.getRoleByValue('User');
-    newGoogleUser.addRole(role);
+    newOauthUser.addRole(role);
 
-    return await this.userRepository.save(newGoogleUser);
+    console.log('new user');
+    return await this.userRepository.save(newOauthUser);
   }
 
   async findUserById(userId: number) {
@@ -105,12 +106,18 @@ export class AuthService {
     return user;
   }
 
-  async googleRedirect(user: User) {
+  async redirect(user: User) {
     const token = await this.generateToken(user);
     const profile = await firstValueFrom(
       this.profileClient.send({ cmd: GET_PROFILE_BY_USER_ID }, user.id),
     );
 
     return { token, profileInfo: profile };
+  }
+
+  async ensureUserAndRedirect(userDto: LoginDto) {
+    const user = await this.ensureOauthUser(userDto);
+    console.log(user);
+    return await this.redirect(user);
   }
 }
