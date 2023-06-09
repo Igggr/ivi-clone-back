@@ -11,6 +11,7 @@ import {
   ADD_REVIEW,
   CREATE_FILM,
   DELETE_FILM,
+  DELETE_REVIEW,
   GET_FILMS,
   GET_ONE_FILM,
   PARSED_DATA,
@@ -31,6 +32,7 @@ import { ReviewService } from './review/review.service';
 import { CreateCommentDTO } from '@app/shared/dto/create-comment.dtos';
 import { CommentService } from './comment/comment.service';
 import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
+import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
 
 @Controller()
 export class FilmController {
@@ -94,6 +96,15 @@ export class FilmController {
   ): Promise<ResponseDTO<Review>> {
     ack(context);
     return this.reviewService.updateReview(dto);
+  }
+
+  @MessagePattern({ cmd: DELETE_REVIEW })
+  deleteReview(
+    @Payload() dto: DeleteReviewDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Review>> {
+    ack(context);
+    return this.reviewService.deleteReview(dto);
   }
 
   @MessagePattern({ cmd: ADD_COMMENT })

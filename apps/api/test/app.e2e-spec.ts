@@ -663,6 +663,21 @@ describe('Test API', () => {
           });
         });
     });
+
+    it("DELETE /film/review/:id User can delete his review, but if it has comments it will be just made empty", () => {
+      return request(app.getHttpServer())
+        .delete(`/film/review/${newReviewId}`)
+        .expect(HttpStatus.OK)
+        .auth(simpleUserToken.token, { type: 'bearer' })
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            title: '',
+            text: '',
+            isPositive: null,
+          });
+          expect(r.body.comments.length).toBeGreaterThan(0);
+        });
+    });
   });
 
   afterAll(async () => {

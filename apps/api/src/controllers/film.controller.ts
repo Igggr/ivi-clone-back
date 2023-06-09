@@ -9,6 +9,7 @@ import {
   ADD_REVIEW,
   ADD_COMMENT,
   UPDATE_REVIEW,
+  DELETE_REVIEW,
 } from '@app/rabbit/events';
 import { FILM, PROFILES } from '@app/rabbit/queues';
 import {
@@ -57,6 +58,7 @@ import { BearerAuth } from '../guards/bearer';
 import { Request } from 'express';
 import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
 import { SubmitUpdateReview } from '@app/shared/dto/submit_update-review.dto';
+import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
 
 @ApiTags('film')
 @Controller('/film')
@@ -212,6 +214,30 @@ export class FilmController {
       this.filmClient.send(
         {
           cmd: UPDATE_REVIEW,
+        },
+        payload,
+      ),
+    );
+    if (response.status === 'error' && response.error === NotYours) {
+      throw new ForbiddenException(NotYours);
+    }
+    if (response.status === 'ok') {
+      return response.value;
+    }
+    return response;
+  }
+
+  @Delete('/review/:id')
+  @ApiOperation({ summary: 'Удаление рецензии на фильм' })
+  @UseGuards(RolesGuard)
+  @ApiBearerAuth(BearerAuth)
+  async deleteReview(@Req() request: Request, @Param('id') id: number) {
+    const profile = await this.getProfileId(request.user);
+    const payload: DeleteReviewDTO = { id, profileId: profile.id };
+    const response: ResponseDTO<Review> = await firstValueFrom(
+      this.filmClient.send(
+        {
+          cmd: DELETE_REVIEW,
         },
         payload,
       ),

@@ -11,6 +11,7 @@ import { Equal, Repository } from 'typeorm';
 import { CommentService } from '../comment/comment.service';
 import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
 import { ResponseDTO } from '@app/rabbit';
+import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
 
 @Injectable()
 export class ReviewService {
@@ -59,7 +60,49 @@ export class ReviewService {
   }
 
   async updateReview(dto: UpdateReviewDTO): Promise<ResponseDTO<Review>> {
-    const review = await this.reviewRepository.findOneBy({ id: dto.id });
+    const check = await this.checkPermission(dto.id, dto.profileId);
+    if (check.status === 'error') {
+      return check;
+    }
+    const review = check.value;
+    review.title = dto.title ?? review.title;
+    review.text = dto.text ?? review.text;
+    review.isPositive = dto.isPositive ?? review.isPositive;
+    await this.reviewRepository.save(review);
+    return {
+      status: 'ok',
+      value: review,
+    };
+  }
+
+  async deleteReview(dto: DeleteReviewDTO): Promise<ResponseDTO<Review>> {
+    const check = await this.checkPermission(dto.id, dto.profileId);
+    if (check.status === 'error') {
+      return check;
+    }
+
+    const review = check.value;
+    if (review.comments.length === 0) {
+      const res = await this.reviewRepository.remove(review);
+      return {
+        status: 'ok',
+        value: res,
+      }
+    } else {
+      review.title = '';
+      review.text = '';
+      review.isPositive = null;
+      const res = await this.reviewRepository.save(review);
+      return {
+        status: 'ok',
+        value: res,
+      }
+    }
+
+  }
+
+  private async checkPermission(reviewId: number, profileId: number): Promise<ResponseDTO<Review>> {
+    const review = await this.reviewRepository.findOne({ where: { id: reviewId }, relations: ['comments'] });
     if (!review) {
       return {
         status: 'error',
@@ -67,17 +110,13 @@ export class ReviewService {
       };
     }
 
-    if (review.profileId !== dto.profileId) {
+    if (review.profileId !== profileId) {
       return {
         status: 'error',
         error: NotYours,
       };
     }
 
-    review.title = dto.title ?? review.title;
-    review.text = dto.text ?? review.text;
-    review.isPositive = dto.isPositive ?? review.isPositive;
-    await this.reviewRepository.save(review);
     return {
       status: 'ok',
       value: review,
