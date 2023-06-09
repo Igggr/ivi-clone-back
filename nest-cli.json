@@ -111,6 +111,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/genre/tsconfig.app.json"
       }
+    },
+    "sorting": {
+      "type": "application",
+      "root": "apps/sorting",
+      "entryFile": "main",
+      "sourceRoot": "apps/sorting/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/sorting/tsconfig.app.json"
+      }
     }
   }
 }

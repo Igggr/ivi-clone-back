@@ -1,7 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { FilmController } from './controllers/film.controller';
 import { JwtMiddleware } from './utils/jwt-middleware';
-import { AUTH, FILES_RECORD, FILM, GENRE, PROFILES } from '@app/rabbit/queues';
+import {
+  AUTH,
+  FILES_RECORD,
+  FILM,
+  GENRE,
+  PROFILES,
+  SORTING,
+} from '@app/rabbit/queues';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
 import { PassportModule } from '@nestjs/passport';
@@ -55,6 +62,12 @@ import { FOR } from '@app/shared/constants/keys';
         name: FILES_RECORD,
         useFactory: (configService: ConfigService) =>
           RABBIT_OPTIONS(FILES_RECORD, configService.get<string>(FOR)),
+        inject: [ConfigService],
+      },
+      {
+        name: SORTING,
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(SORTING, configService.get<string>(FOR)),
         inject: [ConfigService],
       },
     ]),
