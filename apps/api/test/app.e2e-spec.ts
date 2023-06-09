@@ -414,7 +414,7 @@ describe('Test API', () => {
       crouchingTigerId = film.id;
     }, 100000);
 
-    it('Can get film by id with all reviews and comments', () => {
+    it('GET /film/:id Can get film by id with all reviews and comments', () => {
       return request(app.getHttpServer())
         .get(`/film/${crouchingTigerId}`)
         .expect(200)
@@ -457,7 +457,7 @@ describe('Test API', () => {
         });
     }, 100000);
 
-    it("Can't create film if his genre doesn't exist", () => {
+    it("POST /film Can't create film if his genre doesn't exist", () => {
       const filmDto: CreateFilmDTO = {
         title: 'Терминатор',
         originalTitle: 'The Terminator',
@@ -479,7 +479,7 @@ describe('Test API', () => {
         });
     });
 
-    it('Admin can create new film', async () => {
+    it('POST /film Admin can create new film', async () => {
       // создадим недостающие жанры
       const fantasy: CreateGenreDTO = {
         genreName: 'фантастика',
@@ -538,7 +538,7 @@ describe('Test API', () => {
         });
     });
 
-    it('Can get films without limiting then by genre', () => {
+    it('GET /film Can get films without limiting them by genre', () => {
       return request(app.getHttpServer())
         .get('/film')
         .expect(HttpStatus.OK)
@@ -553,7 +553,7 @@ describe('Test API', () => {
         });
     });
 
-    it('Can filter films by genre', () => {
+    it('GET /film?genres=[массив_жанров] Can filter films by genre', () => {
       return request(app.getHttpServer())
         .get('/film?genres=fiction,action')
         .expect(HttpStatus.OK)
@@ -565,7 +565,7 @@ describe('Test API', () => {
         });
     });
 
-    it('Can limit returned film number', () => {
+    it('GET /film?limit=x&ofset=y Can limit returned film number', () => {
       return request(app.getHttpServer())
         .get('/film?limit=1&ofset=0')
         .expect(HttpStatus.OK)

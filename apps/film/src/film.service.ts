@@ -34,7 +34,7 @@ export class FilmService {
   ) {}
 
   async find(dto: FilmQueryDTO) {
-    if (dto.genres.length === 0) {
+    if (dto.filter.genres.length === 0) {
       const res = await this.filmRepository
         .createQueryBuilder('films')
         .offset(dto.pagination.ofset)
@@ -44,9 +44,9 @@ export class FilmService {
     }
 
     // console.log(dto)
-    const genres = await this.findGenresByNamesEn(dto.genres);
+    const genres = await this.findGenresByNamesEn(dto.filter.genres);
     // console.log('Get only films with all this genres:', dto, genres)
-    if (dto.genres.length !== genres.length) {
+    if (dto.filter.genres.length !== genres.length) {
       return {
         status: 'error',
         error: SomeGenresNotFound,

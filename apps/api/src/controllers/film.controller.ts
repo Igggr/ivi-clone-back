@@ -6,7 +6,7 @@ import {
   GET_FILMS,
   UPDATE_FILM,
 } from '@app/rabbit/events';
-import { FILM, PROFILES } from '@app/rabbit/queues';
+import { FILM } from '@app/rabbit/queues';
 import {
   Body,
   Controller,
@@ -33,16 +33,16 @@ import { firstValueFrom } from 'rxjs';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
-import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
+import { CreateFilmDTO, Film, FilmQueryDTO, FilmSort, PaginationDTO, UpdateFilmDTO } from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
 import { DeleteResult } from 'typeorm';
+import { FilterDTO, Rating } from '@app/shared/dto/filter.dto';
 
 @ApiTags('film')
 @Controller('/film')
 export class FilmController {
   constructor(
     @Inject(FILM) private readonly filmClient: ClientProxy,
-    @Inject(PROFILES) private readonly profileClient: ClientProxy,
   ) {}
 
   @UseGuards(RolesGuard)
@@ -71,17 +71,15 @@ export class FilmController {
     genres: string[] = [],
     @Query('limit') limit = 10,
     @Query('ofset') ofset = 0,
+    @Query('country') countryName?,
+    @Query('director') directorId?: number,
+    @Query('actor') actorId?: number,
+    @Query('rating') rating?: Rating,
+    @Query('marks') marks?: number,
+    @Query('sort') sort?: FilmSort,
   ) {
-    const res = await firstValueFrom(
-      this.filmClient.send(
-        { cmd: GET_FILMS },
-        {
-          genres: genres,
-          pagination: { limit, ofset },
-        },
-      ),
-    );
-    return res;
+
+    return this.dispatch({ limit, ofset }, { genres, countryName, directorId, actorId, rating, marks }, sort);
   }
 
   @ApiOperation({ summary: 'Получение информации о фильмах' })
@@ -90,10 +88,17 @@ export class FilmController {
   async getAllMovies(
     @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
     genres: string[] = [],
-    @Query('limit') limit = 0,
-    @Query('ofset') ofset = 10,
+    @Query('limit') limit = 10,
+    @Query('ofset') ofset = 0,
+    @Query('country') countryName?,
+    @Query('director') directorId?: number,
+    @Query('actor') actorId?: number,
+    @Query('rating') rating?: Rating,
+    @Query('marks') marks?: number,
+    @Query('sort') sort?: FilmSort,
+    
   ) {
-    return this.dispatch('movie', genres, { limit, ofset });
+    return this.dispatch({ limit, ofset }, { genres: genres.concat('movie'), countryName, directorId, actorId, rating, marks }, sort);
   }
 
   @ApiOperation({ summary: 'Получение информации о сериалах' })
@@ -102,10 +107,16 @@ export class FilmController {
   async getAllSerials(
     @Query('genres', new ParseArrayPipe({ optional: true, items: String }))
     genres: string[] = [],
-    @Query('limit') limit = 0,
-    @Query('ofset') ofset = 10,
+    @Query('limit') limit = 10,
+    @Query('ofset') ofset = 0,
+    @Query('country') countryName?: string,
+    @Query('director') directorId?: number,
+    @Query('actor') actorId?: number,
+    @Query('rating') rating?: Rating,
+    @Query('marks') marks?: number,
+    @Query('sort') sort?: FilmSort,
   ) {
-    return this.dispatch('serial', genres, { limit, ofset });
+    return this.dispatch({ limit, ofset }, { genres: genres.concat('serial'), countryName, directorId, actorId, rating, marks}, sort);
   }
 
   @ApiOperation({ summary: 'Получение информации о мультфльмах' })
@@ -116,18 +127,26 @@ export class FilmController {
     genres: string[] = [],
     @Query('limit') limit = 0,
     @Query('ofset') ofset = 10,
+    @Query('country') countryName?,
+    @Query('director') directorId?: number,
+    @Query('actor') actorId?: number,
+    @Query('rating') rating?: Rating,
+    @Query('marks') marks?: number,
+    @Query('sort') sort?: FilmSort,
   ) {
-    return this.dispatch('cartoon', genres, { limit, ofset });
+    return this.dispatch({ limit, ofset }, { genres: genres.concat('cartoon'), countryName, directorId, actorId, rating, marks }, sort);
   }
 
-  async dispatch(genre: string, genres: string[], pagination: PaginationDTO) {
+  async dispatch(pagination: PaginationDTO, filter: FilterDTO, sort: FilmSort) {
+    const payload: FilmQueryDTO = {
+      pagination,
+      filter,
+      sort,
+    };
     const res = await firstValueFrom(
       this.filmClient.send(
         { cmd: GET_FILMS },
-        {
-          genres: genres.concat(genre),
-          pagination,
-        },
+        payload,
       ),
     );
     return res;
