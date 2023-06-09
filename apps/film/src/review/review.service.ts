@@ -1,4 +1,9 @@
-import { CreateReviewDTO, NotYours, ParsedReviewDTO, ReviewDoesNotExist } from '@app/shared';
+import {
+  CreateReviewDTO,
+  NotYours,
+  ParsedReviewDTO,
+  ReviewDoesNotExist,
+} from '@app/shared';
 import { Review, Profile } from '@app/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -59,14 +64,14 @@ export class ReviewService {
       return {
         status: 'error',
         error: ReviewDoesNotExist,
-      }
+      };
     }
 
     if (review.profileId !== dto.profileId) {
       return {
         status: 'error',
         error: NotYours,
-      }
+      };
     }
 
     review.title = dto.title ?? review.title;
@@ -76,6 +81,6 @@ export class ReviewService {
     return {
       status: 'ok',
       value: review,
-    }
+    };
   }
 }

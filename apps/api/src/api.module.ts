@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { FilmController } from './controllers/film.controller';
 import { JwtMiddleware } from './utils/jwt-middleware';
 import { AUTH, FILES_RECORD, FILM, GENRE, PROFILES } from '@app/rabbit/queues';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProfilesController } from './controllers/profile.controller';
 import { PassportModule } from '@nestjs/passport';
 import { GenreController } from './controllers/genre.controller';
@@ -14,6 +14,7 @@ import { SessionSerializer } from './utils/serializer';
 import * as Joi from 'joi';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { staticDir } from '@app/shared';
+import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
@@ -25,34 +26,36 @@ import { staticDir } from '@app/shared';
         CLIENT_SECRET: Joi.string().required(),
       }),
     }),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: FILM,
-        ...RABBIT_OPTIONS(FILM),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(FILM, configService.get<string>(FOR)),
+        inject: [ConfigService],
       },
-    ]),
-    ClientsModule.register([
       {
         name: AUTH,
-        ...RABBIT_OPTIONS(AUTH),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(AUTH, configService.get<string>(FOR)),
+        inject: [ConfigService],
       },
-    ]),
-    ClientsModule.register([
       {
         name: PROFILES,
-        ...RABBIT_OPTIONS(PROFILES),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(PROFILES, configService.get<string>(FOR)),
+        inject: [ConfigService],
       },
-    ]),
-    ClientsModule.register([
       {
         name: GENRE,
-        ...RABBIT_OPTIONS(GENRE),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(GENRE, configService.get<string>(FOR)),
+        inject: [ConfigService],
       },
-    ]),
-    ClientsModule.register([
       {
         name: FILES_RECORD,
-        ...RABBIT_OPTIONS(FILES_RECORD),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(FILES_RECORD, configService.get<string>(FOR)),
+        inject: [ConfigService],
       },
     ]),
     PassportModule.register({ session: true }),

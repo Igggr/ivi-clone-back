@@ -220,7 +220,7 @@ export class FilmController {
       throw new ForbiddenException(NotYours);
     }
     if (response.status === 'ok') {
-      return response.value
+      return response.value;
     }
     return response;
   }

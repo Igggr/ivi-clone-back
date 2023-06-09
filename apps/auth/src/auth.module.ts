@@ -4,13 +4,14 @@ import { AuthService } from './auth.service';
 import { User } from '@app/shared';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Role } from '@app/shared/entities/role.entity';
 import { RolesService } from './roles/roles.service';
 import { DatabaseModule, db_schema } from '@app/database';
 import * as Joi from 'joi';
 import { ClientsModule } from '@nestjs/microservices';
 import { PROFILES, RABBIT_OPTIONS } from '@app/rabbit';
+import { FOR, PRIVATE_KEY } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
@@ -18,20 +19,25 @@ import { PROFILES, RABBIT_OPTIONS } from '@app/rabbit';
       isGlobal: true,
       envFilePath: './apps/auth/.env',
       validationSchema: Joi.object({
-        PRIVATE_KEY: Joi.string().required(),
+        [PRIVATE_KEY]: Joi.string().required(),
       }).concat(db_schema),
     }),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: PROFILES,
-        ...RABBIT_OPTIONS(PROFILES),
+        useFactory: (configService: ConfigService) =>
+          RABBIT_OPTIONS(PROFILES, configService.get<string>(FOR)),
+        inject: [ConfigService],
       },
     ]),
-    JwtModule.register({
-      secret: process.env.PRIVATE_KEY,
-      signOptions: {
-        expiresIn: '24h',
-      },
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>(PRIVATE_KEY),
+        signOptions: {
+          expiresIn: '24h',
+        },
+      }),
+      inject: [ConfigService],
     }),
     ...DatabaseModule.forRoot([User, Role]),
   ],

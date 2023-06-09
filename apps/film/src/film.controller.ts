@@ -88,7 +88,10 @@ export class FilmController {
   }
 
   @MessagePattern({ cmd: UPDATE_REVIEW })
-  updateReview(@Payload() dto: UpdateReviewDTO, @Ctx() context: RmqContext): Promise<ResponseDTO<Review>> {
+  updateReview(
+    @Payload() dto: UpdateReviewDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Review>> {
     ack(context);
     return this.reviewService.updateReview(dto);
   }

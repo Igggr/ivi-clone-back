@@ -644,6 +644,115 @@
                 ]
             }
         },
+        "/film/review": {
+            "post": {
+                "operationId": "FilmController_addReview",
+                "summary": "Добавление рецензии на фильм",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubmitReviewDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ],
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "operationId": "FilmController_updateReview",
+                "summary": "Обновление рецензии на фильм",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubmitUpdateReview"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ],
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/film/comment": {
+            "post": {
+                "operationId": "FilmController_addComment",
+                "summary": "Добавление комментария к рецензии на фильм",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubmitCommentDTO"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "film"
+                ],
+                "security": [
+                    {
+                        "defaultBearerAuth": []
+                    }
+                ]
+            }
+        },
         "/genre": {
             "post": {
                 "operationId": "GenreController_createGenre",
@@ -1230,12 +1339,10 @@
                 },
                 "required": [
                     "id",
-                    "url",
                     "title",
                     "text",
                     "filmId",
                     "profileId",
-                    "isPositive",
                     "comments",
                     "film"
                 ]
@@ -1475,6 +1582,93 @@
                     "slogan",
                     "countryName",
                     "duration"
+                ]
+            },
+            "SubmitReviewDTO": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "Ссылка на ревью на кинопоиске",
+                        "example": "https://www.kinopoisk.ru/user/15854772/comment/3251114/"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Название ревью",
+                        "example": "История о том, как на лжи можно заработать миллионы"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
+                    },
+                    "filmId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "isPositive": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "title",
+                    "text",
+                    "filmId"
+                ]
+            },
+            "SubmitUpdateReview": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Первичный ключ",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Название ревью",
+                        "example": "История о том, как на лжи можно заработать миллионы"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
+                    },
+                    "isPositive": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "id",
+                    "title",
+                    "text"
+                ]
+            },
+            "SubmitCommentDTO": {
+                "type": "object",
+                "properties": {
+                    "reviewId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "parentCommentId": {
+                        "type": "number",
+                        "minimum": 1,
+                        "description": "Foreign key",
+                        "example": 1
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Текст комментария под чьим-то ревью",
+                        "example": "Ты просто не понял фильм, иначе б такое ревью не написал"
+                    }
+                },
+                "required": [
+                    "reviewId",
+                    "text"
                 ]
             },
             "DeleteResult": {
