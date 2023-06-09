@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<RmqOptions>(
     FilmModule,
     // от кого получать сообщения
-    RABBIT_OPTIONS(FILM),
+    RABBIT_OPTIONS(FILM, process.env.FOR),
   );
   app.listen();
 }

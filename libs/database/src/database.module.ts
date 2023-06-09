@@ -1,6 +1,15 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import {
+  DB_HOST,
+  DB_PORT,
+  DOCKER_CONTAINER,
+  POSTGRES_DB,
+  POSTGRES_PASSWORD,
+  POSTGRES_USER,
+} from './keys';
+import { DOCKER, FOR, NODE_ENV, PROD, TEST } from '@app/shared/constants/keys';
 
 @Module({})
 export class DatabaseModule {
@@ -11,7 +20,7 @@ export class DatabaseModule {
         imports: [
           TypeOrmModule.forRootAsync({
             useFactory: (configService: ConfigService) => {
-              if (configService.get('IS_TEST')) {
+              if (configService.get<string>(FOR) === TEST) {
                 console.log('Test DB');
                 return {
                   type: 'postgres',
@@ -29,20 +38,19 @@ export class DatabaseModule {
               return {
                 type: 'postgres',
                 host:
-                  configService.get<string>('FOR') === 'docker'
-                    ? configService.get<string>('DOCKER_DB')
-                    : configService.get<string>('DB_HOST'),
+                  configService.get<string>(FOR) === DOCKER
+                    ? configService.get<string>(DOCKER_CONTAINER)
+                    : configService.get<string>(DB_HOST),
                 port:
-                  configService.get('FOR') === 'docker'
+                  configService.get<string>(FOR) === DOCKER
                     ? 5432
-                    : +configService.get('DB_PORT'),
-                username: configService.get<string>('POSTGRES_USER'),
-                password: configService.get<string>('POSTGRES_PASSWORD'),
-                database: configService.get<string>('POSTGRES_DB'),
+                    : +configService.get(DB_PORT),
+                username: configService.get<string>(POSTGRES_USER),
+                password: configService.get<string>(POSTGRES_PASSWORD),
+                database: configService.get<string>(POSTGRES_DB),
                 entities,
-                synchronize: configService.get('NODE_ENV') !== 'prod' || true,
-                autoLoadEntities:
-                  configService.get('NODE_ENV') !== 'prod' || true,
+                synchronize: configService.get<string>(NODE_ENV) !== PROD,
+                autoLoadEntities: configService.get<string>(NODE_ENV) !== PROD,
               };
             },
             inject: [ConfigService],
