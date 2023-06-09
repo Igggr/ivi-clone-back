@@ -31,9 +31,10 @@ import {
 import { ApiModule } from '../src/api.module';
 import { ADMIN, USER } from '../../../libs/shared/src/constants/role.const';
 import { crouchingTigerHiddenDragon } from './data';
-import { SubmitUpdateReview } from '@app/shared/dto/submit_update-review.dto';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FOR } from '@app/shared/constants/keys';
+import { SubmitUpdateCommentDTO } from '@app/shared/dto/submit-update-comment.dto';
+import { SubmitUpdateReviewDTO } from '@app/shared/dto/submit-update-review.dto';
 
 type Token = { token: string };
 
@@ -86,6 +87,7 @@ describe('Test API', () => {
   let crouchingTigerId: number;
   let newFilmId: number;
   let newReviewId: number;
+  let newCommentId: number;
 
   const newReview = {
     title: 'Aaaaa',
@@ -602,10 +604,10 @@ describe('Test API', () => {
         .then((r) => {
           expect(r.body).toMatchObject({
             reviewId: comment.reviewId,
-            profileId: simpleUserId, // потому что использовали его jwt-токен
             text: comment.text,
           });
           expect(r.body.id).toBeDefined();
+          newCommentId = r.body.id;
         });
     });
 
@@ -627,7 +629,7 @@ describe('Test API', () => {
     });
 
     it('PUT /film/review User can update his review', () => {
-      const updateReview: SubmitUpdateReview = {
+      const updateReview: SubmitUpdateReviewDTO = {
         id: newReviewId,
         title: 'Новое заглавие ревью',
         text: 'Новый текст ревью',
@@ -647,7 +649,7 @@ describe('Test API', () => {
     });
 
     it("PUT /film/review User can't update review of other user", () => {
-      const updateReview: SubmitUpdateReview = {
+      const updateReview: SubmitUpdateReviewDTO = {
         id: newReviewId - 1,
         title: 'Новое заглавие ревью',
         text: 'Новый текст ревью',
@@ -664,7 +666,25 @@ describe('Test API', () => {
         });
     });
 
-    it("DELETE /film/review/:id User can delete his review, but if it has comments it will be just made empty", () => {
+    it('PUT /film/comment User can update his comment', () => {
+      const updateComment: SubmitUpdateCommentDTO = {
+        id: newCommentId,
+        text: 'Новый текст комментария',
+      };
+      return request(app.getHttpServer())
+        .put('/film/comment')
+        .expect(HttpStatus.OK)
+        .auth(simpleUserToken.token, { type: 'bearer' })
+        .send(updateComment)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            id: updateComment.id,
+            text: updateComment.text,
+          });
+        });
+    });
+
+    it('DELETE /film/review/:id User can delete his review, but if it has comments it will be just made empty', () => {
       return request(app.getHttpServer())
         .delete(`/film/review/${newReviewId}`)
         .expect(HttpStatus.OK)

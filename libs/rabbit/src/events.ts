@@ -5,10 +5,14 @@ export const UPDATE_FILM = 'update_film';
 export const GET_FILMS = 'get_films';
 export const GET_ONE_FILM = 'get_one_film';
 export const DELETE_FILM = 'delete_film';
+
 export const ADD_REVIEW = 'add_review';
 export const UPDATE_REVIEW = 'update_review';
 export const DELETE_REVIEW = 'delete_review';
+
 export const ADD_COMMENT = 'add_comment';
+export const UPDATE_COMMENT = 'update_comment';
+export const DELETE_COMMENT = 'delete_comment';
 
 export const GET_PROFILE_BY_USER_ID = 'get_profile_by_user_id';
 export const CREATE_PROFILE_WITH_DUMMY_USER = 'create_profile_with_dumy_user';

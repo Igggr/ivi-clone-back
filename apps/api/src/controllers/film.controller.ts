@@ -10,6 +10,7 @@ import {
   ADD_COMMENT,
   UPDATE_REVIEW,
   DELETE_REVIEW,
+  UPDATE_COMMENT,
 } from '@app/rabbit/events';
 import { FILM, PROFILES } from '@app/rabbit/queues';
 import {
@@ -53,12 +54,14 @@ import {
   CreateCommentDTO,
   Review,
   NotYours,
+  Profile,
 } from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
 import { Request } from 'express';
 import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
-import { SubmitUpdateReview } from '@app/shared/dto/submit_update-review.dto';
 import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
+import { SubmitUpdateCommentDTO } from '@app/shared/dto/submit-update-comment.dto';
+import { SubmitUpdateReviewDTO } from '@app/shared/dto/submit-update-review.dto';
 
 @ApiTags('film')
 @Controller('/film')
@@ -206,7 +209,10 @@ export class FilmController {
   @UseGuards(RolesGuard)
   @ApiBearerAuth(BearerAuth)
   @Put('/review')
-  async updateReview(@Body() dto: SubmitUpdateReview, @Req() request: Request) {
+  async updateReview(
+    @Body() dto: SubmitUpdateReviewDTO,
+    @Req() request: Request,
+  ) {
     const profile = await this.getProfileId(request.user);
     const payload: UpdateReviewDTO = { ...dto, profileId: profile.id };
 
@@ -269,6 +275,35 @@ export class FilmController {
     );
   }
 
+  @ApiOperation({ summary: 'Обновление комметнария к рецензии' })
+  @UseGuards(RolesGuard)
+  @ApiBearerAuth(BearerAuth)
+  @Put('/comment')
+  async updateComment(
+    @Body() dto: SubmitUpdateCommentDTO,
+    @Req() request: Request,
+  ) {
+    const profile = await this.getProfileId(request.user);
+    const payload = { ...dto, profileId: profile.id };
+
+    const response: ResponseDTO<Review> = await firstValueFrom(
+      this.filmClient.send(
+        {
+          cmd: UPDATE_COMMENT,
+        },
+        payload,
+      ),
+    );
+    if (response.status === 'error' && response.error === NotYours) {
+      console.log('Not his comment');
+      throw new ForbiddenException(NotYours);
+    }
+    if (response.status === 'ok') {
+      return response.value;
+    }
+    return response;
+  }
+
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   @ApiBearerAuth(BearerAuth)
@@ -288,7 +323,7 @@ export class FilmController {
     );
   }
 
-  private async getProfileId(user) {
+  private async getProfileId(user): Promise<Profile> {
     return await firstValueFrom(
       this.profileClient.send({ cmd: GET_PROFILE_BY_USER_ID }, user.id),
     );

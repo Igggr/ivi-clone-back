@@ -15,6 +15,7 @@ import {
   GET_FILMS,
   GET_ONE_FILM,
   PARSED_DATA,
+  UPDATE_COMMENT,
   UPDATE_FILM,
   UPDATE_REVIEW,
 } from '@app/rabbit/events';
@@ -25,6 +26,7 @@ import {
   UpdateFilmDTO,
   CreateReviewDTO,
   Review,
+  Comment,
 } from '@app/shared';
 import { ResponseDTO, ack } from '@app/rabbit';
 import { ParserSaverService } from './parser.saver/parser.saver.service';
@@ -33,6 +35,7 @@ import { CreateCommentDTO } from '@app/shared/dto/create-comment.dtos';
 import { CommentService } from './comment/comment.service';
 import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
 import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
+import { UpdateCommentDTO } from '@app/shared/dto/update-comment.dto';
 
 @Controller()
 export class FilmController {
@@ -111,5 +114,14 @@ export class FilmController {
   addComment(@Payload() dto: CreateCommentDTO, @Ctx() context: RmqContext) {
     ack(context);
     return this.commentService.addComment(dto);
+  }
+
+  @MessagePattern({ cmd: UPDATE_COMMENT })
+  updateComment(
+    @Payload() dto: UpdateCommentDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Comment>> {
+    ack(context);
+    return this.commentService.updateComment(dto);
   }
 }

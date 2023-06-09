@@ -87,7 +87,7 @@ export class ReviewService {
       return {
         status: 'ok',
         value: res,
-      }
+      };
     } else {
       review.title = '';
       review.text = '';
@@ -96,13 +96,18 @@ export class ReviewService {
       return {
         status: 'ok',
         value: res,
-      }
+      };
     }
-
   }
 
-  private async checkPermission(reviewId: number, profileId: number): Promise<ResponseDTO<Review>> {
-    const review = await this.reviewRepository.findOne({ where: { id: reviewId }, relations: ['comments'] });
+  private async checkPermission(
+    reviewId: number,
+    profileId: number,
+  ): Promise<ResponseDTO<Review>> {
+    const review = await this.reviewRepository.findOne({
+      where: { id: reviewId },
+      relations: ['comments'],
+    });
     if (!review) {
       return {
         status: 'error',
