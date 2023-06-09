@@ -15,6 +15,7 @@ import * as Joi from 'joi';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { staticDir } from '@app/shared';
 import { FOR } from '@app/shared/constants/keys';
+import { ReviewController } from './controllers/review.controller';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { FOR } from '@app/shared/constants/keys';
     ProfilesController,
     FilmController,
     GenreController,
+    ReviewController,
   ],
   providers: [GoogleStrategy, SessionSerializer],
 })
@@ -81,6 +83,7 @@ export class ApiModule implements NestModule {
         AuthController,
         GenreController,
         FilmController,
+        ReviewController,
       );
   }
 }

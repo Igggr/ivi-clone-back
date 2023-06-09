@@ -82,6 +82,8 @@ export class FilmService {
     const film = await this.filmRepository
       .createQueryBuilder('film')
       .where('film.id = :id', { id })
+      .leftJoinAndSelect('film.reviews', 'reviews')
+      .leftJoinAndSelect('reviews.comments', 'commetns')
       .getOne();
     return film;
   }
