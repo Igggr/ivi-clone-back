@@ -590,14 +590,14 @@ describe('Test API', () => {
         });
     });
 
-    it('POST /film/comment User can add comment for any review', () => {
+    it('POST /film/review/comment User can add comment for any review', () => {
       const comment: SubmitCommentDTO = {
         text: newComment,
         reviewId: newReviewId,
       };
 
       return request(app.getHttpServer())
-        .post('/film/comment')
+        .post('/film/review/comment')
         .auth(simpleUserToken.token, { type: 'bearer' })
         .send(comment)
         .expect(HttpStatus.CREATED)
@@ -666,13 +666,13 @@ describe('Test API', () => {
         });
     });
 
-    it('PUT /film/comment User can update his comment', () => {
+    it('PUT /film/review/comment User can update his comment', () => {
       const updateComment: SubmitUpdateCommentDTO = {
         id: newCommentId,
         text: 'Новый текст комментария',
       };
       return request(app.getHttpServer())
-        .put('/film/comment')
+        .put('/film/review/comment')
         .expect(HttpStatus.OK)
         .auth(simpleUserToken.token, { type: 'bearer' })
         .send(updateComment)

@@ -5,12 +5,6 @@ import {
   DELETE_FILM,
   GET_FILMS,
   UPDATE_FILM,
-  GET_PROFILE_BY_USER_ID,
-  ADD_REVIEW,
-  ADD_COMMENT,
-  UPDATE_REVIEW,
-  DELETE_REVIEW,
-  UPDATE_COMMENT,
 } from '@app/rabbit/events';
 import { FILM, PROFILES } from '@app/rabbit/queues';
 import {
@@ -27,9 +21,6 @@ import {
   Query,
   UseGuards,
   ParseArrayPipe,
-  Req,
-  Put,
-  ForbiddenException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
@@ -39,29 +30,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
-import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
-import {
-  CreateFilmDTO,
-  CreateReviewDTO,
-  Film,
-  PaginationDTO,
-  SubmitReviewDTO,
-  UpdateFilmDTO,
-  SubmitCommentDTO,
-  CreateCommentDTO,
-  Review,
-  NotYours,
-  Profile,
-} from '@app/shared';
+import { CreateFilmDTO, Film, PaginationDTO, UpdateFilmDTO } from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
-import { Request } from 'express';
-import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
-import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
-import { SubmitUpdateCommentDTO } from '@app/shared/dto/submit-update-comment.dto';
-import { SubmitUpdateReviewDTO } from '@app/shared/dto/submit-update-review.dto';
+import { DeleteResult } from 'typeorm';
 
 @ApiTags('film')
 @Controller('/film')
@@ -187,123 +161,6 @@ export class FilmController {
     );
   }
 
-  @ApiOperation({ summary: 'Добавление рецензии на фильм' })
-  @UseGuards(RolesGuard)
-  @ApiBearerAuth(BearerAuth)
-  @Post('/review')
-  async addReview(@Body() dto: SubmitReviewDTO, @Req() request: Request) {
-    const profile = await this.getProfileId(request.user);
-    const payload: CreateReviewDTO = { ...dto, profileId: profile.id };
-
-    return await firstValueFrom(
-      this.filmClient.send(
-        {
-          cmd: ADD_REVIEW,
-        },
-        payload,
-      ),
-    );
-  }
-
-  @ApiOperation({ summary: 'Обновление рецензии на фильм' })
-  @UseGuards(RolesGuard)
-  @ApiBearerAuth(BearerAuth)
-  @Put('/review')
-  async updateReview(
-    @Body() dto: SubmitUpdateReviewDTO,
-    @Req() request: Request,
-  ) {
-    const profile = await this.getProfileId(request.user);
-    const payload: UpdateReviewDTO = { ...dto, profileId: profile.id };
-
-    const response: ResponseDTO<Review> = await firstValueFrom(
-      this.filmClient.send(
-        {
-          cmd: UPDATE_REVIEW,
-        },
-        payload,
-      ),
-    );
-    if (response.status === 'error' && response.error === NotYours) {
-      throw new ForbiddenException(NotYours);
-    }
-    if (response.status === 'ok') {
-      return response.value;
-    }
-    return response;
-  }
-
-  @Delete('/review/:id')
-  @ApiOperation({ summary: 'Удаление рецензии на фильм' })
-  @UseGuards(RolesGuard)
-  @ApiBearerAuth(BearerAuth)
-  async deleteReview(@Req() request: Request, @Param('id') id: number) {
-    const profile = await this.getProfileId(request.user);
-    const payload: DeleteReviewDTO = { id, profileId: profile.id };
-    const response: ResponseDTO<Review> = await firstValueFrom(
-      this.filmClient.send(
-        {
-          cmd: DELETE_REVIEW,
-        },
-        payload,
-      ),
-    );
-    if (response.status === 'error' && response.error === NotYours) {
-      throw new ForbiddenException(NotYours);
-    }
-    if (response.status === 'ok') {
-      return response.value;
-    }
-    return response;
-  }
-
-  @ApiOperation({ summary: 'Добавление комментария к рецензии на фильм' })
-  @UseGuards(RolesGuard)
-  @ApiBearerAuth(BearerAuth)
-  @Post('/comment')
-  async addComment(@Body() dto: SubmitCommentDTO, @Req() request: Request) {
-    const profile = await this.getProfileId(request.user);
-    const payload: CreateCommentDTO = { ...dto, profileId: profile.id };
-
-    return await firstValueFrom(
-      this.filmClient.send(
-        {
-          cmd: ADD_COMMENT,
-        },
-        payload,
-      ),
-    );
-  }
-
-  @ApiOperation({ summary: 'Обновление комметнария к рецензии' })
-  @UseGuards(RolesGuard)
-  @ApiBearerAuth(BearerAuth)
-  @Put('/comment')
-  async updateComment(
-    @Body() dto: SubmitUpdateCommentDTO,
-    @Req() request: Request,
-  ) {
-    const profile = await this.getProfileId(request.user);
-    const payload = { ...dto, profileId: profile.id };
-
-    const response: ResponseDTO<Review> = await firstValueFrom(
-      this.filmClient.send(
-        {
-          cmd: UPDATE_COMMENT,
-        },
-        payload,
-      ),
-    );
-    if (response.status === 'error' && response.error === NotYours) {
-      console.log('Not his comment');
-      throw new ForbiddenException(NotYours);
-    }
-    if (response.status === 'ok') {
-      return response.value;
-    }
-    return response;
-  }
-
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
   @ApiBearerAuth(BearerAuth)
@@ -320,12 +177,6 @@ export class FilmController {
         },
         id,
       ),
-    );
-  }
-
-  private async getProfileId(user): Promise<Profile> {
-    return await firstValueFrom(
-      this.profileClient.send({ cmd: GET_PROFILE_BY_USER_ID }, user.id),
     );
   }
 }
