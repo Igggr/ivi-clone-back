@@ -10,6 +10,7 @@ import {
   ADD_COMMENT,
   ADD_REVIEW,
   CREATE_FILM,
+  DELETE_COMMENT,
   DELETE_FILM,
   DELETE_REVIEW,
   GET_FILMS,
@@ -123,5 +124,14 @@ export class FilmController {
   ): Promise<ResponseDTO<Comment>> {
     ack(context);
     return this.commentService.updateComment(dto);
+  }
+
+  @MessagePattern({ cmd: DELETE_COMMENT })
+  deleteComment(
+    @Payload() dto: DeleteReviewDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Comment>> {
+    ack(context);
+    return this.commentService.deleteComment(dto);
   }
 }

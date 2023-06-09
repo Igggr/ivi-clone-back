@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Inject,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Req,
@@ -27,6 +28,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   ADD_COMMENT,
   ADD_REVIEW,
+  DELETE_COMMENT,
   DELETE_REVIEW,
   FILM,
   GET_PROFILE_BY_USER_ID,
@@ -41,6 +43,7 @@ import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
 import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
 import { SubmitUpdateCommentDTO } from '@app/shared/dto/submit-update-comment.dto';
 
+// читать отдельное ревью . комментарий не надо - они загрузяться вместе с фильмом (если выбрать один фильм)
 @ApiTags('film/review')
 @Controller('/film/review')
 export class ReviewController {
@@ -99,7 +102,10 @@ export class ReviewController {
   @ApiOperation({ summary: 'Удаление рецензии на фильм' })
   @UseGuards(RolesGuard)
   @ApiBearerAuth(BearerAuth)
-  async deleteReview(@Req() request: Request, @Param('id') id: number) {
+  async deleteReview(
+    @Req() request: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
     const profile = await this.getProfileId(request.user);
     const payload: DeleteReviewDTO = { id, profileId: profile.id };
     const response: ResponseDTO<Review> = await firstValueFrom(
@@ -149,7 +155,7 @@ export class ReviewController {
     const profile = await this.getProfileId(request.user);
     const payload = { ...dto, profileId: profile.id };
 
-    const response: ResponseDTO<Review> = await firstValueFrom(
+    const response: ResponseDTO<Comment> = await firstValueFrom(
       this.filmClient.send(
         {
           cmd: UPDATE_COMMENT,
@@ -159,6 +165,33 @@ export class ReviewController {
     );
     if (response.status === 'error' && response.error === NotYours) {
       console.log('Not his comment');
+      throw new ForbiddenException(NotYours);
+    }
+    if (response.status === 'ok') {
+      return response.value;
+    }
+    return response;
+  }
+
+  @Delete('/comment/:id')
+  @ApiOperation({ summary: 'Удаление комментария к рецензии' })
+  @UseGuards(RolesGuard)
+  @ApiBearerAuth(BearerAuth)
+  async deleteComment(
+    @Req() request: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const profile = await this.getProfileId(request.user);
+    const payload: DeleteReviewDTO = { id, profileId: profile.id };
+    const response: ResponseDTO<Comment> = await firstValueFrom(
+      this.filmClient.send(
+        {
+          cmd: DELETE_COMMENT,
+        },
+        payload,
+      ),
+    );
+    if (response.status === 'error' && response.error === NotYours) {
       throw new ForbiddenException(NotYours);
     }
     if (response.status === 'ok') {

@@ -95,6 +95,11 @@ describe('Test API', () => {
     isPositive: false,
   };
   const newComment = 'Кто ж такие ревью пишет? Ты просто фильм не понял';
+  const updatedReview = {
+    title: 'Новое заглавие ревью',
+    text: 'Новый текст ревью',
+  };
+  const updatedComment = 'Новый текст комментария';
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -631,8 +636,7 @@ describe('Test API', () => {
     it('PUT /film/review User can update his review', () => {
       const updateReview: SubmitUpdateReviewDTO = {
         id: newReviewId,
-        title: 'Новое заглавие ревью',
-        text: 'Новый текст ревью',
+        ...updatedReview,
       };
       return request(app.getHttpServer())
         .put('/film/review')
@@ -669,7 +673,7 @@ describe('Test API', () => {
     it('PUT /film/review/comment User can update his comment', () => {
       const updateComment: SubmitUpdateCommentDTO = {
         id: newCommentId,
-        text: 'Новый текст комментария',
+        text: updatedComment,
       };
       return request(app.getHttpServer())
         .put('/film/review/comment')
@@ -681,6 +685,23 @@ describe('Test API', () => {
             id: updateComment.id,
             text: updateComment.text,
           });
+        });
+    });
+
+    it('GET /film/:id Change to review and comment are saved in DB', () => {
+      return request(app.getHttpServer())
+        .get(`/film/${newFilmId}`)
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            reviews: [
+              {
+                ...updatedReview,
+                comments: [{ text: updatedComment }],
+              },
+            ],
+          });
+          expect(r.body.id).toBeDefined();
         });
     });
 
@@ -696,6 +717,18 @@ describe('Test API', () => {
             isPositive: null,
           });
           expect(r.body.comments.length).toBeGreaterThan(0);
+        });
+    });
+
+    it('DELETE /film/review/comment/:id', () => {
+      return request(app.getHttpServer())
+        .delete(`/film/review/comment/${newCommentId}`)
+        .auth(simpleUserToken.token, { type: 'bearer' })
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            text: updatedComment,
+          });
         });
     });
   });
