@@ -30,20 +30,26 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
+import { DeleteResult } from 'typeorm';
 import { RolesGuard } from '../guards/roles.guard';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
 import { Roles } from '../guards/roles-auth.decorator';
-import { CreateFilmDTO, Film, FilmQueryDTO, FilmSort, PaginationDTO, UpdateFilmDTO } from '@app/shared';
+import {
+  CreateFilmDTO,
+  Film,
+  FilmQueryDTO,
+  FilmSort,
+  PaginationDTO,
+  UpdateFilmDTO,
+  Rating,
+  FilterDTO,
+} from '@app/shared';
 import { BearerAuth } from '../guards/bearer';
-import { DeleteResult } from 'typeorm';
-import { FilterDTO, Rating } from '@app/shared/dto/filter.dto';
 
 @ApiTags('film')
 @Controller('/film')
 export class FilmController {
-  constructor(
-    @Inject(FILM) private readonly filmClient: ClientProxy,
-  ) {}
+  constructor(@Inject(FILM) private readonly filmClient: ClientProxy) {}
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -78,8 +84,11 @@ export class FilmController {
     @Query('marks') marks?: number,
     @Query('sort') sort?: FilmSort,
   ) {
-
-    return this.dispatch({ limit, ofset }, { genres, countryName, directorId, actorId, rating, marks }, sort);
+    return this.dispatch(
+      { limit, ofset },
+      { genres, countryName, directorId, actorId, rating, marks },
+      sort,
+    );
   }
 
   @ApiOperation({ summary: 'Получение информации о фильмах' })
@@ -96,9 +105,19 @@ export class FilmController {
     @Query('rating') rating?: Rating,
     @Query('marks') marks?: number,
     @Query('sort') sort?: FilmSort,
-    
   ) {
-    return this.dispatch({ limit, ofset }, { genres: genres.concat('movie'), countryName, directorId, actorId, rating, marks }, sort);
+    return this.dispatch(
+      { limit, ofset },
+      {
+        genres: genres.concat('movie'),
+        countryName,
+        directorId,
+        actorId,
+        rating,
+        marks,
+      },
+      sort,
+    );
   }
 
   @ApiOperation({ summary: 'Получение информации о сериалах' })
@@ -116,7 +135,18 @@ export class FilmController {
     @Query('marks') marks?: number,
     @Query('sort') sort?: FilmSort,
   ) {
-    return this.dispatch({ limit, ofset }, { genres: genres.concat('serial'), countryName, directorId, actorId, rating, marks}, sort);
+    return this.dispatch(
+      { limit, ofset },
+      {
+        genres: genres.concat('serial'),
+        countryName,
+        directorId,
+        actorId,
+        rating,
+        marks,
+      },
+      sort,
+    );
   }
 
   @ApiOperation({ summary: 'Получение информации о мультфльмах' })
@@ -134,7 +164,18 @@ export class FilmController {
     @Query('marks') marks?: number,
     @Query('sort') sort?: FilmSort,
   ) {
-    return this.dispatch({ limit, ofset }, { genres: genres.concat('cartoon'), countryName, directorId, actorId, rating, marks }, sort);
+    return this.dispatch(
+      { limit, ofset },
+      {
+        genres: genres.concat('cartoon'),
+        countryName,
+        directorId,
+        actorId,
+        rating,
+        marks,
+      },
+      sort,
+    );
   }
 
   async dispatch(pagination: PaginationDTO, filter: FilterDTO, sort: FilmSort) {
@@ -144,10 +185,7 @@ export class FilmController {
       sort,
     };
     const res = await firstValueFrom(
-      this.filmClient.send(
-        { cmd: GET_FILMS },
-        payload,
-      ),
+      this.filmClient.send({ cmd: GET_FILMS }, payload),
     );
     return res;
   }

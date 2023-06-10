@@ -100,6 +100,8 @@ describe('Test API', () => {
     text: 'Новый текст ревью',
   };
   const updatedComment = 'Новый текст комментария';
+  let directorId: number;
+  let actorId: number;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -434,6 +436,20 @@ describe('Test API', () => {
             },
           });
 
+          expect(response.body.personsInFilm).toBeDefined();
+
+          const director = response.body.personsInFilm.find(
+            (p) => p.role.roleName === 'director',
+          );
+          expect(director.id).toBeDefined();
+          directorId = director.id;
+
+          const actor = response.body.personsInFilm.find(
+            (p) => p.role.roleName === 'actor',
+          );
+          expect(actor.id).toBeDefined();
+          actorId = actor.id;
+
           expect(response.body.reviews.length).toEqual(
             crouchingTigerHiddenDragon.reviews.length,
           );
@@ -569,6 +585,30 @@ describe('Test API', () => {
       const endpoint = encodeURI('/film?country=Тайвань');
       return request(app.getHttpServer())
         .get(endpoint)
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body.length).toBe(1);
+          expect(r.body[0]).toMatchObject({
+            title: crouchingTigerHiddenDragon.title,
+          });
+        });
+    });
+
+    it('GET /film?director=:id Can filter films by director', () => {
+      return request(app.getHttpServer())
+        .get(`/film?director=${directorId}`)
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body.length).toBe(1);
+          expect(r.body[0]).toMatchObject({
+            title: crouchingTigerHiddenDragon.title,
+          });
+        });
+    });
+
+    it('GET /film?actor=:id Can filter films by actor', () => {
+      return request(app.getHttpServer())
+        .get(`/film?actor=${actorId}`)
         .expect(HttpStatus.OK)
         .then((r) => {
           expect(r.body.length).toBe(1);

@@ -1,5 +1,6 @@
-import { PickType } from "@nestjs/swagger";
-import { Country } from "../entities";
+import { PickType } from '@nestjs/swagger';
+import { Country } from '../entities';
+import { Rating } from '../constants/sort-filter';
 
 // Фильтр
 // - жанры
@@ -9,12 +10,10 @@ import { Country } from "../entities";
 // - фильтр по режиссеру
 // - фильтр по актеру
 
-export type Rating = `${1 | 2 | 3 | 4}.${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}` | '5.0';
-
 export class FilterDTO extends PickType(Country, ['countryName']) {
-    genres: string[]; // AND - если указаны несколько жанров возвращаются фильмы принадлежащие им всем
-    actorId: number;
-    directorId: number;
-    rating: Rating; // ====. Какой смысл? Обычно люди хотят рейтинг не меньше, чем, а не точно равный
-    marks: number;  // >=
+  genres: string[]; // AND - если указаны несколько жанров возвращаются фильмы принадлежащие им всем
+  actorId: number;
+  directorId: number;
+  rating: Rating; // ====. Какой смысл? Обычно люди хотят рейтинг не меньше, чем, а не точно равный
+  marks: number; // >=
 }
