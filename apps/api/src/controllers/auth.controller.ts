@@ -33,17 +33,21 @@ import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BearerAuth } from '../guards/bearer';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { VKAuthGuard } from '../guards/vk-auth.guard';
+import { Role, User } from '@app/shared';
+import { TokenProfileResponse } from '@app/shared/api-response/token-profileInfo';
 
+@ApiTags('auth')
 @UseInterceptors(LoggingInterceptor)
 @Controller('/auth')
 export class AuthController {
   constructor(@Inject(AUTH) private readonly client: ClientProxy) {}
 
   @Post('/login')
+  @ApiResponse({ status: HttpStatus.OK, type: User })
   @UsePipes(ValidationPipe)
   async login(@Body() userDto: LoginDto) {
     const res = await firstValueFrom(
@@ -61,6 +65,7 @@ export class AuthController {
   }
 
   @Post('/roles')
+  @ApiResponse({ status: HttpStatus.CREATED, type: Role })
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -81,6 +86,7 @@ export class AuthController {
   }
 
   @Get('/roles')
+  @ApiResponse({ status: HttpStatus.OK, type: [Role] })
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -96,6 +102,7 @@ export class AuthController {
   }
 
   @Post('/users/role')
+  @ApiResponse({ status: HttpStatus.OK, type: User })
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -115,6 +122,7 @@ export class AuthController {
   }
 
   @Get('/users')
+  @ApiResponse({ status: HttpStatus.OK, type: [User] })
   async getUsers() {
     return await firstValueFrom(
       this.client.send(
@@ -133,6 +141,7 @@ export class AuthController {
   }
 
   @Get('google/redirect')
+  @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @UseGuards(GoogleAuthGuard)
   async handleGoogleRedirect(@Req() request: Request) {
     return await firstValueFrom(
@@ -152,6 +161,7 @@ export class AuthController {
   }
 
   @Get('vk/redirect')
+  @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @UseGuards(VKAuthGuard)
   async handleVkRedirect(@Req() request: Request) {
     return await firstValueFrom(
@@ -164,12 +174,12 @@ export class AuthController {
     );
   }
 
-  @Get('status')
-  googleUser(@Req() request: Request) {
-    if (request.user) {
-      return { msg: 'Authenticated' };
-    } else {
-      return { msg: 'Not Authenticated' };
-    }
-  }
+  // @Get('status')
+  // googleUser(@Req() request: Request) {
+  //   if (request.user) {
+  //     return { msg: 'Authenticated' };
+  //   } else {
+  //     return { msg: 'Not Authenticated' };
+  //   }
+  // }
 }

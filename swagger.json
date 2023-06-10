@@ -14,13 +14,22 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
           "201": {
             "description": "",
             "content": {
               "application/json": { "schema": { "type": "object" } }
             }
           }
-        }
+        },
+        "tags": ["auth"]
       }
     },
     "/auth/roles": {
@@ -39,10 +48,13 @@
           "201": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Role" }
+              }
             }
           }
         },
+        "tags": ["auth"],
         "security": [{ "defaultBearerAuth": [] }]
       },
       "get": {
@@ -52,10 +64,16 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Role" }
+                }
+              }
             }
           }
         },
+        "tags": ["auth"],
         "security": [{ "defaultBearerAuth": [] }]
       }
     },
@@ -72,6 +90,14 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
           "201": {
             "description": "",
             "content": {
@@ -79,6 +105,7 @@
             }
           }
         },
+        "tags": ["auth"],
         "security": [{ "defaultBearerAuth": [] }]
       }
     },
@@ -90,17 +117,24 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
             }
           }
-        }
+        },
+        "tags": ["auth"]
       }
     },
     "/auth/google/login": {
       "get": {
         "operationId": "AuthController_handleGoogleLogin",
         "parameters": [],
-        "responses": { "200": { "description": "" } }
+        "responses": { "200": { "description": "" } },
+        "tags": ["auth"]
       }
     },
     "/auth/google/redirect": {
@@ -111,17 +145,23 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenProfileResponse"
+                }
+              }
             }
           }
-        }
+        },
+        "tags": ["auth"]
       }
     },
     "/auth/vk/login": {
       "get": {
         "operationId": "AuthController_hangleVkLogin",
         "parameters": [],
-        "responses": { "200": { "description": "" } }
+        "responses": { "200": { "description": "" } },
+        "tags": ["auth"]
       }
     },
     "/auth/vk/redirect": {
@@ -132,17 +172,15 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenProfileResponse"
+                }
+              }
             }
           }
-        }
-      }
-    },
-    "/auth/status": {
-      "get": {
-        "operationId": "AuthController_googleUser",
-        "parameters": [],
-        "responses": { "200": { "description": "" } }
+        },
+        "tags": ["auth"]
       }
     },
     "/registration": {
@@ -164,7 +202,8 @@
               "application/json": { "schema": { "type": "object" } }
             }
           }
-        }
+        },
+        "tags": ["profile"]
       }
     },
     "/profiles/{id}": {
@@ -194,6 +233,7 @@
             }
           }
         },
+        "tags": ["profile"],
         "security": [{ "defaultBearerAuth": [] }]
       },
       "delete": {
@@ -214,6 +254,7 @@
             }
           }
         },
+        "tags": ["profile"],
         "security": [{ "defaultBearerAuth": [] }]
       }
     },
@@ -228,7 +269,8 @@
               "application/json": { "schema": { "type": "object" } }
             }
           }
-        }
+        },
+        "tags": ["profile"]
       }
     },
     "/film": {
@@ -616,6 +658,60 @@
         },
         "required": ["email", "password"]
       },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Первичный ключ",
+            "example": 1
+          },
+          "email": {
+            "type": "string",
+            "example": "user@mail.ru",
+            "description": "Почтовый адрес"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 16,
+            "example": "12345678",
+            "description": "Пароль пользователя"
+          },
+          "roles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Role" }
+          }
+        },
+        "required": ["id", "email", "password", "roles"]
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Первичный ключ",
+            "example": 1
+          },
+          "value": {
+            "type": "string",
+            "example": "Администратор",
+            "description": "Роль пользователя"
+          },
+          "description": {
+            "type": "string",
+            "example": "Роль со многими правами",
+            "description": "Описание роли"
+          },
+          "users": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/User" }
+          }
+        },
+        "required": ["id", "value", "description", "users"]
+      },
       "CreateRoleDto": {
         "type": "object",
         "properties": {
@@ -624,7 +720,11 @@
             "example": "Администратор",
             "description": "Роль пользователя"
           },
-          "description": { "type": "string" }
+          "description": {
+            "type": "string",
+            "example": "Роль со многими правами",
+            "description": "Описание роли"
+          }
         },
         "required": ["value", "description"]
       },
@@ -639,6 +739,81 @@
           "userId": { "type": "number", "minimum": 1 }
         },
         "required": ["value", "userId"]
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Первичный ключ",
+            "example": 1
+          },
+          "url": {
+            "type": "string",
+            "description": "Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"
+          },
+          "name": {
+            "type": "string",
+            "example": "Александр",
+            "description": "Имя пользователя"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Иванов",
+            "description": "Фамилия пользователя"
+          },
+          "nickname": {
+            "type": "string",
+            "example": "stas9n",
+            "description": "Никнейм пользователя"
+          },
+          "country": {
+            "type": "string",
+            "example": "Россия",
+            "description": "Страна проживания пользователя"
+          },
+          "city": {
+            "type": "string",
+            "example": "Москва",
+            "description": "Город проживания пользователя"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2023-05-02 19:42:24.926691",
+            "description": "Дата создания аккаунта"
+          },
+          "photo": { "type": "string" },
+          "userId": { "type": "number" }
+        },
+        "required": [
+          "id",
+          "url",
+          "name",
+          "surname",
+          "nickname",
+          "country",
+          "city",
+          "createdAt",
+          "photo",
+          "userId"
+        ]
+      },
+      "TokenProfileResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImtuZXNwQHlhbmRleC5ydSIsImlkIjoxLCJpYXQiOjE2ODY0MDA1MDYsImV4cCI6MTY4NjQ4NjkwNn0.SSaS8mR0MCCOaj9JTmCysvRIeJYFdTfMqlENrPYKfPk",
+            "description": "Токен"
+          },
+          "profileInfo": {
+            "description": "Профиль пользователя",
+            "allOf": [{ "$ref": "#/components/schemas/Profile" }]
+          }
+        },
+        "required": ["token", "profileInfo"]
       },
       "CreateUserProfileDto": {
         "type": "object",
