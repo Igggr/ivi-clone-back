@@ -9,7 +9,6 @@ export const RABBIT_OPTIONS = (name: string, target: string) => {
       ? 'rabbit' // микросервис запущен из контейнера
       : 'localhost'; // микросервис запущен из командной строки
 
-  console.log(`${name} (${target}) - url: amqp://${host}:5672`);
   return {
     transport: Transport.RMQ as const,
     options: {

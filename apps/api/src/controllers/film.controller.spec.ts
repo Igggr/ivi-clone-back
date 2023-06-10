@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FilmController } from './film.controller';
-import { FILM } from '@app/rabbit';
+import { FILM, PROFILES } from '@app/rabbit';
 
 describe('FilmController', () => {
   let controller: FilmController;
@@ -11,6 +11,10 @@ describe('FilmController', () => {
       providers: [
         {
           provide: FILM,
+          useValue: {},
+        },
+        {
+          provide: PROFILES,
           useValue: {},
         },
       ],

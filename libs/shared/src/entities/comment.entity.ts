@@ -23,7 +23,7 @@ export class Comment {
     example:
       'https://www.kinopoisk.ru/user/7514/comment/48770/comm/1298253/#comm1298253',
   })
-  @Column({ nullable: false }) // существует только для спаршенныз с кинопоиска
+  @Column({ nullable: true }) // существует только для спаршенныз с кинопоиска
   url?: string;
 
   @ManyToOne(() => Review, (review) => review.comments)

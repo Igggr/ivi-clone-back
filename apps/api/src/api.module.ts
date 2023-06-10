@@ -16,6 +16,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { staticDir } from '@app/shared';
 import { FOR } from '@app/shared/constants/keys';
 import { VKStrategy } from './utils/vk.strategy';
+import { ReviewController } from './controllers/review.controller';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { VKStrategy } from './utils/vk.strategy';
     ProfilesController,
     FilmController,
     GenreController,
+    ReviewController,
   ],
   providers: [GoogleStrategy, SessionSerializer, VKStrategy],
 })
@@ -86,6 +88,7 @@ export class ApiModule implements NestModule {
         AuthController,
         GenreController,
         FilmController,
+        ReviewController,
       );
   }
 }

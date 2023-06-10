@@ -7,27 +7,44 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import {
+  ADD_COMMENT,
+  ADD_REVIEW,
   CREATE_FILM,
+  DELETE_COMMENT,
   DELETE_FILM,
+  DELETE_REVIEW,
   GET_FILMS,
   GET_ONE_FILM,
   PARSED_DATA,
+  UPDATE_COMMENT,
   UPDATE_FILM,
+  UPDATE_REVIEW,
 } from '@app/rabbit/events';
 import {
   FilmQueryDTO,
   ParsedFilmDTO,
   CreateFilmDTO,
   UpdateFilmDTO,
+  CreateReviewDTO,
+  Review,
+  Comment,
 } from '@app/shared';
-import { ack } from '@app/rabbit';
+import { ResponseDTO, ack } from '@app/rabbit';
 import { ParserSaverService } from './parser.saver/parser.saver.service';
+import { ReviewService } from './review/review.service';
+import { CreateCommentDTO } from '@app/shared/dto/create-comment.dtos';
+import { CommentService } from './comment/comment.service';
+import { UpdateReviewDTO } from '@app/shared/dto/update-review.dto';
+import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
+import { UpdateCommentDTO } from '@app/shared/dto/update-comment.dto';
 
 @Controller()
 export class FilmController {
   constructor(
     private readonly filmService: FilmService,
     private readonly parserSaverService: ParserSaverService,
+    private readonly reviewService: ReviewService,
+    private readonly commentService: CommentService,
   ) {}
 
   // вобще говоря emit здесь подходит больше, чем send
@@ -68,5 +85,53 @@ export class FilmController {
     ack(context);
 
     return this.filmService.update(dto);
+  }
+
+  @MessagePattern({ cmd: ADD_REVIEW })
+  addReview(@Payload() dto: CreateReviewDTO, @Ctx() context: RmqContext) {
+    ack(context);
+    return this.reviewService.addReview(dto);
+  }
+
+  @MessagePattern({ cmd: UPDATE_REVIEW })
+  updateReview(
+    @Payload() dto: UpdateReviewDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Review>> {
+    ack(context);
+    return this.reviewService.updateReview(dto);
+  }
+
+  @MessagePattern({ cmd: DELETE_REVIEW })
+  deleteReview(
+    @Payload() dto: DeleteReviewDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Review>> {
+    ack(context);
+    return this.reviewService.deleteReview(dto);
+  }
+
+  @MessagePattern({ cmd: ADD_COMMENT })
+  addComment(@Payload() dto: CreateCommentDTO, @Ctx() context: RmqContext) {
+    ack(context);
+    return this.commentService.addComment(dto);
+  }
+
+  @MessagePattern({ cmd: UPDATE_COMMENT })
+  updateComment(
+    @Payload() dto: UpdateCommentDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Comment>> {
+    ack(context);
+    return this.commentService.updateComment(dto);
+  }
+
+  @MessagePattern({ cmd: DELETE_COMMENT })
+  deleteComment(
+    @Payload() dto: DeleteReviewDTO,
+    @Ctx() context: RmqContext,
+  ): Promise<ResponseDTO<Comment>> {
+    ack(context);
+    return this.commentService.deleteComment(dto);
   }
 }

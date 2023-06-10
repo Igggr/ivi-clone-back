@@ -1,4 +1,15 @@
-import { ParsedReviewDTO, Profile, Review, Comment } from '@app/shared';
+import { ResponseDTO } from '@app/rabbit';
+import {
+  ParsedReviewDTO,
+  Profile,
+  Review,
+  Comment,
+  CommentDoesNotExist,
+  NotYours,
+} from '@app/shared';
+import { CreateCommentDTO } from '@app/shared/dto/create-comment.dtos';
+import { DeleteReviewDTO } from '@app/shared/dto/delete-review.dto';
+import { UpdateCommentDTO } from '@app/shared/dto/update-comment.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
@@ -50,5 +61,74 @@ export class CommentService {
       child.parentComment = parent;
       await this.commentRepository.save(child);
     }
+  }
+
+  async addComment(dto: CreateCommentDTO): Promise<Comment> {
+    const comment = this.commentRepository.create(dto);
+    return this.commentRepository.save(comment);
+  }
+
+  async updateComment(dto: UpdateCommentDTO): Promise<ResponseDTO<Comment>> {
+    const check = await this.checkPermission(dto.id, dto.profileId);
+    if (check.status === 'error') {
+      return check;
+    }
+    const comment = check.value;
+    comment.text = dto.text;
+    await this.commentRepository.save(comment);
+    return {
+      status: 'ok',
+      value: comment,
+    };
+  }
+
+  async deleteComment(dto: DeleteReviewDTO): Promise<ResponseDTO<Comment>> {
+    const check = await this.checkPermission(dto.id, dto.profileId);
+    if (check.status === 'error') {
+      return check;
+    }
+    let comment = check.value;
+    if (comment.childrens.length === 0) {
+      await this.commentRepository.remove(comment);
+      return {
+        status: 'ok',
+        value: comment,
+      };
+    } else {
+      comment.text = '';
+      comment = await this.commentRepository.save(comment);
+      return {
+        status: 'ok',
+        value: comment,
+      };
+    }
+  }
+
+  private async checkPermission(
+    commentId: number,
+    profileId: number,
+  ): Promise<ResponseDTO<Comment>> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+      relations: ['childrens'],
+    });
+    if (!comment) {
+      return {
+        status: 'error',
+        error: CommentDoesNotExist,
+      };
+    }
+
+    if (comment.profileId !== profileId) {
+      return {
+        status: 'error',
+        error: NotYours,
+      };
+    }
+
+    return {
+      status: 'ok',
+      value: comment,
+    };
   }
 }
