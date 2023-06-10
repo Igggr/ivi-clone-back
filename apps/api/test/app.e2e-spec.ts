@@ -538,7 +538,7 @@ describe('Test API', () => {
         });
     });
 
-    it('GET /film Can get films without limiting them by genre', () => {
+    it('GET /film Can get films without filtering them', () => {
       return request(app.getHttpServer())
         .get('/film')
         .expect(HttpStatus.OK)
@@ -561,6 +561,19 @@ describe('Test API', () => {
           expect(r.body.length).toBe(1);
           expect(r.body[0]).toMatchObject({
             title: 'Терминатор',
+          });
+        });
+    });
+
+    it('GET /film?country=страна_производства Can filter films by country', () => {
+      const endpoint = encodeURI('/film?country=Тайвань');
+      return request(app.getHttpServer())
+        .get(endpoint)
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body.length).toBe(1);
+          expect(r.body[0]).toMatchObject({
+            title: crouchingTigerHiddenDragon.title,
           });
         });
     });

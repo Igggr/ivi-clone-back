@@ -36,14 +36,13 @@ export class FilmService {
   async find(dto: FilmQueryDTO) {
     try {
 
-      const query = await this.filterByGenres(
-        this.filmRepository.createQueryBuilder('films')
-          .leftJoinAndSelect('films.filmGenres', 'fg', 'fg.filmId = films.id')
-          .leftJoinAndSelect('films.country', 'country', 'films.countryId = country.id'),
-        dto.filter.genres)
-
-
-      const res = await query
+      const query = this.filmRepository.createQueryBuilder('films')
+        .leftJoinAndSelect('films.filmGenres', 'fg', 'fg.filmId = films.id')
+        .leftJoinAndSelect('films.country', 'country', 'films.countryId = country.id');
+      const genresQuery = await this.filterByGenres(query, dto.filter.genres);
+      const countryQuery = this.filterByCountry(genresQuery, dto.filter.countryName);
+    
+      const res = await countryQuery
         .offset(dto.pagination.ofset)
         .take(dto.pagination.limit)
         .getMany();
@@ -58,7 +57,7 @@ export class FilmService {
     }
   }
 
-  async filterByGenres(query: SelectQueryBuilder<Film>, genreNames: string[]) {
+  private async filterByGenres(query: SelectQueryBuilder<Film>, genreNames: string[]) {
     if (genreNames.length === 0) {
       return query; // то и фильтровать ничего не надо
     }
@@ -79,6 +78,13 @@ export class FilmService {
       .getRawMany();
     
     return query.where('films.id IN(:...ids)', { ids: rightfilms.map((film) => film.id) })
+  }
+
+  private filterByCountry(query: SelectQueryBuilder<Film>, countryName: string) {
+    if (!countryName) {
+      return query;
+    }
+    return query.where('country.countryName = :countryName', { countryName });
   }
 
   async findOneById(id: number): Promise<Film> {
