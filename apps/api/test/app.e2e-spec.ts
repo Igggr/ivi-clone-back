@@ -508,54 +508,6 @@ describe('Test API', () => {
     });
 
     it('POST /film Admin can create new film', async () => {
-      // создадим недостающие жанры
-      const fantasy: CreateGenreDTO = {
-        genreName: 'фантастика',
-        genreNameEn: 'fiction',
-      };
-      const thriller: CreateGenreDTO = {
-        genreName: 'триллер',
-        genreNameEn: 'thriller',
-      };
-
-      await request(app.getHttpServer())
-        .post('/genre')
-        .auth(adminToken.token, { type: 'bearer' })
-        .send(fantasy);
-
-      await request(app.getHttpServer())
-        .post('/genre')
-        .auth(adminToken.token, { type: 'bearer' })
-        .send(thriller);
-
-      return request(app.getHttpServer())
-        .post(`/film`)
-        .auth(adminToken.token, { type: 'bearer' })
-        .send(terminatorDto)
-        .expect(HttpStatus.CREATED)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            status: 'ok',
-            value: {
-              year: terminatorDto.year,
-              title: terminatorDto.title,
-              originalTitle: terminatorDto.originalTitle,
-              slogan: terminatorDto.slogan,
-              duration: terminatorDto.duration,
-              country: {
-                countryName: terminatorDto.countryName,
-              },
-              url: null,
-              preview: null,
-              ageRestrictionId: null,
-            },
-          });
-          expect(r.body.value.id).toBeDefined();
-          newFilmId = r.body.value.id;
-        });
-    });
-
-    it('POST /film Admin can create new film 2', async () => {
       ['драма', 'комедия', 'мелодрама', 'история', 'военный'];
       // создадим недостающие жанры
       const drama: CreateGenreDTO = {
@@ -631,259 +583,332 @@ describe('Test API', () => {
         });
     });
 
-    it('GET /film Can get films without filtering or sorting them', () => {
-      return request(app.getHttpServer())
-        .get('/film')
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body.length).toBe(3);
-          expect(r.body[0]).toMatchObject({
-            title: crouchingTigerHiddenDragon.title,
-          });
-          expect(r.body[1]).toMatchObject({
-            title: terminatorDto.title,
-          });
-          expect(r.body[2]).toMatchObject({
-            title: forestGumpDTO.title,
-          });
-        });
-    });
+    it('POST /film Admin can create new film 2', async () => {
+      // создадим недостающие жанры
+      const fantasy: CreateGenreDTO = {
+        genreName: 'фантастика',
+        genreNameEn: 'fiction',
+      };
+      const thriller: CreateGenreDTO = {
+        genreName: 'триллер',
+        genreNameEn: 'thriller',
+      };
 
-    it('GET /film Can sort films by year', () => {
-      // terminator - 1984
-      // forest gump - 1994
-      // crouching tiger - 2000
-      return request(app.getHttpServer())
-        .get('/film?sort=date')
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body.length).toBe(3);
-          expect(r.body[0]).toMatchObject({
-            title: terminatorDto.title,
-          });
-          expect(r.body[1]).toMatchObject({
-            title: forestGumpDTO.title,
-          });
-          expect(r.body[2]).toMatchObject({
-            title: crouchingTigerHiddenDragon.title,
-          });
-        });
-    });
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(fantasy);
 
-    it('GET /film?genres=[массив_жанров] Can filter films by genre', () => {
-      return request(app.getHttpServer())
-        .get('/film?genres=fiction,action')
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body.length).toBe(1);
-          expect(r.body[0]).toMatchObject({
-            title: terminatorDto.title,
-          });
-        });
-    });
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(thriller);
 
-    it('GET /film?country=страна_производства Can filter films by country', () => {
-      const endpoint = encodeURI('/film?country=Тайвань');
       return request(app.getHttpServer())
-        .get(endpoint)
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body.length).toBe(1);
-          expect(r.body[0]).toMatchObject({
-            title: crouchingTigerHiddenDragon.title,
-          });
-        });
-    });
-
-    it('GET /film?director=:id Can filter films by director', () => {
-      return request(app.getHttpServer())
-        .get(`/film?director=${directorId}`)
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body.length).toBe(1);
-          expect(r.body[0]).toMatchObject({
-            title: crouchingTigerHiddenDragon.title,
-          });
-        });
-    });
-
-    it('GET /film?actor=:id Can filter films by actor', () => {
-      return request(app.getHttpServer())
-        .get(`/film?actor=${actorId}`)
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body.length).toBe(1);
-          expect(r.body[0]).toMatchObject({
-            title: crouchingTigerHiddenDragon.title,
-          });
-        });
-    });
-
-    it('GET /film?limit=x&ofset=y Can limit returned film number', () => {
-      return request(app.getHttpServer())
-        .get('/film?limit=1&ofset=0')
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body.length).toBe(1);
-          expect(r.body[0]).toMatchObject({
-            title: crouchingTigerHiddenDragon.title,
-          });
-        });
-    });
-
-    it('POST /film/review User can add review for film', () => {
-      return request(app.getHttpServer())
-        .post('/film/review')
-        .auth(simpleUserToken.token, { type: 'bearer' })
-        .send({ ...newReview, filmId: newFilmId })
+        .post(`/film`)
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(terminatorDto)
         .expect(HttpStatus.CREATED)
         .then((r) => {
           expect(r.body).toMatchObject({
-            filmId: newFilmId,
-            isPositive: newReview.isPositive ?? null,
-            title: newReview.title,
-            text: newReview.text,
-          });
-          expect(r.body.id).toBeDefined();
-          newReviewId = r.body.id;
-        });
-    });
-
-    it('POST /film/review/comment User can add comment for any review', () => {
-      const comment: SubmitCommentDTO = {
-        text: newComment,
-        reviewId: newReviewId,
-      };
-
-      return request(app.getHttpServer())
-        .post('/film/review/comment')
-        .auth(simpleUserToken.token, { type: 'bearer' })
-        .send(comment)
-        .expect(HttpStatus.CREATED)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            reviewId: comment.reviewId,
-            text: comment.text,
-          });
-          expect(r.body.id).toBeDefined();
-          newCommentId = r.body.id;
-        });
-    });
-
-    it('GET /film/:id Newly created review anf film are saved in DB', () => {
-      return request(app.getHttpServer())
-        .get(`/film/${newFilmId}`)
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            reviews: [
-              {
-                ...newReview,
-                comments: [{ text: newComment }],
+            status: 'ok',
+            value: {
+              year: terminatorDto.year,
+              title: terminatorDto.title,
+              originalTitle: terminatorDto.originalTitle,
+              slogan: terminatorDto.slogan,
+              duration: terminatorDto.duration,
+              country: {
+                countryName: terminatorDto.countryName,
               },
-            ],
+              url: null,
+              preview: null,
+              ageRestrictionId: null,
+            },
           });
-          expect(r.body.id).toBeDefined();
+          expect(r.body.value.id).toBeDefined();
+          newFilmId = r.body.value.id;
         });
     });
 
-    it('PUT /film/review User can update his review', () => {
-      const updateReview: SubmitUpdateReviewDTO = {
-        id: newReviewId,
-        ...updatedReview,
-      };
-      return request(app.getHttpServer())
-        .put('/film/review')
-        .expect(HttpStatus.OK)
-        .auth(simpleUserToken.token, { type: 'bearer' })
-        .send(updateReview)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            id: updateReview.id,
-            title: updateReview.title,
-            text: updateReview.text,
+    describe('Sorting and filtering films', () => {
+      it('GET /film Can get films without filtering or sorting them', () => {
+        return request(app.getHttpServer())
+          .get('/film')
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(3);
+            expect(r.body[0]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
+            });
+            expect(r.body[1]).toMatchObject({
+              title: forestGumpDTO.title,
+            });
+            expect(r.body[2]).toMatchObject({
+              title: terminatorDto.title,
+            });
           });
-        });
+      });
+
+      it('GET /film?sort=date Can sort films by year', () => {
+        // terminator - 1984
+        // forest gump - 1994
+        // crouching tiger - 2000
+        return request(app.getHttpServer())
+          .get('/film?sort=date')
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(3);
+            expect(r.body[0]).toMatchObject({
+              title: terminatorDto.title,
+            });
+            expect(r.body[1]).toMatchObject({
+              title: forestGumpDTO.title,
+            });
+            expect(r.body[2]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
+            });
+          });
+      });
+
+      it('GET /film?sort=alphabet Can sort films by title', () => {
+        // terminator - 1984
+        // forest gump - 1994
+        // crouching tiger - 2000
+        return request(app.getHttpServer())
+          .get('/film?sort=alphabet')
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(3);
+            expect(r.body[0]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
+            });
+            expect(r.body[1]).toMatchObject({
+              title: terminatorDto.title,
+            });
+            expect(r.body[2]).toMatchObject({
+              title: forestGumpDTO.title,
+            });
+          });
+      });
+
+      it('GET /film?genres=[массив_жанров] Can filter films by genre', () => {
+        return request(app.getHttpServer())
+          .get('/film?genres=fiction,action')
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(1);
+            expect(r.body[0]).toMatchObject({
+              title: terminatorDto.title,
+            });
+          });
+      });
+
+      it('GET /film?country=страна_производства Can filter films by country', () => {
+        const endpoint = encodeURI('/film?country=Тайвань');
+        return request(app.getHttpServer())
+          .get(endpoint)
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(1);
+            expect(r.body[0]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
+            });
+          });
+      });
+
+      it('GET /film?director=:id Can filter films by director', () => {
+        return request(app.getHttpServer())
+          .get(`/film?director=${directorId}`)
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(1);
+            expect(r.body[0]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
+            });
+          });
+      });
+
+      it('GET /film?actor=:id Can filter films by actor', () => {
+        return request(app.getHttpServer())
+          .get(`/film?actor=${actorId}`)
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(1);
+            expect(r.body[0]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
+            });
+          });
+      });
+
+      it('GET /film?limit=x&ofset=y Can limit returned film number', () => {
+        return request(app.getHttpServer())
+          .get('/film?limit=1&ofset=0')
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(1);
+            expect(r.body[0]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
+            });
+          });
+      });
     });
 
-    it("PUT /film/review User can't update review of other user", () => {
-      const updateReview: SubmitUpdateReviewDTO = {
-        id: newReviewId - 1,
-        title: 'Новое заглавие ревью',
-        text: 'Новый текст ревью',
-      };
-      return request(app.getHttpServer())
-        .put('/film/review')
-        .expect(HttpStatus.FORBIDDEN)
-        .auth(simpleUserToken.token, { type: 'bearer' })
-        .send(updateReview)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            error: NotYours,
+    describe('Review for film', () => {
+      it('POST /film/review User can add review for film', () => {
+        return request(app.getHttpServer())
+          .post('/film/review')
+          .auth(simpleUserToken.token, { type: 'bearer' })
+          .send({ ...newReview, filmId: newFilmId })
+          .expect(HttpStatus.CREATED)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              filmId: newFilmId,
+              isPositive: newReview.isPositive ?? null,
+              title: newReview.title,
+              text: newReview.text,
+            });
+            expect(r.body.id).toBeDefined();
+            newReviewId = r.body.id;
           });
-        });
-    });
+      });
 
-    it('PUT /film/review/comment User can update his comment', () => {
-      const updateComment: SubmitUpdateCommentDTO = {
-        id: newCommentId,
-        text: updatedComment,
-      };
-      return request(app.getHttpServer())
-        .put('/film/review/comment')
-        .expect(HttpStatus.OK)
-        .auth(simpleUserToken.token, { type: 'bearer' })
-        .send(updateComment)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            id: updateComment.id,
-            text: updateComment.text,
-          });
-        });
-    });
+      it('POST /film/review/comment User can add comment for any review', () => {
+        const comment: SubmitCommentDTO = {
+          text: newComment,
+          reviewId: newReviewId,
+        };
 
-    it('GET /film/:id Change to review and comment are saved in DB', () => {
-      return request(app.getHttpServer())
-        .get(`/film/${newFilmId}`)
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            reviews: [
-              {
-                ...updatedReview,
-                comments: [{ text: updatedComment }],
-              },
-            ],
+        return request(app.getHttpServer())
+          .post('/film/review/comment')
+          .auth(simpleUserToken.token, { type: 'bearer' })
+          .send(comment)
+          .expect(HttpStatus.CREATED)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              reviewId: comment.reviewId,
+              text: comment.text,
+            });
+            expect(r.body.id).toBeDefined();
+            newCommentId = r.body.id;
           });
-          expect(r.body.id).toBeDefined();
-        });
-    });
+      });
 
-    it('DELETE /film/review/:id User can delete his review, but if it has comments it will be just made empty', () => {
-      return request(app.getHttpServer())
-        .delete(`/film/review/${newReviewId}`)
-        .expect(HttpStatus.OK)
-        .auth(simpleUserToken.token, { type: 'bearer' })
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            title: '',
-            text: '',
-            isPositive: null,
+      it('GET /film/:id Newly created review anf film are saved in DB', () => {
+        return request(app.getHttpServer())
+          .get(`/film/${newFilmId}`)
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              reviews: [
+                {
+                  ...newReview,
+                  comments: [{ text: newComment }],
+                },
+              ],
+            });
+            expect(r.body.id).toBeDefined();
           });
-          expect(r.body.comments.length).toBeGreaterThan(0);
-        });
-    });
+      });
 
-    it('DELETE /film/review/comment/:id', () => {
-      return request(app.getHttpServer())
-        .delete(`/film/review/comment/${newCommentId}`)
-        .auth(simpleUserToken.token, { type: 'bearer' })
-        .expect(HttpStatus.OK)
-        .then((r) => {
-          expect(r.body).toMatchObject({
-            text: updatedComment,
+      it('PUT /film/review User can update his review', () => {
+        const updateReview: SubmitUpdateReviewDTO = {
+          id: newReviewId,
+          ...updatedReview,
+        };
+        return request(app.getHttpServer())
+          .put('/film/review')
+          .expect(HttpStatus.OK)
+          .auth(simpleUserToken.token, { type: 'bearer' })
+          .send(updateReview)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              id: updateReview.id,
+              title: updateReview.title,
+              text: updateReview.text,
+            });
           });
-        });
+      });
+
+      it("PUT /film/review User can't update review of other user", () => {
+        const updateReview: SubmitUpdateReviewDTO = {
+          id: newReviewId - 1,
+          title: 'Новое заглавие ревью',
+          text: 'Новый текст ревью',
+        };
+        return request(app.getHttpServer())
+          .put('/film/review')
+          .expect(HttpStatus.FORBIDDEN)
+          .auth(simpleUserToken.token, { type: 'bearer' })
+          .send(updateReview)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              error: NotYours,
+            });
+          });
+      });
+
+      it('PUT /film/review/comment User can update his comment', () => {
+        const updateComment: SubmitUpdateCommentDTO = {
+          id: newCommentId,
+          text: updatedComment,
+        };
+        return request(app.getHttpServer())
+          .put('/film/review/comment')
+          .expect(HttpStatus.OK)
+          .auth(simpleUserToken.token, { type: 'bearer' })
+          .send(updateComment)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              id: updateComment.id,
+              text: updateComment.text,
+            });
+          });
+      });
+
+      it('GET /film/:id Change to review and comment are saved in DB', () => {
+        return request(app.getHttpServer())
+          .get(`/film/${newFilmId}`)
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              reviews: [
+                {
+                  ...updatedReview,
+                  comments: [{ text: updatedComment }],
+                },
+              ],
+            });
+            expect(r.body.id).toBeDefined();
+          });
+      });
+
+      it('DELETE /film/review/:id User can delete his review, but if it has comments it will be just made empty', () => {
+        return request(app.getHttpServer())
+          .delete(`/film/review/${newReviewId}`)
+          .expect(HttpStatus.OK)
+          .auth(simpleUserToken.token, { type: 'bearer' })
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              title: '',
+              text: '',
+              isPositive: null,
+            });
+            expect(r.body.comments.length).toBeGreaterThan(0);
+          });
+      });
+
+      it('DELETE /film/review/comment/:id', () => {
+        return request(app.getHttpServer())
+          .delete(`/film/review/comment/${newCommentId}`)
+          .auth(simpleUserToken.token, { type: 'bearer' })
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body).toMatchObject({
+              text: updatedComment,
+            });
+          });
+      });
     });
   });
 
