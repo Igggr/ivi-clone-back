@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RolesService } from './roles/roles.service';
 import { USER } from '@app/shared/constants/role.const';
-import { GET_PROFILE_BY_USER_ID, PROFILES } from '@app/rabbit';
+import { CREATE_PROFILE, GET_PROFILE_BY_USER_ID, PROFILES } from '@app/rabbit';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
@@ -25,7 +25,7 @@ export class AuthService {
   async login(userDto: LoginDto) {
     const user = await this.validateUser(userDto);
     if (user instanceof User) {
-      return this.googleRedirect(user);
+      return this.getTokenAndProfileInfo(user);
     }
     return user;
   }
@@ -78,7 +78,7 @@ export class AuthService {
     };
   }
 
-  async ensureGoogleUser(userDto: LoginDto) {
+  async ensureOauthUser(userDto: LoginDto) {
     console.log('Auth Service');
     console.log(userDto);
     const user = await this.userRepository.findOneBy({
@@ -88,16 +88,23 @@ export class AuthService {
       return user;
     }
     console.log('User not found');
-    const newGoogleUser = await this.userRepository.create(userDto);
-    await newGoogleUser.setPassword(userDto.password);
+    let newOauthUser = await this.userRepository.create(userDto);
+    await newOauthUser.setPassword(userDto.password);
     let role = await this.roleService.getRoleByValue('User');
     if (!role) {
       await this.roleService.createRole(USER);
     }
     role = await this.roleService.getRoleByValue('User');
-    newGoogleUser.addRole(role);
+    newOauthUser.addRole(role);
+    newOauthUser = await this.userRepository.save(newOauthUser);
+    await firstValueFrom(
+      this.profileClient.send(
+        { cmd: CREATE_PROFILE },
+        { nickname: userDto.email.split('@')[0], userId: newOauthUser.id },
+      ),
+    );
 
-    return await this.userRepository.save(newGoogleUser);
+    return newOauthUser;
   }
 
   async findUserById(userId: number) {
@@ -105,7 +112,7 @@ export class AuthService {
     return user;
   }
 
-  async googleRedirect(user: User) {
+  async getTokenAndProfileInfo(user: User) {
     const token = await this.generateToken(user);
     const profile = await firstValueFrom(
       this.profileClient.send({ cmd: GET_PROFILE_BY_USER_ID }, user.id),

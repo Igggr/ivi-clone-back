@@ -15,7 +15,6 @@ import {
   CREATE_ROLE,
   CREATE_USER,
   DELETE_USER,
-  ENSURE_GOOGLE_USER,
   GET_ROLES,
   GET_TOKEN,
   GET_USERS,
@@ -27,6 +26,8 @@ import {
   VERIFY_TOKEN,
   FIND_USER_BY_ID,
   ack,
+  VK_REDIRECT,
+  ENSURE_OAUTH_USER,
 } from '@app/rabbit';
 import { AddRoleDto } from '@app/shared/dto/add-role.dto';
 import { RolesService } from './roles/roles.service';
@@ -128,17 +129,24 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: GOOGLE_REDIRECT })
-  handleRedirect(@Payload() user: User, @Ctx() context: RmqContext) {
+  handleGoogleRedirect(@Payload() user: User, @Ctx() context: RmqContext) {
     ack(context);
 
-    return this.authService.googleRedirect(user);
+    return this.authService.getTokenAndProfileInfo(user);
   }
 
-  @MessagePattern({ cmd: ENSURE_GOOGLE_USER })
+  @MessagePattern({ cmd: VK_REDIRECT })
+  handleVkRedirect(@Payload() user: User, @Ctx() context: RmqContext) {
+    ack(context);
+
+    return this.authService.getTokenAndProfileInfo(user);
+  }
+
+  @MessagePattern({ cmd: ENSURE_OAUTH_USER })
   ensureGoogleUser(@Payload() userDto: LoginDto, @Ctx() context: RmqContext) {
     ack(context);
 
-    return this.authService.ensureGoogleUser(userDto);
+    return this.authService.ensureOauthUser(userDto);
   }
 
   @MessagePattern({ cmd: FIND_USER_BY_ID })

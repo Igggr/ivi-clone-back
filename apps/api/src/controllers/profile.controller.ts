@@ -29,9 +29,10 @@ import { ProfilesGuard } from '../guards/profile-auth.guard';
 import { Roles } from '../guards/roles-auth.decorator';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BearerAuth } from '../guards/bearer';
 
+@ApiTags('profile')
 @Controller()
 export class ProfilesController {
   constructor(@Inject(PROFILES) private readonly client: ClientProxy) {}
