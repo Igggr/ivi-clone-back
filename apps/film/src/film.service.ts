@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientProxy } from '@nestjs/microservices';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, SelectQueryBuilder } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
 import {
   GENRE,
@@ -34,48 +34,45 @@ export class FilmService {
   ) {}
 
   async find(dto: FilmQueryDTO) {
-    if (dto.filter.genres.length === 0) {
-      const res = await this.filmRepository
-        .createQueryBuilder('films')
+    try {
+      const query = await this.filterByGenres(this.filmRepository.createQueryBuilder('films'), dto.filter.genres)
+
+      const res = await query.leftJoinAndSelect('films.filmGenres', 'fg')
         .offset(dto.pagination.ofset)
         .take(dto.pagination.limit)
         .getMany();
-      return res;
-    }
 
-    // console.log(dto)
-    const genres = await this.findGenresByNamesEn(dto.filter.genres);
-    // console.log('Get only films with all this genres:', dto, genres)
-    if (dto.filter.genres.length !== genres.length) {
+      return res;
+    } catch (e) {
       return {
         status: 'error',
-        error: SomeGenresNotFound,
-      };
+        error: e.message,
+        
+      }
     }
-    const genreIds = genres.map((g) => g.id);
+  }
 
-    // чтобы получить фильмы у кторых есть все указанные жанры
-    // сначала отфильтруй filmGenre, по жанрам
-    // а потом сгруппируй по фильму и оставь только те фильмыэ
-    // у которым соотвествует то же количество жанров
+  async filterByGenres(query: SelectQueryBuilder<Film>, genreNames: string[]) {
+    if (genreNames.length === 0) {
+      return query; // то и фильтровать ничего не надо
+    }
+    const genres = await this.findGenresByNamesEn(genreNames);
+    console.log(genres);
+
+    if (genreNames.length !== genres.length) {
+      throw new BadRequestException(SomeGenresNotFound)
+    }
     const rightfilms = await this.filmRepository
       .createQueryBuilder('films')
       .leftJoinAndSelect('films.filmGenres', 'fg')
-      .where('fg.genreId IN(:...genreIds)', { genreIds })
+      .where('fg.genreId IN(:...genreIds)', { genreIds: genres.map((g) => g.id) })
       .groupBy('films.id')
-      .having('COUNT(fg.genreId) = 2')
+      .having('COUNT(fg.genreId) = :num', {num: genres.length})
       .select('films.id', 'id')
       .addSelect('films.title')
       .getRawMany();
-
-    const res = await this.filmRepository
-      .createQueryBuilder('films')
-      .where('films.id IN(:...ids)', { ids: rightfilms.map((film) => film.id) })
-      .offset(dto.pagination.ofset)
-      .take(dto.pagination.limit)
-      .getMany();
-
-    return res;
+    
+    return query.where('films.id IN(:...ids)', { ids: rightfilms.map((film) => film.id) })
   }
 
   async findOneById(id: number): Promise<Film> {
