@@ -19,6 +19,7 @@ import {
   CountryWithThisNameNotFound,
   FilmGenre,
   SomeGenresNotFound,
+  FilmSort,
 } from '@app/shared';
 import { CountryService } from './country/country.service';
 
@@ -45,8 +46,6 @@ export class FilmService {
           'country',
           'films.countryId = country.id',
         );
-      // .leftJoinAndSelect('films.personsInFilm', 'pf', 'pf.filmId = film.id')
-      // .leftJoinAndSelect('pf.actor', 'actors', 'pf.actorId = actors.id')
 
       // фильтрация
       const genresQuery = await this.filterByGenres(query, dto.filter.genres);
@@ -65,7 +64,10 @@ export class FilmService {
         'actor',
       );
 
-      const res = await actorQuery
+      // сортировка
+      const sortQuery = await this.sortFilms(actorQuery, dto.sort);
+
+      const res = await sortQuery
         .offset(dto.pagination.ofset)
         .take(dto.pagination.limit)
         .getMany();
@@ -140,6 +142,20 @@ export class FilmService {
     return query.where('films.id IN(:...ids)', {
       ids: rightFilms.map((f) => f.id),
     });
+  }
+
+  private async sortFilms(query: SelectQueryBuilder<Film>, sort: FilmSort) {
+    if (!sort) {
+      return query;
+    }
+    switch (sort) {
+      case 'alphabet':
+        return query.orderBy('films.title');
+      case 'date':
+        return query.orderBy('films.year');
+      default: // not implemented yet
+        return query;
+    }
   }
 
   async findOneById(id: number): Promise<Film> {

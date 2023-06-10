@@ -84,6 +84,27 @@ describe('Test API', () => {
   let comedyId: number;
   let dramaId: number;
 
+  const terminatorDto: CreateFilmDTO = {
+    title: 'Терминатор',
+    originalTitle: 'The Terminator',
+    year: 1984,
+    countryName: 'США',
+    genreNames: ['фантастика', 'боевик', 'триллер'],
+    slogan: '«Твоё будущее в его руках»',
+    duration: '108 minutes',
+  };
+
+  const forestGumpDTO: CreateFilmDTO = {
+    title: 'Форрест Гамп (1994)',
+    originalTitle: 'Forrest Gump',
+    year: 1994,
+    countryName: 'США',
+    genreNames: ['драма', 'комедия', 'мелодрама', 'история', 'военный'],
+    slogan:
+      '«Мир уже никогда не будет прежним, после того как вы увидите его глазами Форреста Гампа»',
+    duration: '142 minutes',
+  };
+
   let crouchingTigerId: number;
   let newFilmId: number;
   let newReviewId: number;
@@ -474,19 +495,10 @@ describe('Test API', () => {
     }, 100000);
 
     it("POST /film Can't create film if his genre doesn't exist", () => {
-      const filmDto: CreateFilmDTO = {
-        title: 'Терминатор',
-        originalTitle: 'The Terminator',
-        year: 1984,
-        countryName: 'США',
-        genreNames: ['фантастика', 'боевик', 'триллер'],
-        slogan: '«Твоё будущее в его руках»',
-        duration: '108 minutes',
-      };
       return request(app.getHttpServer())
         .post(`/film`)
         .auth(adminToken.token, { type: 'bearer' })
-        .send(filmDto)
+        .send(terminatorDto)
         .then((r) => {
           expect(r.body).toEqual({
             error: SomeGenresNotFound,
@@ -516,33 +528,22 @@ describe('Test API', () => {
         .auth(adminToken.token, { type: 'bearer' })
         .send(thriller);
 
-      const filmDto: CreateFilmDTO = {
-        title: 'Терминатор',
-        originalTitle: 'The Terminator',
-        year: 1984,
-        countryName: 'США',
-        genreNames: ['фантастика', 'боевик', 'триллер'],
-        slogan: '«Твоё будущее в его руках»',
-        duration: '108 minutes',
-      };
       return request(app.getHttpServer())
         .post(`/film`)
         .auth(adminToken.token, { type: 'bearer' })
-        .send(filmDto)
+        .send(terminatorDto)
         .expect(HttpStatus.CREATED)
         .then((r) => {
           expect(r.body).toMatchObject({
             status: 'ok',
             value: {
-              year: 1984,
-              title: 'Терминатор',
-              originalTitle: 'The Terminator',
-              slogan: '«Твоё будущее в его руках»',
-              duration: '108 minutes',
+              year: terminatorDto.year,
+              title: terminatorDto.title,
+              originalTitle: terminatorDto.originalTitle,
+              slogan: terminatorDto.slogan,
+              duration: terminatorDto.duration,
               country: {
-                id: 13,
-                countryName: 'США',
-                url: '/lists/m_act[country]/1/',
+                countryName: terminatorDto.countryName,
               },
               url: null,
               preview: null,
@@ -554,17 +555,117 @@ describe('Test API', () => {
         });
     });
 
-    it('GET /film Can get films without filtering them', () => {
+    it('POST /film Admin can create new film 2', async () => {
+      ['драма', 'комедия', 'мелодрама', 'история', 'военный'];
+      // создадим недостающие жанры
+      const drama: CreateGenreDTO = {
+        genreName: 'драма',
+        genreNameEn: 'drama',
+      };
+      const comedy: CreateGenreDTO = {
+        genreName: 'комедия',
+        genreNameEn: 'comedy',
+      };
+      const melodarama: CreateGenreDTO = {
+        genreName: 'мелодрама',
+        genreNameEn: 'melodarama',
+      };
+      const history: CreateGenreDTO = {
+        genreName: 'история',
+        genreNameEn: 'history',
+      };
+      const military: CreateGenreDTO = {
+        genreName: 'военный',
+        genreNameEn: 'military',
+      };
+
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(drama);
+
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(comedy);
+
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(melodarama);
+
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(history);
+
+      await request(app.getHttpServer())
+        .post('/genre')
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(military);
+
+      return request(app.getHttpServer())
+        .post(`/film`)
+        .auth(adminToken.token, { type: 'bearer' })
+        .send(forestGumpDTO)
+        .expect(HttpStatus.CREATED)
+        .then((r) => {
+          expect(r.body).toMatchObject({
+            status: 'ok',
+            value: {
+              year: forestGumpDTO.year,
+              title: forestGumpDTO.title,
+              originalTitle: forestGumpDTO.originalTitle,
+              slogan: forestGumpDTO.slogan,
+              duration: forestGumpDTO.duration,
+              country: {
+                countryName: forestGumpDTO.countryName,
+              },
+              url: null,
+              preview: null,
+              ageRestrictionId: null,
+            },
+          });
+          expect(r.body.value.id).toBeDefined();
+          newFilmId = r.body.value.id;
+        });
+    });
+
+    it('GET /film Can get films without filtering or sorting them', () => {
       return request(app.getHttpServer())
         .get('/film')
         .expect(HttpStatus.OK)
         .then((r) => {
-          expect(r.body.length).toBe(2);
+          expect(r.body.length).toBe(3);
           expect(r.body[0]).toMatchObject({
             title: crouchingTigerHiddenDragon.title,
           });
           expect(r.body[1]).toMatchObject({
-            title: 'Терминатор',
+            title: terminatorDto.title,
+          });
+          expect(r.body[2]).toMatchObject({
+            title: forestGumpDTO.title,
+          });
+        });
+    });
+
+    it('GET /film Can sort films by year', () => {
+      // terminator - 1984
+      // forest gump - 1994
+      // crouching tiger - 2000
+      return request(app.getHttpServer())
+        .get('/film?sort=date')
+        .expect(HttpStatus.OK)
+        .then((r) => {
+          expect(r.body.length).toBe(3);
+          expect(r.body[0]).toMatchObject({
+            title: terminatorDto.title,
+          });
+          expect(r.body[1]).toMatchObject({
+            title: forestGumpDTO.title,
+          });
+          expect(r.body[2]).toMatchObject({
+            title: crouchingTigerHiddenDragon.title,
           });
         });
     });
@@ -576,7 +677,7 @@ describe('Test API', () => {
         .then((r) => {
           expect(r.body.length).toBe(1);
           expect(r.body[0]).toMatchObject({
-            title: 'Терминатор',
+            title: terminatorDto.title,
           });
         });
     });
