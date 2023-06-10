@@ -35,9 +35,15 @@ export class FilmService {
 
   async find(dto: FilmQueryDTO) {
     try {
-      const query = await this.filterByGenres(this.filmRepository.createQueryBuilder('films'), dto.filter.genres)
 
-      const res = await query.leftJoinAndSelect('films.filmGenres', 'fg')
+      const query = await this.filterByGenres(
+        this.filmRepository.createQueryBuilder('films')
+          .leftJoinAndSelect('films.filmGenres', 'fg', 'fg.filmId = films.id')
+          .leftJoinAndSelect('films.country', 'country', 'films.countryId = country.id'),
+        dto.filter.genres)
+
+
+      const res = await query
         .offset(dto.pagination.ofset)
         .take(dto.pagination.limit)
         .getMany();
@@ -64,7 +70,7 @@ export class FilmService {
     }
     const rightfilms = await this.filmRepository
       .createQueryBuilder('films')
-      .leftJoinAndSelect('films.filmGenres', 'fg')
+      .leftJoinAndSelect('films.filmGenres', 'fg', 'fg.filmId = films.id')
       .where('fg.genreId IN(:...genreIds)', { genreIds: genres.map((g) => g.id) })
       .groupBy('films.id')
       .having('COUNT(fg.genreId) = :num', {num: genres.length})
@@ -79,8 +85,8 @@ export class FilmService {
     const film = await this.filmRepository
       .createQueryBuilder('film')
       .where('film.id = :id', { id })
-      .leftJoinAndSelect('film.reviews', 'reviews')
-      .leftJoinAndSelect('reviews.comments', 'commetns')
+      .leftJoinAndSelect('film.reviews', 'reviews', 'film.id = reviews.filmId')
+      .leftJoinAndSelect('reviews.comments', 'comments', 'reviews.id = comments.reviewId')
       .getOne();
     return film;
   }
