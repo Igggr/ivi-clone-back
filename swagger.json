@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "paths": {
     "/auth/login": {
-      "post": {
+      "get": {
         "operationId": "AuthController_login",
         "parameters": [],
         "requestBody": {
@@ -18,14 +18,20 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/TokenProfileResponse"
+                }
               }
             }
           },
-          "201": {
+          "401": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedException"
+                }
+              }
             }
           }
         },
@@ -50,6 +56,16 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Role" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExistedRoleException"
+                }
               }
             }
           }
@@ -78,7 +94,7 @@
       }
     },
     "/auth/users/role": {
-      "post": {
+      "get": {
         "operationId": "AuthController_addRole",
         "parameters": [],
         "requestBody": {
@@ -98,10 +114,14 @@
               }
             }
           },
-          "201": {
+          "404": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundRoleOrUserException"
+                }
+              }
             }
           }
         },
@@ -199,7 +219,19 @@
           "201": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenProfileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RegisterException" }
+              }
             }
           }
         },
@@ -229,7 +261,19 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Profile" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateProfileException"
+                }
+              }
             }
           }
         },
@@ -250,7 +294,21 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedProfileUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedProfileUserException"
+                }
+              }
             }
           }
         },
@@ -266,7 +324,12 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "type": "object" } }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Profile" }
+                }
+              }
             }
           }
         },
@@ -537,205 +600,6 @@
             "description": "",
             "content": {
               "application/json": { "schema": { "type": "object" } }
-        "/film/review": {
-            "post": {
-                "operationId": "FilmController_addReview",
-                "summary": "Добавление рецензии на фильм",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/SubmitReviewDTO"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "film"
-                ],
-                "security": [
-                    {
-                        "defaultBearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "operationId": "FilmController_updateReview",
-                "summary": "Обновление рецензии на фильм",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/SubmitUpdateReview"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "film"
-                ],
-                "security": [
-                    {
-                        "defaultBearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/film/comment": {
-            "post": {
-                "operationId": "FilmController_addComment",
-                "summary": "Добавление комментария к рецензии на фильм",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/SubmitCommentDTO"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "film"
-                ],
-                "security": [
-                    {
-                        "defaultBearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/genre": {
-            "post": {
-                "operationId": "GenreController_createGenre",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CreateGenreDTO"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "genre"
-                ],
-                "security": [
-                    {
-                        "defaultBearerAuth": []
-                    }
-                ]
-            },
-            "get": {
-                "operationId": "GenreController_getAllGenres",
-                "parameters": [],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Genre"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "genre"
-                ]
-            },
-            "put": {
-                "operationId": "GenreController_updateGenre",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UpdateGenreDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Genre"
-                                }
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "genre"
-                ],
-                "security": [
-                    {
-                        "defaultBearerAuth": []
-                    }
-                ]
             }
           }
         },
@@ -778,832 +642,6 @@
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Genre" }
               }
-        "schemas": {
-            "LoginDto": {
-                "type": "object",
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "example": "user@mail.ru",
-                        "description": "Почтовый адрес"
-                    },
-                    "password": {
-                        "type": "string",
-                        "minLength": 4,
-                        "maxLength": 16,
-                        "example": "12345678",
-                        "description": "Пароль пользователя"
-                    }
-                },
-                "required": [
-                    "email",
-                    "password"
-                ]
-            },
-            "CreateRoleDto": {
-                "type": "object",
-                "properties": {
-                    "value": {
-                        "type": "string",
-                        "example": "Администратор",
-                        "description": "Роль пользователя"
-                    },
-                    "description": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "value",
-                    "description"
-                ]
-            },
-            "AddRoleDto": {
-                "type": "object",
-                "properties": {
-                    "value": {
-                        "type": "string",
-                        "example": "Администратор",
-                        "description": "Роль пользователя"
-                    },
-                    "userId": {
-                        "type": "number",
-                        "minimum": 1
-                    }
-                },
-                "required": [
-                    "value",
-                    "userId"
-                ]
-            },
-            "CreateUserProfileDto": {
-                "type": "object",
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "example": "user@mail.ru",
-                        "description": "Почтовый адрес"
-                    },
-                    "password": {
-                        "type": "string",
-                        "minLength": 4,
-                        "maxLength": 16,
-                        "example": "12345678",
-                        "description": "Пароль пользователя"
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Александр",
-                        "description": "Имя пользователя"
-                    },
-                    "surname": {
-                        "type": "string",
-                        "example": "Иванов",
-                        "description": "Фамилия пользователя"
-                    },
-                    "nickname": {
-                        "type": "string",
-                        "example": "stas9n",
-                        "description": "Никнейм пользователя"
-                    },
-                    "city": {
-                        "type": "string",
-                        "example": "Москва",
-                        "description": "Город проживания пользователя"
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"
-                    },
-                    "photo": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "email",
-                    "password",
-                    "name",
-                    "surname",
-                    "nickname",
-                    "city"
-                ]
-            },
-            "Promise": {
-                "type": "object",
-                "properties": {}
-            },
-            "Actor": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на актера на кинопоиске",
-                        "example": "https://www.kinopoisk.ru/name/7836/"
-                    },
-                    "fullName": {
-                        "type": "string",
-                        "description": "Имя актера",
-                        "example": "Киану Ривз"
-                    },
-                    "fullNameEn": {
-                        "type": "string",
-                        "description": "Actor name",
-                        "example": "Keanu Reeves"
-                    },
-                    "photo": {
-                        "type": "string",
-                        "description": "Ссылка на фотографию",
-                        "example": "www.kinopoisk.ru/2L92Ne432/b7d04b8v/fqOJASjI4frRMS8965211hOo-XV0re_Ej7Lr57tFE8StVoHC9xZ4AjaNyHf_VbpUUKejq5x-XyQl3uasLNgem9pnrJB9TRVeVIR63J8YtVNDyUiwEZzuQArGKjaOkNY2XlQC4GA0G_C0jw5jy1G78eVSV6rZrutBkSqH6w8MS4lscKiQGIkhzUDTLRuojWV2ATm-x-QtypR-wc0mO_bCJQzW8iNS90qy123-0ajDrhO1gFYKqz8rcnV7xfq9aur634G4sAh78a9hYS4pG1yVdAHo3vTFnzllzNFud5pWgka9FiJTQdZ48rfM3qILcD0ixdGXqqreKwOHOvYILDpaS95QqJNbmTD8ozOsaCsdVHTwmk8kpp0qtp3zDZXLxTA3H3cSMyJEKkEEH27AONLtkTWxhAuJzrvyJ4rXq42Iu3udMLuwSFpS7pKzvkt4fUWEwusPJtbMeYYvQy40qXdjd84k4YMTBNrilc-tg7lw3AJ20eQI6Z_aEle5NxjM2Xkr3OArIvta0kzREA-LGpyERSPbLQY2HTt2XSF9t-k00pfNdzLhY7ar0xd_HvKoA5wBtdM1GRluqKFlioWK7Jnouv_SGDDoWaP9kvMtCylcxjfDqG7mlB3IR2_BTVcbV5CXH7dwcuDUSFAErfxASWKeUicxFziqPAlAp9qUy3-ZyKm9s8gyOClg_AOiTRuLn-XG4qnPhWevu-Zu0e51aufARL7FUOIQRGqwtb9eUSlCL_PFIKcZG305E8U5xslt6Ml4z5D7oHia410CwX77KV8nxUOZzNfEjYsWXHAMRclVA_V_lGJyY6SIoKavf4GJo46BdVInmvuO2OB2WTZoz5qJSz6SqnIIyYIPM2G_S6ms5naw-g10h2yLRXzTLZdY1-IG_tTCUyF2C4M1zT6wqzGNgMWw1xk7fAnitQkHKp6YKStd0Wpx-ijDzhLzfqn7jyZlcbu_heXPqQRMgM9laaaBBjy0ctNi53lTBV7MQ-swbVImotcqSl67A2RLJEitmKnoD_Cp88l5AVygsY1J2Z-XVzHJLdcmr4pGLOP_xWrEYXb_JOJiErT54KdsrSPbsh9DF0ClmWt9-EH1uMYovXorWfzyulN4CpP8UbA8G4kcBdaiy1z1Rk4INZ7TPcQpFsI3zzRyEKLWWgKWjgzx6FI90ESChtmI3sgRVbj2K747KFjMMCgj6ekgDRCib1o6bLZnUQoelyYdK2RuQf9GaIcDBu3UYNDTVdjw9_3_0liiT4EFs_frKW3Yw0TrN_vP-1jY3FAZ4tib8EwA8n9aOG6FhpCb_IVmLeknrvOMRjr1ElcfxPKi4sQakJbPvwHoUP5Bd2MlqNkdSLHm6eQofog5-Q7D23K6yXCfMsI8G6kO9KaSeW0Hh3-bRCygvRRbFvEEPqZAgKGE2hDkfo3iGMC_ABVT1NrYXAtgdarWSX3LSyisorvSyCvTvLKhHphq_7VG4vucFyV8SxQc8r9kq8XAVe7XAAJil8mBt17PEMpSnWP1YtTLiB76kedZhvp-WzjYzuHbcFnYY_8SYBxoSkzH9EKo7de1bYnUDaNMt8jEYGU9xUJyspa4ILatfDCKYN9RZfCWGcp92KA1O7Z6zdpom82xSpAJyfAOw2G8KBj9lpbRyNwX9az4B1xwrXaKtKEnPcUy0pKVuiLmPX5j6vDeAyTR5nhb_BgQBfiFuF-ba8v8kbsxGiijbQPwDwmZDeYFMslsNXTcOJed099EGobDJw6EcFPjdkoi1d9uoqqgTDPl8NcpWk1YAmeZ5BgP-9s7nePIQ1gJInyD8P55WEzml2CqH_XmnrmH37FMdEiU4HUv5wDS4sW4YXSt_tLKchxhBTGFaRnt2-JliURJnnqKu3xiaCPJSONfItAsa4gtZhdBGE3Xt-6b9i1SDRf6dXKXL1UighMlucAHjezi-gAuQaeiR9hYDdqgFMu0WkxJ2kt909ti6-tT3iEi_Sh7X_XU4ap81TYOy7asw2xH-cXB1TwmsMIipCiTBM288xuwHTI0QAYq-Z4pQia61hreanv7zaPaEXtI0f4jEFyZ6Q6V9iE7L-TGTBq1nvIPR9qUUeSsx5ADERXrcuXs7HGZYBwSV_BkaHl8yTK3-wZobal6uTzCikNqOPPvoQMfSzq99qRwa673ph8rdE0RbpRZFmBUv0eT8uJkGdME3e4yWGJ9IETSFmlr7TiDRltWCs2bG8r90ahj6piybKHAb1mJfQQWs0ku1dV_ORZtkx12OpaR1r1kYcKDhNngx7ztgthib5P1ExYpWh7JUGZrFuvcWQjoHMF7cWg7AA9CYAxLSv3FZiG7HOUGbnlF7bGNVVi0UjQNJMPyUJZYUYaO79CaQD5gF-Al6outWPAHGcU67WjJeq6SiYMqCVD8E_GOuZrvheaTeG1kFZyJx77Rb3YLZeOHnPUwMFMlS_K0fA-SaDDvU5SCBajpDUjDB9s1q6zY6ojf0mgi6jlB3zKjTRqorTfEE5jf1pY9ixWdQv3WSJWhlS6kQ2DxRGlRBh7O8hhgT5Ml48QJKkw4sGcK9Zu_aHp5blNpccnawu1T0X5pGQwHdjNbz-XHXnn3jSG9hcp34qX_ZIKD0If5kjY_fsB7YP5SZPLG26kf-vHEmXTIbEg7qU7CqVNauVO84TF_qEuc93XC2a6nBD7qRI1RTKVY9PAmv_WBoMNlisAUnxwiOKGcU2XQh5vo3EoT1OrE2NzLKNv_E8lg6DhQ3aFwzTkpTuZ244oe1VScKgWecZ90CnahBP82wAFTJvmylN6OcYhSjLNEwMeZW2_pcTRI1smeWHsrXfBKYop4scxzQXzaKJ1kpnLJHSTkzOgEDRGNZWumwhT-xzLRwGXrcNbenNKqU11ydyDXaPu_2sK2-cWKTIjq-h-wy1LoStPcw6GNS7us9rQBSE1mBr77FL3B3QQ6VTBk7-bT0nElyrBH3M8TiwFvQtUwpxr7rwnxlOr3M"
-                    },
-                    "personInFilm": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ActorFilm"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "url",
-                    "fullName",
-                    "fullNameEn",
-                    "photo",
-                    "personInFilm"
-                ]
-            },
-            "ActorRole": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "roleName": {
-                        "type": "string",
-                        "description": "Какова его роль в фильме",
-                        "examples": [
-                            "actor",
-                            "operator"
-                        ]
-                    },
-                    "personsInFilm": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ActorFilm"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "roleName",
-                    "personsInFilm"
-                ]
-            },
-            "ActorFilm": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "filmId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "actorId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "roleId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "roleNotes": {
-                        "type": "string",
-                        "description": "Примечание по роли",
-                        "examples": [
-                            "... дворецкий",
-                            "... по костюмам"
-                        ]
-                    },
-                    "film": {
-                        "$ref": "#/components/schemas/Film"
-                    },
-                    "actor": {
-                        "$ref": "#/components/schemas/Actor"
-                    },
-                    "role": {
-                        "$ref": "#/components/schemas/ActorRole"
-                    }
-                },
-                "required": [
-                    "id",
-                    "filmId",
-                    "actorId",
-                    "roleId",
-                    "roleNotes",
-                    "film",
-                    "actor",
-                    "role"
-                ]
-            },
-            "FilmGenre": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "genreId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "filmId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "film": {
-                        "$ref": "#/components/schemas/Film"
-                    }
-                },
-                "required": [
-                    "id",
-                    "genreId",
-                    "filmId",
-                    "film"
-                ]
-            },
-            "AgeRestriction": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на возрастное ограничение на кинопоиске",
-                        "example": "https://www.kinopoisk.ru/film/462682/rn/R/"
-                    },
-                    "abbreviation": {
-                        "type": "string",
-                        "description": "Буквенная аббревиатура возрастного ограничения",
-                        "example": "R"
-                    },
-                    "minAge": {
-                        "type": "string",
-                        "description": "Минимальный возраст зрителя",
-                        "example": "16+"
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Описание ограничения по возрасту",
-                        "example": "Детям до 17 лет обязательно присутствие родителей"
-                    }
-                },
-                "required": [
-                    "id",
-                    "url",
-                    "abbreviation",
-                    "minAge",
-                    "description"
-                ]
-            },
-            "Comment": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на комментарий",
-                        "example": "https://www.kinopoisk.ru/user/7514/comment/48770/comm/1298253/#comm1298253"
-                    },
-                    "reviewId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "parentCommentId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "profileId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "text": {
-                        "type": "string",
-                        "description": "Текст комментария под чьим-то ревью",
-                        "example": "Ты просто не понял фильм, иначе б такое ревью не написал"
-                    },
-                    "review": {
-                        "$ref": "#/components/schemas/Review"
-                    },
-                    "parentComment": {
-                        "$ref": "#/components/schemas/Comment"
-                    },
-                    "childrens": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Comment"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "reviewId",
-                    "profileId",
-                    "text",
-                    "review"
-                ]
-            },
-            "Review": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на ревью на кинопоиске",
-                        "example": "https://www.kinopoisk.ru/user/15854772/comment/3251114/"
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Название ревью",
-                        "example": "История о том, как на лжи можно заработать миллионы"
-                    },
-                    "text": {
-                        "type": "string",
-                        "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
-                    },
-                    "filmId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "profileId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "isPositive": {
-                        "type": "boolean"
-                    },
-                    "comments": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Comment"
-                        }
-                    },
-                    "film": {
-                        "$ref": "#/components/schemas/Film"
-                    }
-                },
-                "required": [
-                    "id",
-                    "title",
-                    "text",
-                    "filmId",
-                    "profileId",
-                    "comments",
-                    "film"
-                ]
-            },
-            "FilmViewsCountry": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "countryId": {
-                        "type": "number",
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "filmId": {
-                        "type": "number",
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "premiere_date": {
-                        "format": "date-time",
-                        "type": "string",
-                        "description": "Дата премьеры"
-                    },
-                    "premiere_place": {
-                        "type": "string",
-                        "description": "Где состоялась премьера фильма в данной стране",
-                        "example": "Кинофестиваль в Лос-Анджелесе"
-                    },
-                    "viewersCount": {
-                        "type": "string",
-                        "description": "Число просмотров в данной стране",
-                        "example": "2 142 550 чел."
-                    }
-                },
-                "required": [
-                    "id",
-                    "countryId",
-                    "filmId",
-                    "premiere_date",
-                    "premiere_place",
-                    "viewersCount"
-                ]
-            },
-            "Film": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка фильм на кинопоиске",
-                        "example": "https://www.kinopoisk.ru/film/301/"
-                    },
-                    "preview": {
-                        "type": "string",
-                        "description": "Ссылка на preview"
-                    },
-                    "year": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Год выпуска",
-                        "example": 1999
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Название фильма",
-                        "example": "Матрица"
-                    },
-                    "originalTitle": {
-                        "type": "string",
-                        "description": "Оригинальное название",
-                        "example": "Matrix"
-                    },
-                    "slogan": {
-                        "type": "string",
-                        "description": "Слоган",
-                        "example": "«Добро пожаловать в реальный мир»"
-                    },
-                    "countryId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign Key",
-                        "example": 1
-                    },
-                    "ageRestrictionId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign Key",
-                        "example": 1
-                    },
-                    "country": {
-                        "$ref": "#/components/schemas/Country"
-                    },
-                    "personsInFilm": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ActorFilm"
-                        }
-                    },
-                    "filmGenres": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/FilmGenre"
-                        }
-                    },
-                    "duration": {
-                        "type": "string"
-                    },
-                    "ageRestriction": {
-                        "$ref": "#/components/schemas/AgeRestriction"
-                    },
-                    "reviews": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Review"
-                        }
-                    },
-                    "views": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/FilmViewsCountry"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "year",
-                    "title",
-                    "originalTitle",
-                    "slogan",
-                    "countryId",
-                    "country",
-                    "personsInFilm",
-                    "filmGenres",
-                    "duration",
-                    "reviews",
-                    "views"
-                ]
-            },
-            "Country": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "countryName": {
-                        "type": "string",
-                        "description": "Название страны",
-                        "example": "USA"
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на страну на кинопоиске",
-                        "example": "https://www.kinopoisk.ru/lists/movies/country--1/?b=films&b=top"
-                    },
-                    "filmsCreated": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Film"
-                        }
-                    },
-                    "filmViews": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/FilmViewsCountry"
-                        }
-                    }
-                },
-                "required": [
-                    "id",
-                    "countryName",
-                    "url",
-                    "filmsCreated",
-                    "filmViews"
-                ]
-            },
-            "CreateFilmDTO": {
-                "type": "object",
-                "properties": {
-                    "year": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Год выпуска",
-                        "example": 1999
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Название фильма",
-                        "example": "Матрица"
-                    },
-                    "originalTitle": {
-                        "type": "string",
-                        "description": "Оригинальное название",
-                        "example": "Matrix"
-                    },
-                    "slogan": {
-                        "type": "string",
-                        "description": "Слоган",
-                        "example": "«Добро пожаловать в реальный мир»"
-                    },
-                    "countryName": {
-                        "type": "string",
-                        "description": "Назвaние страны",
-                        "example": "USA"
-                    },
-                    "genreNames": {
-                        "description": "Назвaние жанров",
-                        "example": [
-                            "фантастика",
-                            "боевик",
-                            "триллер"
-                        ],
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "duration": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "year",
-                    "title",
-                    "originalTitle",
-                    "slogan",
-                    "countryName",
-                    "duration"
-                ]
-            },
-            "SubmitReviewDTO": {
-                "type": "object",
-                "properties": {
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на ревью на кинопоиске",
-                        "example": "https://www.kinopoisk.ru/user/15854772/comment/3251114/"
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Название ревью",
-                        "example": "История о том, как на лжи можно заработать миллионы"
-                    },
-                    "text": {
-                        "type": "string",
-                        "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
-                    },
-                    "filmId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "isPositive": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "title",
-                    "text",
-                    "filmId"
-                ]
-            },
-            "SubmitUpdateReview": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Название ревью",
-                        "example": "История о том, как на лжи можно заработать миллионы"
-                    },
-                    "text": {
-                        "type": "string",
-                        "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
-                    },
-                    "isPositive": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "id",
-                    "title",
-                    "text"
-                ]
-            },
-            "SubmitCommentDTO": {
-                "type": "object",
-                "properties": {
-                    "reviewId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "parentCommentId": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Foreign key",
-                        "example": 1
-                    },
-                    "text": {
-                        "type": "string",
-                        "description": "Текст комментария под чьим-то ревью",
-                        "example": "Ты просто не понял фильм, иначе б такое ревью не написал"
-                    }
-                },
-                "required": [
-                    "reviewId",
-                    "text"
-                ]
-            },
-            "DeleteResult": {
-                "type": "object",
-                "properties": {}
-            },
-            "CreateGenreDTO": {
-                "type": "object",
-                "properties": {
-                    "genreName": {
-                        "type": "string",
-                        "description": "Название жанра",
-                        "example": "Комедия"
-                    },
-                    "genreNameEn": {
-                        "type": "string",
-                        "description": "Genre title",
-                        "example": "Comedy "
-                    }
-                },
-                "required": [
-                    "genreName"
-                ]
-            },
-            "Genre": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "url": {
-                        "type": "string",
-                        "description": "Ссылка на жанр на кинопоиске",
-                        "example": "https://www.kinopoisk.ru/lists/movies/genre--comedy/?b=films&b=top"
-                    },
-                    "genreName": {
-                        "type": "string",
-                        "description": "Название жанра",
-                        "example": "Комедия"
-                    },
-                    "genreNameEn": {
-                        "type": "string",
-                        "description": "Genre title",
-                        "example": "Comedy "
-                    }
-                },
-                "required": [
-                    "id",
-                    "url",
-                    "genreName",
-                    "genreNameEn"
-                ]
-            },
-            "UpdateGenreDto": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "minimum": 1,
-                        "description": "Первичный ключ",
-                        "example": 1
-                    },
-                    "genreNameEn": {
-                        "type": "string",
-                        "description": "Genre title",
-                        "example": "Comedy "
-                    }
-                },
-                "required": [
-                    "id",
-                    "genreNameEn"
-                ]
             }
           }
         },
@@ -1646,12 +684,158 @@
         "tags": ["genre"],
         "security": [{ "defaultBearerAuth": [] }]
       }
+    },
+    "/film/review": {
+      "post": {
+        "operationId": "ReviewController_addReview",
+        "summary": "Добавление рецензии на фильм",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitReviewDTO" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          }
+        },
+        "tags": ["film/review"],
+        "security": [{ "defaultBearerAuth": [] }]
+      },
+      "put": {
+        "operationId": "ReviewController_updateReview",
+        "summary": "Обновление рецензии на фильм",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitUpdateReviewDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          }
+        },
+        "tags": ["film/review"],
+        "security": [{ "defaultBearerAuth": [] }]
+      }
+    },
+    "/film/review/{id}": {
+      "delete": {
+        "operationId": "ReviewController_deleteReview",
+        "summary": "Удаление рецензии на фильм",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          }
+        },
+        "tags": ["film/review"],
+        "security": [{ "defaultBearerAuth": [] }]
+      }
+    },
+    "/film/review/comment": {
+      "post": {
+        "operationId": "ReviewController_addComment",
+        "summary": "Добавление комментария к рецензии на фильм",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitCommentDTO" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          }
+        },
+        "tags": ["film/review"],
+        "security": [{ "defaultBearerAuth": [] }]
+      },
+      "put": {
+        "operationId": "ReviewController_updateComment",
+        "summary": "Обновление комметнария к рецензии",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitUpdateCommentDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          }
+        },
+        "tags": ["film/review"],
+        "security": [{ "defaultBearerAuth": [] }]
+      }
+    },
+    "/film/review/comment/{id}": {
+      "delete": {
+        "operationId": "ReviewController_deleteComment",
+        "summary": "Удаление комментария к рецензии",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          }
+        },
+        "tags": ["film/review"],
+        "security": [{ "defaultBearerAuth": [] }]
+      }
     }
   },
   "info": {
     "title": "Учебный проект",
     "description": "Клон kinopoisk-a",
-    "version": "0.0.0",
+    "version": "0.9.9",
     "contact": {}
   },
   "tags": [],
@@ -1683,88 +867,6 @@
         },
         "required": ["email", "password"]
       },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "minimum": 1,
-            "description": "Первичный ключ",
-            "example": 1
-          },
-          "email": {
-            "type": "string",
-            "example": "user@mail.ru",
-            "description": "Почтовый адрес"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 4,
-            "maxLength": 16,
-            "example": "12345678",
-            "description": "Пароль пользователя"
-          },
-          "roles": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/Role" }
-          }
-        },
-        "required": ["id", "email", "password", "roles"]
-      },
-      "Role": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "minimum": 1,
-            "description": "Первичный ключ",
-            "example": 1
-          },
-          "value": {
-            "type": "string",
-            "example": "Администратор",
-            "description": "Роль пользователя"
-          },
-          "description": {
-            "type": "string",
-            "example": "Роль со многими правами",
-            "description": "Описание роли"
-          },
-          "users": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/User" }
-          }
-        },
-        "required": ["id", "value", "description", "users"]
-      },
-      "CreateRoleDto": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "example": "Администратор",
-            "description": "Роль пользователя"
-          },
-          "description": {
-            "type": "string",
-            "example": "Роль со многими правами",
-            "description": "Описание роли"
-          }
-        },
-        "required": ["value", "description"]
-      },
-      "AddRoleDto": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "example": "Администратор",
-            "description": "Роль пользователя"
-          },
-          "userId": { "type": "number", "minimum": 1 }
-        },
-        "required": ["value", "userId"]
-      },
       "Profile": {
         "type": "object",
         "properties": {
@@ -1776,6 +878,7 @@
           },
           "url": {
             "type": "string",
+            "example": "https://www.kinopoisk.ru/user/2797306/",
             "description": "Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"
           },
           "name": {
@@ -1809,8 +912,17 @@
             "example": "2023-05-02 19:42:24.926691",
             "description": "Дата создания аккаунта"
           },
-          "photo": { "type": "string" },
-          "userId": { "type": "number" }
+          "photo": {
+            "type": "string",
+            "example": "34387d2698cf4a8aff4828a8d3b9f18f.jpg",
+            "description": "Название фотографии"
+          },
+          "userId": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Внешний ключ",
+            "example": 1
+          }
         },
         "required": [
           "id",
@@ -1839,6 +951,111 @@
           }
         },
         "required": ["token", "profileInfo"]
+      },
+      "UnauthorizedException": { "type": "object", "properties": {} },
+      "CreateRoleDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "example": "Администратор",
+            "description": "Роль пользователя"
+          },
+          "description": {
+            "type": "string",
+            "example": "Роль со многими правами",
+            "description": "Описание роли"
+          }
+        },
+        "required": ["value", "description"]
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Первичный ключ",
+            "example": 1
+          },
+          "value": {
+            "type": "string",
+            "example": "Администратор",
+            "description": "Роль пользователя"
+          },
+          "description": {
+            "type": "string",
+            "example": "Роль со многими правами",
+            "description": "Описание роли"
+          },
+          "users": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/User" }
+          }
+        },
+        "required": ["id", "value", "description", "users"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Первичный ключ",
+            "example": 1
+          },
+          "email": {
+            "type": "string",
+            "example": "user@mail.ru",
+            "description": "Почтовый адрес"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 16,
+            "example": "12345678",
+            "description": "Пароль пользователя"
+          },
+          "roles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Role" }
+          }
+        },
+        "required": ["id", "email", "password", "roles"]
+      },
+      "ExistedRoleException": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number", "default": 400 },
+          "message": {
+            "type": "string",
+            "default": "Такая роль уже существует"
+          }
+        },
+        "required": ["statusCode", "message"]
+      },
+      "AddRoleDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "example": "Администратор",
+            "description": "Роль пользователя"
+          },
+          "userId": { "type": "number", "minimum": 1 }
+        },
+        "required": ["value", "userId"]
+      },
+      "NotFoundRoleOrUserException": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number", "default": 404 },
+          "message": {
+            "type": "string",
+            "default": "Пользователь или роль не найдены, либо данная роль уже присвоена пользователю"
+          }
+        },
+        "required": ["statusCode", "message"]
       },
       "CreateUserProfileDto": {
         "type": "object",
@@ -1877,11 +1094,60 @@
           },
           "url": {
             "type": "string",
+            "example": "https://www.kinopoisk.ru/user/2797306/",
             "description": "Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)"
           },
-          "photo": { "type": "string" }
+          "photo": {
+            "type": "string",
+            "example": "34387d2698cf4a8aff4828a8d3b9f18f.jpg",
+            "description": "Название фотографии"
+          }
         },
         "required": ["email", "password", "name", "surname", "nickname", "city"]
+      },
+      "RegisterException": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number", "default": 400 },
+          "message": {
+            "type": "string",
+            "default": "Ошибка при создании профиля"
+          }
+        },
+        "required": ["statusCode", "message"]
+      },
+      "UpdateProfileException": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number", "default": 400 },
+          "message": {
+            "type": "string",
+            "default": "Ошибка при обновлении профиля"
+          }
+        },
+        "required": ["statusCode", "message"]
+      },
+      "DeletedProfileUserResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number", "default": 200 },
+          "message": {
+            "type": "string",
+            "default": "Профиль и пользователь успешно удалены"
+          }
+        },
+        "required": ["statusCode", "message"]
+      },
+      "DeletedProfileUserException": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number", "default": 400 },
+          "message": {
+            "type": "string",
+            "default": "Ошибка при удалении профиля"
+          }
+        },
+        "required": ["statusCode", "message"]
       },
       "Promise": { "type": "object", "properties": {} },
       "Actor": {
@@ -2141,12 +1407,10 @@
         },
         "required": [
           "id",
-          "url",
           "title",
           "text",
           "filmId",
           "profileId",
-          "isPositive",
           "comments",
           "film"
         ]
@@ -2413,6 +1677,95 @@
           }
         },
         "required": ["id", "genreNameEn"]
+      },
+      "SubmitReviewDTO": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Ссылка на ревью на кинопоиске",
+            "example": "https://www.kinopoisk.ru/user/15854772/comment/3251114/"
+          },
+          "title": {
+            "type": "string",
+            "description": "Название ревью",
+            "example": "История о том, как на лжи можно заработать миллионы"
+          },
+          "text": {
+            "type": "string",
+            "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
+          },
+          "filmId": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Foreign key",
+            "example": 1
+          },
+          "isPositive": { "type": "boolean" }
+        },
+        "required": ["title", "text", "filmId"]
+      },
+      "SubmitUpdateReviewDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Первичный ключ",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Название ревью",
+            "example": "История о том, как на лжи можно заработать миллионы"
+          },
+          "text": {
+            "type": "string",
+            "description": "Фильм «„Волк с Уолл-стрит“» — привлекательный, завораживающий, но жестокий и контроверсиальный фильм ..."
+          },
+          "isPositive": { "type": "boolean" }
+        },
+        "required": ["id", "title", "text"]
+      },
+      "SubmitCommentDTO": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Foreign key",
+            "example": 1
+          },
+          "parentCommentId": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Foreign key",
+            "example": 1
+          },
+          "text": {
+            "type": "string",
+            "description": "Текст комментария под чьим-то ревью",
+            "example": "Ты просто не понял фильм, иначе б такое ревью не написал"
+          }
+        },
+        "required": ["reviewId", "text"]
+      },
+      "SubmitUpdateCommentDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Первичный ключ",
+            "example": 1
+          },
+          "text": {
+            "type": "string",
+            "description": "Текст комментария под чьим-то ревью",
+            "example": "Ты просто не понял фильм, иначе б такое ревью не написал"
+          }
+        },
+        "required": ["id", "text"]
       }
     }
   }
