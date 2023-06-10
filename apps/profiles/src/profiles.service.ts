@@ -254,10 +254,10 @@ export class ProfilesService {
     return await this.profileRepository.findOneBy({ userId: userId });
   }
 
-  async createProfile(userInfo) {
+  async createProfile(profileDetails) {
     const profile = await this.profileRepository.create({
-      nickname: userInfo.nickname,
-      userId: userInfo.userId,
+      nickname: profileDetails.nickname,
+      userId: profileDetails.userId,
     });
     return await this.profileRepository.save(profile);
   }

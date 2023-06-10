@@ -1,5 +1,11 @@
 import { AUTH, ENSURE_OAUTH_USER } from '@app/rabbit';
+import {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI,
+} from '@app/shared/constants/keys';
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
@@ -8,11 +14,14 @@ import * as uuid from 'uuid';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject(AUTH) private client: ClientProxy) {
+  constructor(
+    @Inject(AUTH) private client: ClientProxy,
+    configService: ConfigService,
+  ) {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_REDIRECT_URI,
+      clientID: configService.get<string>(GOOGLE_CLIENT_ID),
+      clientSecret: configService.get<string>(GOOGLE_CLIENT_SECRET),
+      callbackURL: configService.get<string>(GOOGLE_REDIRECT_URI),
       scope: ['profile', 'email'],
     });
   }

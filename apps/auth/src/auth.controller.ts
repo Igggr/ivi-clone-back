@@ -132,18 +132,14 @@ export class AuthController {
   handleGoogleRedirect(@Payload() user: User, @Ctx() context: RmqContext) {
     ack(context);
 
-    return this.authService.redirect(user);
+    return this.authService.getTokenAndProfileInfo(user);
   }
 
   @MessagePattern({ cmd: VK_REDIRECT })
   handleVkRedirect(@Payload() user: User, @Ctx() context: RmqContext) {
     ack(context);
-    console.log('auth control');
 
-    return this.authService.ensureUserAndRedirect({
-      email: user.email,
-      password: user.password,
-    });
+    return this.authService.getTokenAndProfileInfo(user);
   }
 
   @MessagePattern({ cmd: ENSURE_OAUTH_USER })

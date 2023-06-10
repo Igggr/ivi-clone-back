@@ -25,7 +25,7 @@ export class AuthService {
   async login(userDto: LoginDto) {
     const user = await this.validateUser(userDto);
     if (user instanceof User) {
-      return this.redirect(user);
+      return this.getTokenAndProfileInfo(user);
     }
     return user;
   }
@@ -112,18 +112,12 @@ export class AuthService {
     return user;
   }
 
-  async redirect(user: User) {
+  async getTokenAndProfileInfo(user: User) {
     const token = await this.generateToken(user);
     const profile = await firstValueFrom(
       this.profileClient.send({ cmd: GET_PROFILE_BY_USER_ID }, user.id),
     );
 
     return { token, profileInfo: profile };
-  }
-
-  async ensureUserAndRedirect(userDto: LoginDto) {
-    const user = await this.ensureOauthUser(userDto);
-    console.log(user);
-    return await this.redirect(user);
   }
 }

@@ -18,6 +18,7 @@ import {
   ErrorDTO,
   CREATE_PROFILE,
 } from '@app/rabbit';
+import { ProfileDetails } from '@app/shared/types/profile-details';
 
 @Controller()
 export class ProfilesController {
@@ -84,9 +85,12 @@ export class ProfilesController {
   }
 
   @MessagePattern({ cmd: CREATE_PROFILE })
-  createProfile(@Ctx() context: RmqContext, @Payload() userInfo) {
+  createProfile(
+    @Ctx() context: RmqContext,
+    @Payload() profileDetails: ProfileDetails,
+  ) {
     ack(context);
 
-    return this.profileService.createProfile(userInfo);
+    return this.profileService.createProfile(profileDetails);
   }
 }
