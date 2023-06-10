@@ -17,6 +17,10 @@ export class Role {
   value: string;
 
   @IsString({ message: 'Должно быть строкой' })
+  @ApiProperty({
+    example: 'Роль со многими правами',
+    description: 'Описание роли',
+  })
   @IsOptional()
   @Column({ nullable: true })
   description: string;

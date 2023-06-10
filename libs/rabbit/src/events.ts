@@ -22,6 +22,7 @@ export const LOGIN = 'login';
 export const GET_USER_BY_EMAIL = 'get-user-by-email';
 export const FIND_USER_BY_ID = 'find-user_by_id';
 export const GET_TOKEN = 'get-token';
+export const CREATE_PROFILE = 'create-profile';
 export const UPDATE_PROFILE = 'update-profile';
 export const UPDATE_USER = 'update-user';
 export const DELETE_PROFILE = 'delete-profile';
@@ -47,4 +48,5 @@ export const ENSURE_ALL_GENRES_EXISTS = 'ensure_all_genre_exists';
 
 export const GOOGLE_LOGIN = 'google-login';
 export const GOOGLE_REDIRECT = 'google-redirect';
-export const ENSURE_GOOGLE_USER = 'ensure-google-user';
+export const VK_REDIRECT = 'vk-redirect';
+export const ENSURE_OAUTH_USER = 'ensure-oauth-user';

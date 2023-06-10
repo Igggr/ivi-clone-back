@@ -16,7 +16,9 @@ import {
   ack,
   GET_PROFILE_BY_USER_ID,
   ErrorDTO,
+  CREATE_PROFILE,
 } from '@app/rabbit';
+import { ProfileDetails } from '@app/shared/types/profile-details';
 
 @Controller()
 export class ProfilesController {
@@ -78,6 +80,17 @@ export class ProfilesController {
   @MessagePattern({ cmd: GET_PROFILE_BY_USER_ID })
   getProfileByUserId(@Ctx() context: RmqContext, @Payload() userId: number) {
     ack(context);
+
     return this.profileService.getProfileByUserId(userId);
+  }
+
+  @MessagePattern({ cmd: CREATE_PROFILE })
+  createProfile(
+    @Ctx() context: RmqContext,
+    @Payload() profileDetails: ProfileDetails,
+  ) {
+    ack(context);
+
+    return this.profileService.createProfile(profileDetails);
   }
 }
