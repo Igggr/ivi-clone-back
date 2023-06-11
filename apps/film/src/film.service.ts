@@ -20,6 +20,8 @@ import {
   FilmGenre,
   SomeGenresNotFound,
   FilmSort,
+  exhaustiveCheck,
+  Review,
 } from '@app/shared';
 import { CountryService } from './country/country.service';
 
@@ -153,8 +155,20 @@ export class FilmService {
         return query.orderBy('films.title');
       case 'date':
         return query.orderBy('films.year');
-      default: // not implemented yet
+      case 'marks':
+        return query
+          .addSelect((subQuery) => {
+            return subQuery
+              .select('COUNT(rev.id)', 'count')
+              .from(Review, 'rev')
+              .where('rev.filmId = films.id')
+              .groupBy('rev.filmId');
+          }, 'count')
+          .orderBy('count', 'DESC');
+      case 'ratings': // not implemented yet
         return query;
+      default:
+        exhaustiveCheck(sort);
     }
   }
 

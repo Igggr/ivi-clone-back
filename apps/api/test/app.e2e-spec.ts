@@ -95,7 +95,7 @@ describe('Test API', () => {
   };
 
   const forestGumpDTO: CreateFilmDTO = {
-    title: 'Форрест Гамп (1994)',
+    title: 'Форрест Гамп',
     originalTitle: 'Forrest Gump',
     year: 1994,
     countryName: 'США',
@@ -106,7 +106,7 @@ describe('Test API', () => {
   };
 
   let crouchingTigerId: number;
-  let newFilmId: number;
+  let forestGumpId: number;
   let newReviewId: number;
   let newCommentId: number;
 
@@ -579,7 +579,7 @@ describe('Test API', () => {
             },
           });
           expect(r.body.value.id).toBeDefined();
-          newFilmId = r.body.value.id;
+          forestGumpId = r.body.value.id;
         });
     });
 
@@ -627,7 +627,7 @@ describe('Test API', () => {
             },
           });
           expect(r.body.value.id).toBeDefined();
-          newFilmId = r.body.value.id;
+          forestGumpId = r.body.value.id;
         });
     });
 
@@ -672,9 +672,6 @@ describe('Test API', () => {
       });
 
       it('GET /film?sort=alphabet Can sort films by title', () => {
-        // terminator - 1984
-        // forest gump - 1994
-        // crouching tiger - 2000
         return request(app.getHttpServer())
           .get('/film?sort=alphabet')
           .expect(HttpStatus.OK)
@@ -688,6 +685,27 @@ describe('Test API', () => {
             });
             expect(r.body[2]).toMatchObject({
               title: forestGumpDTO.title,
+            });
+          });
+      });
+
+      it('GET /film?sort=marks Can sort films by reviews ammount', () => {
+        // terminator - много
+        // forest gump - 0
+        // crouching tiger - 0
+        return request(app.getHttpServer())
+          .get('/film?sort=marks')
+          .expect(HttpStatus.OK)
+          .then((r) => {
+            expect(r.body.length).toBe(3);
+            expect(r.body[0]).toMatchObject({
+              title: terminatorDto.title,
+            });
+            expect(r.body[1]).toMatchObject({
+              title: forestGumpDTO.title,
+            });
+            expect(r.body[2]).toMatchObject({
+              title: crouchingTigerHiddenDragon.title,
             });
           });
       });
@@ -759,11 +777,11 @@ describe('Test API', () => {
         return request(app.getHttpServer())
           .post('/film/review')
           .auth(simpleUserToken.token, { type: 'bearer' })
-          .send({ ...newReview, filmId: newFilmId })
+          .send({ ...newReview, filmId: forestGumpId })
           .expect(HttpStatus.CREATED)
           .then((r) => {
             expect(r.body).toMatchObject({
-              filmId: newFilmId,
+              filmId: forestGumpId,
               isPositive: newReview.isPositive ?? null,
               title: newReview.title,
               text: newReview.text,
@@ -796,7 +814,7 @@ describe('Test API', () => {
 
       it('GET /film/:id Newly created review anf film are saved in DB', () => {
         return request(app.getHttpServer())
-          .get(`/film/${newFilmId}`)
+          .get(`/film/${forestGumpId}`)
           .expect(HttpStatus.OK)
           .then((r) => {
             expect(r.body).toMatchObject({
@@ -868,7 +886,7 @@ describe('Test API', () => {
 
       it('GET /film/:id Change to review and comment are saved in DB', () => {
         return request(app.getHttpServer())
-          .get(`/film/${newFilmId}`)
+          .get(`/film/${forestGumpId}`)
           .expect(HttpStatus.OK)
           .then((r) => {
             expect(r.body).toMatchObject({
