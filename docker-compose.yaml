@@ -208,18 +208,6 @@ services:
       - postgres_file
     volumes:
       - .:/usr/src/app
-  
-  swagger-ui:
-    image: swaggerapi/swagger-ui
-    container_name: "swagger-ui"
-    ports:
-      - "8082:8080"
-    depends_on:
-      - api
-    volumes:
-      - ./swagger.json:/swagger.json
-    environment:
-      SWAGGER_JSON: /swagger.json
 
   nginx:
     image: nginx:latest

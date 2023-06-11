@@ -39,6 +39,5 @@ lerna-debug.log*
 /rabbitmq/
 /redis_data/
 /db_data/
-swagger.json
 *.md
 .github
