@@ -12,8 +12,6 @@ import { AuthController } from './controllers/auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
 import { SessionSerializer } from './utils/serializer';
 import * as Joi from 'joi';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { staticDir } from '@app/shared';
 import { FOR } from '@app/shared/constants/keys';
 import { VKStrategy } from './utils/vk.strategy';
 import { ReviewController } from './controllers/review.controller';
@@ -65,10 +63,6 @@ import { ReviewController } from './controllers/review.controller';
       },
     ]),
     PassportModule.register({ session: true }),
-    ServeStaticModule.forRoot({
-      serveRoot: '/photo',
-      rootPath: staticDir(),
-    }),
   ],
   controllers: [
     AuthController,
