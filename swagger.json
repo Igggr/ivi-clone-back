@@ -94,7 +94,7 @@
       }
     },
     "/auth/users/role": {
-      "get": {
+      "put": {
         "operationId": "AuthController_addRole",
         "parameters": [],
         "requestBody": {
@@ -146,7 +146,8 @@
             }
           }
         },
-        "tags": ["auth"]
+        "tags": ["auth"],
+        "security": [{ "defaultBearerAuth": [] }]
       }
     },
     "/auth/google/login": {

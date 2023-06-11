@@ -20,6 +20,7 @@ import {
   HttpStatus,
   Inject,
   Post,
+  Put,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -105,7 +106,7 @@ export class AuthController {
     );
   }
 
-  @Get('/users/role')
+  @Put('/users/role')
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -130,6 +131,7 @@ export class AuthController {
   }
 
   @Get('/users')
+  @ApiBearerAuth(BearerAuth)
   @ApiResponse({ status: HttpStatus.OK, type: [User] })
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
