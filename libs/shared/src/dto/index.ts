@@ -25,3 +25,5 @@ export * from './create-age-restriction.dto';
 export * from './create-country.dto';
 export * from './create_film.dto';
 export * from './update-film.dto';
+export * from './film-query.dto';
+export * from './filter.dto';

@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientProxy } from '@nestjs/microservices';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, SelectQueryBuilder } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
 import {
   GENRE,
@@ -19,6 +19,9 @@ import {
   CountryWithThisNameNotFound,
   FilmGenre,
   SomeGenresNotFound,
+  FilmSort,
+  exhaustiveCheck,
+  Review,
 } from '@app/shared';
 import { CountryService } from './country/country.service';
 
@@ -34,56 +37,153 @@ export class FilmService {
   ) {}
 
   async find(dto: FilmQueryDTO) {
-    if (dto.genres.length === 0) {
-      const res = await this.filmRepository
+    try {
+      const genres = await this.getAllGenres();
+
+      const query = this.filmRepository
         .createQueryBuilder('films')
+        .leftJoinAndSelect('films.filmGenres', 'fg', 'fg.filmId = films.id')
+        .leftJoinAndSelect(
+          'films.country',
+          'country',
+          'films.countryId = country.id',
+        );
+
+      // фильтрация
+      const genresQuery = await this.filterByGenres(query, dto.filter.genres);
+      const countryQuery = this.filterByCountry(
+        genresQuery,
+        dto.filter.countryName,
+      );
+      const directorQuery = await this.filterByPerson(
+        countryQuery,
+        dto.filter.directorId,
+        'director',
+      );
+      const actorQuery = await this.filterByPerson(
+        directorQuery,
+        dto.filter.actorId,
+        'actor',
+      );
+
+      // сортировка
+      const sortQuery = await this.sortFilms(actorQuery, dto.sort);
+
+      const res = await sortQuery
         .offset(dto.pagination.ofset)
         .take(dto.pagination.limit)
         .getMany();
-      return res;
-    }
 
-    // console.log(dto)
-    const genres = await this.findGenresByNamesEn(dto.genres);
-    // console.log('Get only films with all this genres:', dto, genres)
-    if (dto.genres.length !== genres.length) {
+      return res;
+    } catch (e) {
       return {
         status: 'error',
-        error: SomeGenresNotFound,
+        error: e.message,
       };
     }
-    const genreIds = genres.map((g) => g.id);
+  }
 
-    // чтобы получить фильмы у кторых есть все указанные жанры
-    // сначала отфильтруй filmGenre, по жанрам
-    // а потом сгруппируй по фильму и оставь только те фильмыэ
-    // у которым соотвествует то же количество жанров
+  private async filterByGenres(
+    query: SelectQueryBuilder<Film>,
+    genreNames: string[],
+  ) {
+    if (genreNames.length === 0) {
+      return query; // то и фильтровать ничего не надо
+    }
+    const genres = await this.findGenresByNamesEn(genreNames);
+
+    if (genreNames.length !== genres.length) {
+      throw new BadRequestException(SomeGenresNotFound);
+    }
     const rightfilms = await this.filmRepository
       .createQueryBuilder('films')
-      .leftJoinAndSelect('films.filmGenres', 'fg')
-      .where('fg.genreId IN(:...genreIds)', { genreIds })
+      .leftJoinAndSelect('films.filmGenres', 'fg', 'fg.filmId = films.id')
+      .where('fg.genreId IN(:...genreIds)', {
+        genreIds: genres.map((g) => g.id),
+      })
       .groupBy('films.id')
-      .having('COUNT(fg.genreId) = 2')
+      .having('COUNT(fg.genreId) = :num', { num: genres.length })
       .select('films.id', 'id')
       .addSelect('films.title')
       .getRawMany();
 
-    const res = await this.filmRepository
+    return query.where('films.id IN(:...ids)', {
+      ids: rightfilms.map((film) => film.id),
+    });
+  }
+
+  private filterByCountry(
+    query: SelectQueryBuilder<Film>,
+    countryName: string,
+  ) {
+    if (!countryName) {
+      return query;
+    }
+    return query.where('country.countryName = :countryName', { countryName });
+  }
+
+  private async filterByPerson(
+    query: SelectQueryBuilder<Film>,
+    personId: number,
+    role: 'actor' | 'director',
+  ) {
+    if (!personId || !role) {
+      return query;
+    }
+    console.log('should fiter by person.id', personId);
+    const rightFilms = await this.filmRepository
       .createQueryBuilder('films')
-      .where('films.id IN(:...ids)', { ids: rightfilms.map((film) => film.id) })
-      .offset(dto.pagination.ofset)
-      .take(dto.pagination.limit)
+      .leftJoinAndSelect('films.personsInFilm', 'pf', 'pf.filmId = films.id')
+      .leftJoinAndSelect('pf.role', 'role', 'pf.roleId = role.id')
+      .where('pf.actorId = :personId', { personId })
+      .andWhere('role.roleName = :role', { role })
+      .groupBy('films.id')
+      .select('films.id')
       .getMany();
 
-    return res;
+    return query.where('films.id IN(:...ids)', {
+      ids: rightFilms.map((f) => f.id),
+    });
+  }
+
+  private async sortFilms(query: SelectQueryBuilder<Film>, sort: FilmSort) {
+    if (!sort) {
+      return query;
+    }
+    switch (sort) {
+      case 'alphabet':
+        return query.orderBy('films.title');
+      case 'date':
+        return query.orderBy('films.year');
+      case 'marks':
+        return query
+          .addSelect((subQuery) => {
+            return subQuery
+              .select('COUNT(rev.id)', 'count')
+              .from(Review, 'rev')
+              .where('rev.filmId = films.id')
+              .groupBy('rev.filmId');
+          }, 'count')
+          .orderBy('count', 'DESC');
+      case 'ratings': // not implemented yet
+        return query;
+      default:
+        exhaustiveCheck(sort);
+    }
   }
 
   async findOneById(id: number): Promise<Film> {
     const film = await this.filmRepository
       .createQueryBuilder('film')
       .where('film.id = :id', { id })
-      .leftJoinAndSelect('film.reviews', 'reviews')
-      .leftJoinAndSelect('reviews.comments', 'commetns')
+      .leftJoinAndSelect('film.reviews', 'reviews', 'film.id = reviews.filmId')
+      .leftJoinAndSelect(
+        'reviews.comments',
+        'comments',
+        'reviews.id = comments.reviewId',
+      )
+      .leftJoinAndSelect('film.personsInFilm', 'pf', 'pf.filmId = film.id')
+      .leftJoinAndSelect('pf.role', 'role', 'pf.roleId = role.id')
       .getOne();
     return film;
   }

@@ -68,7 +68,9 @@ export class Film {
   @Column()
   countryId: number;
 
-  @OneToMany(() => ActorFilm, (personsInFilm) => personsInFilm.film)
+  @OneToMany(() => ActorFilm, (personsInFilm) => personsInFilm.film, {
+    eager: true,
+  })
   personsInFilm: ActorFilm[];
 
   @OneToMany(() => FilmGenre, (filmGenre) => filmGenre.film)
