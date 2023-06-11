@@ -13,7 +13,7 @@ export class Country {
   id: number;
 
   @IsString()
-  @ApiProperty({ description: 'Название страны', example: 'USA' })
+  @ApiProperty({ description: 'Название страны', example: 'США' })
   @Column({ unique: true, nullable: false })
   countryName: string;
 
