@@ -377,6 +377,36 @@
             "required": true,
             "in": "query",
             "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "director",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "actor",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "rating",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "marks",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "sort",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -411,6 +441,36 @@
             "required": true,
             "in": "query",
             "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "director",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "actor",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "rating",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "marks",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "sort",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -445,6 +505,42 @@
             "required": true,
             "in": "query",
             "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "country",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "director",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "actor",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "rating",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "marks",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "sort",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -479,6 +575,36 @@
             "required": true,
             "in": "query",
             "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "director",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "actor",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "rating",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "marks",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "sort",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1572,7 +1698,7 @@
           "countryName": {
             "type": "string",
             "description": "Название страны",
-            "example": "USA"
+            "example": "США"
           },
           "url": {
             "type": "string",
