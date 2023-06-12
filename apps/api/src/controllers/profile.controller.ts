@@ -29,7 +29,12 @@ import { ProfilesGuard } from '../guards/profile-auth.guard';
 import { Roles } from '../guards/roles-auth.decorator';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { BearerAuth } from '../guards/bearer';
 import { TokenProfileResponse } from '@app/shared/api-response/token-profileInfo';
 import { Profile } from '@app/shared';
@@ -50,6 +55,7 @@ export class ProfilesController {
     type: RegisterException,
   })
   @UsePipes(ValidationPipe)
+  @ApiOperation({ summary: 'Регистрация пользователя' })
   @UseInterceptors(FileInterceptor('photo'))
   async registration(
     @Body() userProfileDto: CreateUserProfileDto,
@@ -73,6 +79,7 @@ export class ProfilesController {
   }
 
   @Put('/profiles/:id')
+  @ApiOperation({ summary: 'Обновление информации профиля' })
   @ApiResponse({ status: HttpStatus.OK, type: Profile })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -107,6 +114,7 @@ export class ProfilesController {
   }
 
   @Delete('/profiles/:id')
+  @ApiOperation({ summary: 'Удаление профиля' })
   @ApiResponse({ status: HttpStatus.OK, type: DeletedProfileUserResponse })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -131,6 +139,7 @@ export class ProfilesController {
   }
 
   @Get('/profiles')
+  @ApiOperation({ summary: 'Получение информации о профилях' })
   @ApiResponse({ status: HttpStatus.OK, type: [Profile] })
   async getProfiles() {
     return await firstValueFrom(

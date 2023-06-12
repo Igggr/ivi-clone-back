@@ -25,7 +25,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { CreateGenreDTO, Genre, UpdateGenreDto } from '@app/shared';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BearerAuth } from '../guards/bearer';
 import { DeleteResult } from 'typeorm';
 
@@ -36,6 +36,7 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiOperation({ summary: 'Создание жанра' })
   @ApiBearerAuth(BearerAuth)
   @Post()
   async createGenre(@Body() dto: CreateGenreDTO): Promise<ResponseDTO<Genre>> {
@@ -50,6 +51,7 @@ export class GenreController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Получение информации о жанрах' })
   async getAllGenres(): Promise<Genre[]> {
     return await firstValueFrom(
       this.client.send(
@@ -62,12 +64,14 @@ export class GenreController {
   }
 
   @Get('/:id')
+  @ApiOperation({ summary: 'Получение информации о конкретном жанре' })
   async getOneGenre(@Param('id', ParseIntPipe) id: number) {
     return await firstValueFrom(this.client.send({ cmd: GET_GENRE_BY_ID }, id));
   }
 
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
+  @ApiOperation({ summary: 'Обновление информации о жанре' })
   @Roles(ADMIN)
   @Put()
   async updateGenre(@Body() dto: UpdateGenreDto): Promise<Genre> {
@@ -83,6 +87,7 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
+  @ApiOperation({ summary: 'Удаление жанра' })
   @ApiBearerAuth(BearerAuth)
   @Delete('/:id')
   async deleteGenre(

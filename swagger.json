@@ -4,6 +4,7 @@
     "/auth/login": {
       "get": {
         "operationId": "AuthController_login",
+        "summary": "Авторизация пользователя",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -41,6 +42,7 @@
     "/auth/roles": {
       "post": {
         "operationId": "AuthController_createRole",
+        "summary": "Добавление новой роли",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -75,6 +77,7 @@
       },
       "get": {
         "operationId": "AuthController_getRoles",
+        "summary": "Получение информации о ролях",
         "parameters": [],
         "responses": {
           "200": {
@@ -96,6 +99,7 @@
     "/auth/users/role": {
       "put": {
         "operationId": "AuthController_addRole",
+        "summary": "Добавление пользователю новой роли",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -132,6 +136,7 @@
     "/auth/users": {
       "get": {
         "operationId": "AuthController_getUsers",
+        "summary": "Получение информации о пользователях",
         "parameters": [],
         "responses": {
           "200": {
@@ -153,6 +158,7 @@
     "/auth/google/login": {
       "get": {
         "operationId": "AuthController_handleGoogleLogin",
+        "summary": "Авторизация пользователя через google",
         "parameters": [],
         "responses": { "200": { "description": "" } },
         "tags": ["auth"]
@@ -161,6 +167,7 @@
     "/auth/google/redirect": {
       "get": {
         "operationId": "AuthController_handleGoogleRedirect",
+        "summary": "Перенаправление после авторизации через google",
         "parameters": [],
         "responses": {
           "200": {
@@ -180,6 +187,7 @@
     "/auth/vk/login": {
       "get": {
         "operationId": "AuthController_hangleVkLogin",
+        "summary": "Авторизация пользователя через vk",
         "parameters": [],
         "responses": { "200": { "description": "" } },
         "tags": ["auth"]
@@ -188,6 +196,7 @@
     "/auth/vk/redirect": {
       "get": {
         "operationId": "AuthController_handleVkRedirect",
+        "summary": "Перенаправление после авторизации через vk",
         "parameters": [],
         "responses": {
           "200": {
@@ -207,6 +216,7 @@
     "/registration": {
       "post": {
         "operationId": "ProfilesController_registration",
+        "summary": "Регистрация пользователя",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -242,6 +252,7 @@
     "/profiles/{id}": {
       "put": {
         "operationId": "ProfilesController_updateProfile",
+        "summary": "Обновление информации профиля",
         "parameters": [
           {
             "name": "id",
@@ -283,6 +294,7 @@
       },
       "delete": {
         "operationId": "ProfilesController_deleteProfile",
+        "summary": "Удаление профиля",
         "parameters": [
           {
             "name": "id",
@@ -320,6 +332,7 @@
     "/profiles": {
       "get": {
         "operationId": "ProfilesController_getProfiles",
+        "summary": "Получение информации о профилях",
         "parameters": [],
         "responses": {
           "200": {
@@ -587,6 +600,7 @@
     "/genre": {
       "post": {
         "operationId": "GenreController_createGenre",
+        "summary": "Создание жанра",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -609,6 +623,7 @@
       },
       "get": {
         "operationId": "GenreController_getAllGenres",
+        "summary": "Получение информации о жанрах",
         "parameters": [],
         "responses": {
           "200": {
@@ -627,6 +642,7 @@
       },
       "put": {
         "operationId": "GenreController_updateGenre",
+        "summary": "Обновление информации о жанре",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -653,6 +669,7 @@
     "/genre/{id}": {
       "get": {
         "operationId": "GenreController_getOneGenre",
+        "summary": "Получение информации о конкретном жанре",
         "parameters": [
           {
             "name": "id",
@@ -673,6 +690,7 @@
       },
       "delete": {
         "operationId": "GenreController_deleteGenre",
+        "summary": "Удаление жанра",
         "parameters": [
           {
             "name": "id",

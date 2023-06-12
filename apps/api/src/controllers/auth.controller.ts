@@ -34,7 +34,12 @@ import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { BearerAuth } from '../guards/bearer';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { VKAuthGuard } from '../guards/vk-auth.guard';
@@ -50,6 +55,7 @@ export class AuthController {
   constructor(@Inject(AUTH) private readonly client: ClientProxy) {}
 
   @Get('/login')
+  @ApiOperation({ summary: 'Авторизация пользователя' })
   @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: UnauthorizedException })
   @UsePipes(ValidationPipe)
@@ -69,6 +75,7 @@ export class AuthController {
   }
 
   @Post('/roles')
+  @ApiOperation({ summary: 'Добавление новой роли' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Role })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ExistedRoleException })
   @ApiBearerAuth(BearerAuth)
@@ -91,6 +98,7 @@ export class AuthController {
   }
 
   @Get('/roles')
+  @ApiOperation({ summary: 'Получение информации о ролях' })
   @ApiResponse({ status: HttpStatus.OK, type: [Role] })
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
@@ -107,6 +115,7 @@ export class AuthController {
   }
 
   @Put('/users/role')
+  @ApiOperation({ summary: 'Добавление пользователю новой роли' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -132,6 +141,7 @@ export class AuthController {
 
   @Get('/users')
   @ApiBearerAuth(BearerAuth)
+  @ApiOperation({ summary: 'Получение информации о пользователях' })
   @ApiResponse({ status: HttpStatus.OK, type: [User] })
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -147,12 +157,16 @@ export class AuthController {
   }
 
   @Get('google/login')
+  @ApiOperation({ summary: 'Авторизация пользователя через google' })
   @UseGuards(GoogleAuthGuard)
   async handleGoogleLogin() {
     return { msg: 'Google Authentication' };
   }
 
   @Get('google/redirect')
+  @ApiOperation({
+    summary: 'Перенаправление после авторизации через google',
+  })
   @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @UseGuards(GoogleAuthGuard)
   async handleGoogleRedirect(@Req() request: Request) {
@@ -167,12 +181,14 @@ export class AuthController {
   }
 
   @Get('vk/login')
+  @ApiOperation({ summary: 'Авторизация пользователя через vk' })
   @UseGuards(VKAuthGuard)
   async hangleVkLogin() {
     return { msg: 'VK Authentication' };
   }
 
   @Get('vk/redirect')
+  @ApiOperation({ summary: 'Перенаправление после авторизации через vk' })
   @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @UseGuards(VKAuthGuard)
   async handleVkRedirect(@Req() request: Request) {
