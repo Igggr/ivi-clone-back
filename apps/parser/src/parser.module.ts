@@ -15,12 +15,15 @@ import { TasksService } from './task.service';
 import { ActorParserService } from './actor.parser/actor.parser.service';
 import { ReviewParserService } from './review.parser/review.parser.service';
 import { MainPageParserService } from './main-page.parser/main-page.parser.service';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     ClientsModule.registerAsync([
       {
         name: FILM,

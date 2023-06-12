@@ -3,11 +3,12 @@ import { ParserSimulatorService } from './parser-simulator.service';
 import { ClientsModule } from '@nestjs/microservices';
 import { RABBIT_OPTIONS, FILM } from '@app/rabbit';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
     ClientsModule.registerAsync([
       {

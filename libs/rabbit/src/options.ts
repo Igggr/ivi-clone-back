@@ -7,8 +7,8 @@ export const RABBIT_OPTIONS = (name: string, target: string) => {
       ? 'rabbit_test' // используется для тестов
       : target === DOCKER
       ? 'rabbit' // микросервис запущен из контейнера
-      : 'localhost'; // микросервис запущен из командной строки
-
+        : 'localhost'; // микросервис запущен из командной строки
+  
   return {
     transport: Transport.RMQ as const,
     options: {
