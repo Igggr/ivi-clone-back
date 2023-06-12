@@ -49,7 +49,7 @@ import { NotFoundRoleOrUserException } from '@app/shared/api-response/not-found-
 export class AuthController {
   constructor(@Inject(AUTH) private readonly client: ClientProxy) {}
 
-  @Get('/login')
+  @Post('/login')
   @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: UnauthorizedException })
   @UsePipes(ValidationPipe)
