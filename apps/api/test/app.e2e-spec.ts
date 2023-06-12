@@ -295,13 +295,13 @@ describe('Test API', () => {
         );
     }, 100000);
 
-    it('/POST /auth/users/role: Admin should be able to assign role to other user', () => {
+    it('/PUT /auth/users/role: Admin should be able to assign role to other user', () => {
       const dto: AddRoleDto = { userId: simpleUserId, value: testerRole.value };
       return request(app.getHttpServer())
-        .post('/auth/users/role')
+        .put('/auth/users/role')
         .auth(adminToken.token, { type: 'bearer' })
         .send(dto)
-        .expect(HttpStatus.CREATED)
+        .expect(HttpStatus.OK)
         .then((r) => {
           expect(r.body).toMatchObject({
             email: simpleUserDTO.email,
