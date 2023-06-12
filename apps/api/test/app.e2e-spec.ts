@@ -181,11 +181,11 @@ describe('Test API', () => {
         });
     }, 100000);
 
-    it('/POST /auth/login: Admin can login', async () => {
+    it('/GET /auth/login: Admin can login', async () => {
       await makeAdmin(adminId ?? 1, clientService.authClient);
 
       return request(app.getHttpServer())
-        .post('/auth/login')
+        .get('/auth/login')
         .send({
           email: adminDTO.email,
           password: adminDTO.password,
@@ -205,9 +205,9 @@ describe('Test API', () => {
         });
     }, 100000);
 
-    it('/POST /auth/login: User can login', () => {
+    it('/GET /auth/login: User can login', () => {
       return request(app.getHttpServer())
-        .post('/auth/login')
+        .get('/auth/login')
         .send({
           email: simpleUserDTO.email,
           password: simpleUserDTO.password,
@@ -272,10 +272,10 @@ describe('Test API', () => {
         );
     }, 100000);
 
-    it('/POST /auth/users/role: Admin should be able to assign role to other user', () => {
+    it('/PUT /auth/users/role: Admin should be able to assign role to other user', () => {
       const dto: AddRoleDto = { userId: simpleUserId, value: testerRole.value };
       return request(app.getHttpServer())
-        .post('/auth/users/role')
+        .put('/auth/users/role')
         .auth(adminToken.token, { type: 'bearer' })
         .send(dto)
         .expect(HttpStatus.CREATED)
