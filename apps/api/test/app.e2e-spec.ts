@@ -181,11 +181,11 @@ describe('Test API', () => {
         });
     }, 100000);
 
-    it('/GET /auth/login: Admin can login', async () => {
+    it('/POST /auth/login: Admin can login', async () => {
       await makeAdmin(adminId ?? 1, clientService.authClient);
 
       return request(app.getHttpServer())
-        .get('/auth/login')
+        .post('/auth/login')
         .send({
           email: adminDTO.email,
           password: adminDTO.password,
@@ -205,9 +205,9 @@ describe('Test API', () => {
         });
     }, 100000);
 
-    it('/GET /auth/login: User can login', () => {
+    it('/POST /auth/login: User can login', () => {
       return request(app.getHttpServer())
-        .get('/auth/login')
+        .post('/auth/login')
         .send({
           email: simpleUserDTO.email,
           password: simpleUserDTO.password,
@@ -278,7 +278,7 @@ describe('Test API', () => {
         .put('/auth/users/role')
         .auth(adminToken.token, { type: 'bearer' })
         .send(dto)
-        .expect(HttpStatus.CREATED)
+        .expect(HttpStatus.OK)
         .then((r) => {
           expect(r.body).toMatchObject({
             email: simpleUserDTO.email,
