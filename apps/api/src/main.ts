@@ -13,7 +13,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Учебный проект')
     .setDescription('Клон kinopoisk-a')
-    .setVersion('0.0.0')
+    .setVersion('0.9.9')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'jwt' },
       BearerAuth,

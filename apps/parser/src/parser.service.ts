@@ -95,7 +95,7 @@ export class ParserService {
   }
 
   private async getPreview(page: Page, film: number): Promise<string> {
-    console.log('Патаюсь спаристь preview');
+    console.log('Патаюсь спарсить preview');
     try {
       const url = await page
         .$(`xpath/${previewPageXPath(film)}`)
@@ -112,7 +112,7 @@ export class ParserService {
       console.log(`Успешно спарсил preview для ${film}`);
       return src;
     } catch {
-      console.log(`Не удалось спарить preview для ${film}`);
+      console.log(`Не удалось спарсить preview для ${film}`);
       return null;
     }
   }

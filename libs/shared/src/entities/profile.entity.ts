@@ -18,6 +18,7 @@ export class Profile {
   @IsOptional()
   @IsString()
   @ApiProperty({
+    example: 'https://www.kinopoisk.ru/user/2797306/',
     description:
       'Ссылка на профиль на кинопоиске (имеется только у спаршенных с кинопоиска профилей)',
   })
@@ -78,10 +79,17 @@ export class Profile {
   })
   createdAt: Date;
 
+  @ApiProperty({
+    example: '34387d2698cf4a8aff4828a8d3b9f18f.jpg',
+    description: 'Название фотографии',
+  })
   @Column({ nullable: true })
   @IsOptional()
   photo: string;
 
+  @IsInt()
+  @IsPositive()
+  @ApiProperty({ description: 'Внешний ключ', example: 1 })
   @Column({ nullable: false })
   userId: number;
 }

@@ -20,6 +20,9 @@ import { FOR } from '@app/shared/constants/keys';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,

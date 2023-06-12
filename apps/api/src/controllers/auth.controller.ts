@@ -20,6 +20,7 @@ import {
   HttpStatus,
   Inject,
   Post,
+  Put,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -33,12 +34,19 @@ import { Roles } from '../guards/roles-auth.decorator';
 import { RolesGuard } from '../guards/roles.guard';
 import { ValidationPipe } from '@app/shared/pipes/validation-pipe';
 import { ADMIN } from '@app/shared/constants/role-guard.const';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { BearerAuth } from '../guards/bearer';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { VKAuthGuard } from '../guards/vk-auth.guard';
 import { Role, User } from '@app/shared';
 import { TokenProfileResponse } from '@app/shared/api-response/token-profileInfo';
+import { ExistedRoleException } from '@app/shared/api-response/existed-role-exception';
+import { NotFoundRoleOrUserException } from '@app/shared/api-response/not-found-role-user';
 
 @ApiTags('auth')
 @UseInterceptors(LoggingInterceptor)
@@ -46,8 +54,10 @@ import { TokenProfileResponse } from '@app/shared/api-response/token-profileInfo
 export class AuthController {
   constructor(@Inject(AUTH) private readonly client: ClientProxy) {}
 
-  @Post('/login')
-  @ApiResponse({ status: HttpStatus.OK, type: User })
+  @Get('/login')
+  @ApiOperation({ summary: 'Авторизация пользователя' })
+  @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: UnauthorizedException })
   @UsePipes(ValidationPipe)
   async login(@Body() userDto: LoginDto) {
     const res = await firstValueFrom(
@@ -65,7 +75,9 @@ export class AuthController {
   }
 
   @Post('/roles')
+  @ApiOperation({ summary: 'Добавление новой роли' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Role })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ExistedRoleException })
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -86,6 +98,7 @@ export class AuthController {
   }
 
   @Get('/roles')
+  @ApiOperation({ summary: 'Получение информации о ролях' })
   @ApiResponse({ status: HttpStatus.OK, type: [Role] })
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
@@ -101,8 +114,13 @@ export class AuthController {
     );
   }
 
-  @Post('/users/role')
+  @Put('/users/role')
+  @ApiOperation({ summary: 'Добавление пользователю новой роли' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: NotFoundRoleOrUserException,
+  })
   @ApiBearerAuth(BearerAuth)
   @UseGuards(RolesGuard)
   @Roles(ADMIN)
@@ -122,7 +140,11 @@ export class AuthController {
   }
 
   @Get('/users')
+  @ApiBearerAuth(BearerAuth)
+  @ApiOperation({ summary: 'Получение информации о пользователях' })
   @ApiResponse({ status: HttpStatus.OK, type: [User] })
+  @UseGuards(RolesGuard)
+  @Roles(ADMIN)
   async getUsers() {
     return await firstValueFrom(
       this.client.send(
@@ -135,12 +157,16 @@ export class AuthController {
   }
 
   @Get('google/login')
+  @ApiOperation({ summary: 'Авторизация пользователя через google' })
   @UseGuards(GoogleAuthGuard)
   async handleGoogleLogin() {
     return { msg: 'Google Authentication' };
   }
 
   @Get('google/redirect')
+  @ApiOperation({
+    summary: 'Перенаправление после авторизации через google',
+  })
   @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @UseGuards(GoogleAuthGuard)
   async handleGoogleRedirect(@Req() request: Request) {
@@ -155,12 +181,14 @@ export class AuthController {
   }
 
   @Get('vk/login')
+  @ApiOperation({ summary: 'Авторизация пользователя через vk' })
   @UseGuards(VKAuthGuard)
   async hangleVkLogin() {
     return { msg: 'VK Authentication' };
   }
 
   @Get('vk/redirect')
+  @ApiOperation({ summary: 'Перенаправление после авторизации через vk' })
   @ApiResponse({ status: HttpStatus.OK, type: TokenProfileResponse })
   @UseGuards(VKAuthGuard)
   async handleVkRedirect(@Req() request: Request) {
