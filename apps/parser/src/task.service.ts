@@ -6,6 +6,7 @@ import { ParserService } from './parser.service';
 import { ClientProxy } from '@nestjs/microservices';
 import { FILM } from '@app/rabbit/queues';
 import { PARSED_DATA } from '@app/rabbit/events';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class TasksService {
@@ -33,7 +34,7 @@ export class TasksService {
 
     if (res.status === 'ok') {
       this.logger.log(`Film ${film} parsed succesefully`);
-      this.client.send({ cmd: PARSED_DATA }, res.value);
+      await firstValueFrom(this.client.send({ cmd: PARSED_DATA }, res.value));
     } else {
       console.log(`Unable to parse film ${film}`);
       console.log(res.error);
