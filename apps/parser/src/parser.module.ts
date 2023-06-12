@@ -24,9 +24,6 @@ import { FOR } from '@app/shared/constants/keys';
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     ClientsModule.registerAsync([
       {
         name: FILM,
